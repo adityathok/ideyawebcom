@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 
 final class Setting extends Model
 {
@@ -66,5 +67,31 @@ final class Setting extends Model
         }
 
         return $result;
+    }
+
+    /** @return array<string, string> */
+    public static function seo(): array
+    {
+        $keys = ['seo_title', 'seo_description', 'seo_keywords', 'seo_og_image'];
+        $result = [];
+        foreach ($keys as $key) {
+            $result[$key] = (string) (self::get($key, '') ?? '');
+        }
+
+        return $result;
+    }
+
+    public static function seoOgImageUrl(): ?string
+    {
+        $path = (string) (self::get('seo_og_image', '') ?? '');
+        if ($path === '') {
+            return null;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        return Storage::disk('public')->url($path);
     }
 }
