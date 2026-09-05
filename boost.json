@@ -1,0 +1,9 @@
+{
+    "agents": [
+        "zed"
+    ],
+    "guidelines": true,
+    "packages": [
+        "livewire/blaze"
+    ]
+}

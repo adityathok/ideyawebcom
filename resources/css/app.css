@@ -1,0 +1,160 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@theme {
+    --font-sans: 'Inter', 'Geist Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* DESIGN.md — Intercom canvas system */
+    --color-ink: #111111;
+    --color-ink-muted: #626260;
+    --color-ink-subtle: #7b7b78;
+    --color-ink-tertiary: #9c9fa5;
+    --color-canvas: #f5f1ec;
+    --color-surface-1: #ffffff;
+    --color-surface-2: #ebe7e1;
+    --color-hairline: #d3cec6;
+    --color-hairline-soft: #ebe7e1;
+    --color-fin-orange: #ff5600;
+    --color-brand-blue: #0007cb;
+
+    /* keep zinc for admin/Flux but primary is ink */
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f5f5f5;
+    --color-zinc-200: #e5e5e5;
+    --color-zinc-300: #d4d4d4;
+    --color-zinc-400: #a3a3a3;
+    --color-zinc-500: #737373;
+    --color-zinc-600: #525252;
+    --color-zinc-700: #404040;
+    --color-zinc-800: #262626;
+    --color-zinc-900: #171717;
+    --color-zinc-950: #0a0a0a;
+
+    --color-accent: #111111;
+    --color-accent-content: #111111;
+    --color-accent-foreground: #ffffff;
+}
+
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-hairline-soft, currentColor);
+    }
+    html {
+        background: var(--color-canvas);
+    }
+    body {
+        background: var(--color-canvas);
+        color: var(--color-ink);
+    }
+    a {
+        color: var(--color-ink);
+    }
+    a:hover {
+        color: var(--color-ink);
+    }
+    ::placeholder {
+        color: var(--color-ink-subtle);
+        opacity: 1;
+    }
+    ::selection {
+        background: var(--color-ink);
+        color: var(--color-surface-1);
+    }
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply  !mb-0 !leading-tight;
+}
+
+/* Flux light-only overrides — ensure all Flux text is ink on canvas/surface */
+[data-flux-field] [data-flux-label] {
+    color: var(--color-ink) !important;
+}
+[data-flux-field] [data-flux-description] {
+    color: var(--color-ink-muted) !important;
+}
+[data-flux-control] {
+    color: var(--color-ink) !important;
+    border-color: var(--color-hairline) !important;
+    background: var(--color-surface-1) !important;
+}
+[data-flux-control]::placeholder {
+    color: var(--color-ink-subtle) !important;
+}
+/* flux:heading / flux:text / flux:subheading */
+[data-flux-heading] {
+    color: var(--color-ink) !important;
+}
+[data-flux-text],
+[data-flux-subheading] {
+    color: var(--color-ink-muted) !important;
+}
+/* Flux nav/sidebar items */
+[data-flux-nav-item],
+[data-flux-sidebar-item] {
+    color: var(--color-ink-muted);
+}
+[data-flux-nav-item][data-current],
+[data-flux-sidebar-item][data-current] {
+    color: var(--color-surface-1) !important;
+    background: var(--color-ink) !important;
+}
+
+/* Prose — blog body must be ink, not zinc */
+.prose {
+    --tw-prose-body: var(--color-ink);
+    --tw-prose-headings: var(--color-ink);
+    --tw-prose-lead: var(--color-ink-muted);
+    --tw-prose-links: var(--color-ink);
+    --tw-prose-bold: var(--color-ink);
+    --tw-prose-counters: var(--color-ink-muted);
+    --tw-prose-bullets: var(--color-hairline);
+    --tw-prose-hr: var(--color-hairline);
+    --tw-prose-quotes: var(--color-ink);
+    --tw-prose-quote-borders: var(--color-ink);
+    --tw-prose-captions: var(--color-ink-muted);
+    --tw-prose-code: var(--color-ink);
+    --tw-prose-pre-code: var(--color-ink);
+    --tw-prose-pre-bg: var(--color-surface-2);
+    --tw-prose-th-borders: var(--color-hairline);
+    --tw-prose-td-borders: var(--color-hairline-soft);
+    color: var(--color-ink);
+}
+.prose a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-hairline);
+}
+.prose a:hover {
+    text-decoration-color: var(--color-ink);
+}
+.prose strong {
+    color: var(--color-ink);
+}
+.prose :where(p, li) {
+    color: var(--color-ink);
+}
+.prose :where(blockquote) {
+    color: var(--color-ink-muted);
+    border-left-color: var(--color-ink);
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
