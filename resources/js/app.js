@@ -1,6 +1,6 @@
-import { animate, stagger } from 'motion';
+import { animate, stagger, scroll } from 'motion';
 
-// Aurora + hero text — runs on welcome / home pages only
+// Aurora + hero text + sky parallax — runs on welcome / home pages only
 function initAuroraHero() {
     const hero = document.querySelector('[data-aurora-hero]');
     if (!hero) {
@@ -45,6 +45,19 @@ function initAuroraHero() {
         // opacity pulse
         animate(el, { opacity: [0.55, 0.8, 0.5, 0.55] }, { duration: dur * 0.6, repeat: Infinity, easing: 'ease-in-out', delay: i * 0.6 });
     });
+
+    // Sky parallax — subtle y drift on scroll (disabled if reduced motion)
+    const skyImg = hero.querySelector('[data-hero-sky]');
+    if (skyImg && !prefersReducedMotion && typeof scroll === 'function') {
+        try {
+            scroll(animate(skyImg, { y: [0, 28] }, { easing: 'linear' }), {
+                target: hero,
+                offset: ['start start', 'end start'],
+            });
+        } catch (_) {
+            // Motion scroll not available in this env — ignore
+        }
+    }
 }
 
 if (document.readyState === 'loading') {

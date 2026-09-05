@@ -66,7 +66,7 @@ final class MetaService
     {
         $profile = Setting::profile();
         $seo = Setting::seo();
-        $company = $profile['company_name'] ?: (string) config('app.name', 'Ideya Webcom');
+        $company = $profile['company_name'] ?: (string) config('app.name', 'IdeyaWeb');
         $tagline = $profile['tagline'] ?: 'Digital Agency & IT Solution';
         $about = $profile['about'] ?: 'Membangun produk digital yang cepat & bermakna.';
 
@@ -128,7 +128,7 @@ final class MetaService
     {
         $profile = $this->withDefaults ? Setting::profile() : [];
         $seo = $this->withDefaults ? Setting::seo() : [];
-        $appName = (string) config('app.name', 'Ideya Webcom');
+        $appName = (string) config('app.name', 'IdeyaWeb');
         $company = $this->withDefaults ? ($profile['company_name'] ?? '') ?: $appName : $appName;
 
         $seoTitle = $this->withDefaults ? $this->strOrNull($seo['seo_title'] ?? null) : null;

@@ -1,21 +1,24 @@
-<x-layouts.public :title="($profile['company_name'] ?? config('app.name', 'Ideya Webcom'))">
-    @php $profile = $profile ?? \App\Models\Setting::profile(); @endphp
+<x-layouts.public :title="($profile['company_name'] ?? config('app.name', 'IdeyaWeb'))">
+    @php
+        $profile = $profile ?? \App\Models\Setting::profile();
+        $heroSky = file_exists(public_path('images/hero-sky.jpg')) ? asset('images/hero-sky.jpg') : 'https://images.unsplash.com/photo-1570483358100-6d222cdea6ff?auto=format&fit=crop&w=2400&q=80';
+    @endphp
 
-    {{-- Hero Agency — gradasi biru langit + aurora kebiruan + Motion (center: heading / subheading / description + 2 CTA) --}}
-    <section data-aurora-hero class="relative isolate overflow-hidden bg-gradient-to-b from-[#f0f9ff] via-[#e0f2fe] to-[#bae6fd]">
-        {{-- Aurora kebiruan — sky/cyan/blue blobs, animated via Motion (resources/js/app.js) --}}
+    {{-- Hero Agency — foto langit + overlay lembut + aurora tipis + Motion (center: heading / subheading / description + 2 CTA) --}}
+    <section data-aurora-hero class="relative isolate overflow-hidden bg-[#bae6fd]">
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            <div data-aurora-blob class="absolute left-[6%] top-[-12%] h-[560px] w-[720px] rounded-full opacity-70 blur-[80px] will-change-transform" style="background: radial-gradient(ellipse 70% 60% at 40% 35%, rgba(125,211,252,0.50) 0%, rgba(56,189,248,0.28) 36%, transparent 70%);"></div>
-            <div data-aurora-blob class="absolute right-[4%] top-[-8%] h-[520px] w-[640px] rounded-full opacity-60 blur-[90px] will-change-transform" style="background: radial-gradient(ellipse 75% 65% at 60% 40%, rgba(14,165,233,0.36) 0%, rgba(59,130,246,0.22) 32%, transparent 72%);"></div>
-            <div data-aurora-blob class="absolute left-1/2 top-[18%] h-[440px] w-[980px] -translate-x-1/2 rounded-full opacity-50 blur-[75px] will-change-transform" style="background: radial-gradient(ellipse 85% 55% at 50% 40%, rgba(6,182,212,0.30) 0%, rgba(125,211,252,0.20) 42%, transparent 76%);"></div>
-            <div data-aurora-blob class="absolute bottom-[-20%] left-1/2 h-[400px] w-[900px] -translate-x-1/2 rounded-full opacity-40 blur-[70px] will-change-transform" style="background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(96,165,250,0.24) 0%, transparent 70%);"></div>
-            <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(240,249,255,0) 45%, rgba(240,249,255,0.55) 100%);"></div>
+            <img data-hero-sky src="{{ $heroSky }}" alt="" class="h-full w-full object-cover object-center" loading="eager" fetchpriority="high" />
+            <div class="absolute inset-0 bg-gradient-to-b from-[#f0f9ff]/70 via-[#e0f2fe]/45 to-[#f5f1ec]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-white/10"></div>
+            <div data-aurora-blob class="absolute left-[4%] top-[-10%] h-[520px] w-[680px] rounded-full opacity-35 blur-[80px] will-change-transform" style="background: radial-gradient(ellipse 70% 60% at 40% 35%, rgba(125,211,252,0.55) 0%, rgba(56,189,248,0.30) 36%, transparent 70%);"></div>
+            <div data-aurora-blob class="absolute right-[2%] top-[6%] h-[480px] w-[600px] rounded-full opacity-25 blur-[90px] will-change-transform" style="background: radial-gradient(ellipse 75% 65% at 60% 40%, rgba(14,165,233,0.32) 0%, transparent 72%);"></div>
         </div>
 
-        <div class="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:py-32">
+        <div class="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center px-4 py-24 text-center sm:min-h-[640px] sm:px-6 sm:py-32 lg:min-h-[760px] lg:py-40">
+            <div class="w-full">
             <p data-hero-sub class="text-sm font-medium tracking-wide text-[#626260]">{{ $profile['tagline'] ?? 'Digital Agency & IT Solution' }}</p>
             <h1 data-hero-heading class="mx-auto mt-4 max-w-2xl text-4xl font-medium leading-[1.05] tracking-[-0.8px] text-[#111111] sm:text-5xl lg:text-[56px] lg:leading-[1.10] lg:tracking-[-1.4px]">
-                {{ ($profile['company_name'] ?? 'Ideya Webcom') }}
+                {{ ($profile['company_name'] ?? 'IdeyaWeb') }}
             </h1>
             <p data-hero-sub class="mx-auto mt-3 max-w-2xl text-[20px] font-normal leading-7 tracking-[-0.2px] text-[#111111] sm:text-[22px]">
                 Membangun produk digital yang cepat &amp; bermakna.
@@ -26,6 +29,7 @@
             <div class="mt-8 flex items-center justify-center gap-3">
                 <a data-hero-cta href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasi Gratis</a>
                 <a data-hero-cta href="#layanan" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Lihat Layanan</a>
+            </div>
             </div>
         </div>
     </section>
@@ -79,8 +83,8 @@
             <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
                 <div>
                     <p class="text-sm font-medium tracking-wide text-[#626260]">Profil</p>
-                    <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Tentang {{ ($profile['company_name'] ?? '') ?: 'Ideya Webcom' }}</h2>
-                    <p class="mt-4 max-w-xl text-base leading-7 text-[#626260]">{{ $profile['about'] ?? 'Ideya Webcom adalah digital agency yang fokus pada pengembangan website dan aplikasi berkualitas — mengutamakan kecepatan, keamanan, dan pengalaman pengguna.' }}</p>
+                    <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Tentang {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</h2>
+                    <p class="mt-4 max-w-xl text-base leading-7 text-[#626260]">{{ $profile['about'] ?? 'IdeyaWeb adalah digital agency yang fokus pada pengembangan website dan aplikasi berkualitas — mengutamakan kecepatan, keamanan, dan pengalaman pengguna.' }}</p>
                     <div class="mt-8 grid gap-4 sm:grid-cols-3">
                         <div class="rounded-xl border border-[#d3cec6] bg-white p-5 text-center">
                             <p class="text-[28px] font-medium tracking-tight text-[#111111]">50+</p>

@@ -11,7 +11,7 @@
         <div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5">
                 <x-app-logo-icon class="size-7 text-[#111111]" />
-                <span class="text-[15px] font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: config('app.name', 'Ideya Webcom') }}</span>
+                <span class="text-[15px] font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}</span>
             </a>
             <nav class="hidden items-center gap-1 md:flex">
                 <a href="{{ route('home') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'bg-[#111111] text-white' : 'text-[#626260] hover:bg-[#ebe7e1] hover:text-[#111111]' }}">Beranda</a>
@@ -40,7 +40,7 @@
                 <div>
                     <div class="flex items-center gap-2.5">
                         <x-app-logo-icon class="size-7 text-[#111111]" />
-                        <span class="font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: 'Ideya Webcom' }}</span>
+                        <span class="font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</span>
                     </div>
                     <p class="mt-3 text-sm leading-6 text-[#626260]">{{ $profile['tagline'] ?? 'Digital Agency & IT Solution — membangun produk digital yang cepat, aman, dan mudah diskalakan.' }}</p>
                     @if(!empty($profile['about']))
@@ -78,7 +78,7 @@
                 </div>
             </div>
             <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-[#d3cec6] pt-6 text-sm text-[#7b7b78] sm:flex-row">
-                <p>&copy; {{ date('Y') }} {{ ($profile['company_name'] ?? '') ?: config('app.name', 'Ideya Webcom') }}. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} {{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}. All rights reserved.</p>
                 <p class="text-xs tracking-wide">Dibuat dengan ♥ di atas canvas #f5f1ec — DESIGN.md</p>
             </div>
         </div>

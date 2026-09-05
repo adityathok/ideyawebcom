@@ -12,9 +12,9 @@ final class SettingSeeder extends Seeder
     public function run(): void
     {
         $defaults = [
-            'company_name' => 'Ideya Webcom',
+            'company_name' => 'IdeyaWeb',
             'tagline' => 'Digital Agency & IT Solution',
-            'about' => 'Ideya Webcom adalah digital agency yang fokus pada website, aplikasi, dan solusi IT untuk membantu bisnis bertumbuh di era digital.',
+            'about' => 'IdeyaWeb adalah digital agency yang fokus pada website, aplikasi, dan solusi IT untuk membantu bisnis bertumbuh di era digital.',
             'email' => 'hello@ideyaweb.com',
             'phone' => '+62 812-3456-7890',
             'address' => 'Jl. Teknologi No.123, Jakarta Selatan',

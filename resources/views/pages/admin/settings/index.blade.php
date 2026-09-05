@@ -140,7 +140,7 @@ new #[Title('Pengaturan Website')] class extends Component {
         <flux:separator class="my-2" />
         <flux:heading size="sm">SEO Default (fallback site-wide)</flux:heading>
         <p class="text-sm leading-6 text-[#626260]">Dipakai <code class="rounded bg-[#f5f1ec] px-1 py-0.5 text-xs">MetaService</code> sebagai default jika halaman tidak set meta sendiri. Kosongkan untuk fallback ke Nama Perusahaan / Tentang. Bisa di-override per-controller via <code class="rounded bg-[#f5f1ec] px-1 py-0.5 text-xs">forHome()</code> / <code class="rounded bg-[#f5f1ec] px-1 py-0.5 text-xs">set([...])</code>.</p>
-        <flux:input wire:model="seo_title" label="SEO Title" placeholder="Contoh: Ideya Webcom — Digital Agency & IT Solution" description="Judul default (title tag). Ideal ≤60 karakter." />
+        <flux:input wire:model="seo_title" label="SEO Title" placeholder="Contoh: IdeyaWeb — Digital Agency & IT Solution" description="Judul default (title tag). Ideal ≤60 karakter." />
         <flux:textarea wire:model="seo_description" label="SEO Description" rows="3" placeholder="Deskripsi singkat untuk hasil pencarian & share..." description="Ideal 150–160 karakter." />
         <flux:input wire:model="seo_keywords" label="SEO Keywords" placeholder="laravel, agency, website, aplikasi" description="Pisahkan dengan koma." />
         <div class="space-y-3 rounded-xl border border-[#d3cec6] bg-[#f5f1ec] p-4">

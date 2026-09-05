@@ -1,7 +1,7 @@
 @props(['meta' => []])
 @php
     $m = $meta ?? [];
-    $titleFull = $m['title_full'] ?? $m['title'] ?? config('app.name', 'Ideya Webcom');
+    $titleFull = $m['title_full'] ?? $m['title'] ?? config('app.name', 'IdeyaWeb');
     $title = $m['title'] ?? $titleFull;
     $description = $m['description'] ?? null;
     $keywords = $m['keywords'] ?? null;
