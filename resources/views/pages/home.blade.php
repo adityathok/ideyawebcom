@@ -23,11 +23,8 @@
             <h1 data-hero-heading class="mx-auto mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.8px] text-[#111111] sm:text-5xl lg:text-[56px] lg:leading-[1.10] lg:tracking-[-1.4px]">
                 {{ ($profile['tagline'] ?? '') ?: 'Developer Website & Web App' }}
             </h1>
-            <p data-hero-sub class="mx-auto mt-3 max-w-2xl text-[20px] font-normal leading-7 tracking-[-0.2px] text-[#111111] sm:text-[22px]">
-                Spesialis Web App &amp; berpengalaman di WordPress.
-            </p>
             <p data-hero-desc class="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#626260] sm:text-[18px] sm:leading-7">
-                {{ !empty($profile['about']) ? \Illuminate\Support\Str::limit($profile['about'], 200) : 'Kami mengerjakan website, web app, dan app — spesialis membangun web app & app custom, dan berpengalaman membangun, mengoptimasi, dan merawat WordPress, dari company profile hingga WooCommerce.' }}
+                {{ !empty($profile['about']) ? \Illuminate\Support\Str::limit($profile['about'], 200) : 'Kami membangun website & app custom, dan berpengalaman membangun, mengoptimasi, dan merawat Aplikasi dan Web WordPress, dari company profile hingga WooCommerce.' }}
             </p>
             <div class="mt-8 flex items-center justify-center gap-3">
                 <a data-hero-cta href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasi Gratis</a>
