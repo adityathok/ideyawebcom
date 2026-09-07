@@ -45,6 +45,7 @@
                 'short' => 'Dashboard, sistem & aplikasi bisnis',
                 'desc' => 'Spesialis membangun web app dan app custom — dashboard, sistem internal, dan aplikasi bisnis yang cepat, aman, dan mudah diskalakan. Dirancang sesuai alur kerja Anda, lengkap dengan testing dan dokumentasi sejak hari pertama.',
                 'points' => ['Dashboard & sistem internal', 'Auth, roles & permission', 'API & integrasi siap pakai', 'Testing & dokumentasi'],
+                'image' => 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=80',
             ],
             [
                 'icon' => '◎',
@@ -52,6 +53,7 @@
                 'short' => 'Ringan & SEO-friendly',
                 'desc' => 'Website bisnis yang ringan, cepat, dan mudah dikelola — fokus pada kecepatan, SEO teknis, dan konversi. Cocok untuk company profile, landing page, dan katalog.',
                 'points' => ['Desain responsif & cepat', 'SEO teknis & meta rapi', 'Mudah dikelola / CMS ringan', 'Siap dihubungkan ke WhatsApp & formulir'],
+                'image' => 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=1600&q=80',
             ],
             [
                 'icon' => '⬡',
@@ -59,6 +61,7 @@
                 'short' => 'Theme, plugin & WooCommerce',
                 'desc' => 'Berpengalaman mengerjakan WordPress — custom theme, custom plugin, Elementor/Gutenberg, hingga WooCommerce. Rapi, aman, dan tidak berat.',
                 'points' => ['Custom theme & child theme', 'Custom plugin & Gutenberg block', 'Elementor / Gutenberg yang rapi', 'WooCommerce & payment gateway'],
+                'image' => 'https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&w=1600&q=80',
             ],
             [
                 'icon' => '↗',
@@ -66,6 +69,7 @@
                 'short' => 'Core Web Vitals lebih hijau',
                 'desc' => 'Audit menyeluruh untuk WordPress yang lambat atau bermasalah — performa, keamanan, dan SEO teknis. Hasil terukur, sebelum vs sesudah.',
                 'points' => ['Audit kecepatan & Core Web Vitals', 'Hardening keamanan & cleanup', 'Optimasi database & caching', 'SEO teknis & struktur data'],
+                'image' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=80',
             ],
             [
                 'icon' => '✦',
@@ -73,6 +77,7 @@
                 'short' => 'Payment & pihak ketiga',
                 'desc' => 'REST API, payment gateway, dan integrasi layanan pihak ketiga untuk website maupun web app — sinkronisasi data yang andal.',
                 'points' => ['REST API & webhook', 'Payment gateway (Midtrans, Xendit, dll)', 'Integrasi ERP / CRM / spreadsheet', 'Dokumentasi API yang jelas'],
+                'image' => 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1600&q=80',
             ],
             [
                 'icon' => '☰',
@@ -80,6 +85,7 @@
                 'short' => 'Update, backup & support',
                 'desc' => 'Update, backup, monitoring, dan support rutin khusus website & web app — termasuk WordPress. Website tetap aman tanpa Anda repot.',
                 'points' => ['Update rutin & backup', 'Monitoring uptime & error', 'Perbaikan bug prioritas', 'Laporan berkala yang jelas'],
+                'image' => 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1600&q=80',
             ],
         ];
     @endphp
@@ -140,9 +146,9 @@
                     @endforeach
                 </div>
 
-                {{-- Kolom kanan: deskripsi layanan bergantian — tinggi disamakan dengan kolom daftar --}}
+                {{-- Kolom kanan: deskripsi layanan bergantian — tiap layanan punya background image sendiri, tinggi disamakan dengan kolom daftar --}}
                 <div class="flex flex-col lg:col-span-7">
-                    <div class="relative flex-1 overflow-hidden rounded-xl border border-[#d3cec6] bg-white p-6 sm:p-8">
+                    <div class="relative flex-1 overflow-hidden rounded-xl border border-[#d3cec6] bg-white">
                         @foreach($services as $i => $service)
                             <div
                                 role="tabpanel"
@@ -154,7 +160,16 @@
                                 x-transition:enter="transition ease-out duration-300"
                                 x-transition:enter-start="opacity-0 translate-y-3"
                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                class="relative isolate flex h-full flex-col overflow-hidden"
                             >
+                                {{-- Gambar di atas: area terlihat diperbesar, bawahnya tertutup gradasi pudar --}}
+                                <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-96 sm:h-[28rem]">
+                                    <img src="{{ $service['image'] }}" alt="" loading="lazy" class="h-full w-full object-cover" />
+                                </div>
+                                <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10" style="background: linear-gradient(to bottom, transparent 0, rgba(255,255,255,0.55) 180px, #ffffff 320px, #ffffff 100%);"></div>
+                                {{-- Spacer: area gambar yang dibiarkan terlihat --}}
+                                <div aria-hidden="true" class="h-52 shrink-0 sm:h-72"></div>
+                                <div class="h-full p-6 pt-2 sm:p-8 sm:pt-3">
                                 <div class="flex items-center gap-4">
                                     <span aria-hidden="true" class="flex size-12 items-center justify-center rounded-xl bg-[#f5f1ec] text-xl text-[#111111]">{{ $service['icon'] }}</span>
                                     <div>
@@ -174,6 +189,7 @@
                                 <div class="mt-6 flex flex-wrap gap-3">
                                     <a href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasikan kebutuhan ini</a>
                                     <a href="#proses" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Lihat proses kerja</a>
+                                </div>
                                 </div>
                             </div>
                         @endforeach
