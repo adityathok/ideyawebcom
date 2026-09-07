@@ -1,6 +1,6 @@
 import { animate, stagger, scroll } from 'motion';
 
-// Aurora + hero text + sky parallax — runs on welcome / home pages only
+// Aurora + hero text + sky parallax — runs on home page only
 function initAuroraHero() {
     const hero = document.querySelector('[data-aurora-hero]');
     if (!hero) {
