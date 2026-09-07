@@ -19,9 +19,9 @@
 
         <div class="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center px-4 py-24 text-center sm:min-h-[640px] sm:px-6 sm:py-32 lg:min-h-[760px] lg:py-40">
             <div class="w-full">
-            <p data-hero-sub class="text-sm font-medium tracking-wide text-[#626260]">{{ $profile['tagline'] ?? 'Digital Agency & IT Solution' }}</p>
-            <h1 data-hero-heading class="mx-auto mt-4 max-w-2xl text-4xl font-medium leading-[1.05] tracking-[-0.8px] text-[#111111] sm:text-5xl lg:text-[56px] lg:leading-[1.10] lg:tracking-[-1.4px]">
-                {{ ($profile['company_name'] ?? 'IdeyaWeb') }}
+            <p data-hero-sub class="text-sm font-medium tracking-wide text-[#626260]">{{ ($profile['company_name'] ?? 'IdeyaWeb') }}</p>
+            <h1 data-hero-heading class="mx-auto mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.8px] text-[#111111] sm:text-5xl lg:text-[56px] lg:leading-[1.10] lg:tracking-[-1.4px]">
+                {{ $profile['tagline'] ?? 'Digital Agency & IT Solution' }}
             </h1>
             <p data-hero-sub class="mx-auto mt-3 max-w-2xl text-[20px] font-normal leading-7 tracking-[-0.2px] text-[#111111] sm:text-[22px]">
                 Membangun produk digital yang cepat &amp; bermakna.
