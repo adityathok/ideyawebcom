@@ -21,13 +21,13 @@
             <div class="w-full">
             <p data-hero-sub class="text-sm font-medium tracking-wide text-[#626260]">{{ ($profile['company_name'] ?? 'IdeyaWeb') }}</p>
             <h1 data-hero-heading class="mx-auto mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.8px] text-[#111111] sm:text-5xl lg:text-[56px] lg:leading-[1.10] lg:tracking-[-1.4px]">
-                {{ $profile['tagline'] ?? 'Digital Agency & IT Solution' }}
+                {{ ($profile['tagline'] ?? '') ?: 'Developer Website & Web App' }}
             </h1>
             <p data-hero-sub class="mx-auto mt-3 max-w-2xl text-[20px] font-normal leading-7 tracking-[-0.2px] text-[#111111] sm:text-[22px]">
-                Membangun produk digital yang cepat &amp; bermakna.
+                Spesialis Web App &amp; berpengalaman di WordPress.
             </p>
             <p data-hero-desc class="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#626260] sm:text-[18px] sm:leading-7">
-                {{ !empty($profile['about']) ? \Illuminate\Support\Str::limit($profile['about'], 200) : 'Kami membantu bisnis bertumbuh lewat website, aplikasi, dan strategi digital yang tepat — dari ide, desain, hingga launch dan scale.' }}
+                {{ !empty($profile['about']) ? \Illuminate\Support\Str::limit($profile['about'], 200) : 'Kami mengerjakan website, web app, dan app — spesialis membangun web app & app custom, dan berpengalaman membangun, mengoptimasi, dan merawat WordPress, dari company profile hingga WooCommerce.' }}
             </p>
             <div class="mt-8 flex items-center justify-center gap-3">
                 <a data-hero-cta href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasi Gratis</a>
@@ -37,44 +37,157 @@
         </div>
     </section>
 
-    {{-- Layanan — feature-card grid 3-up (DESIGN.md feature-card) --}}
+    @php
+        $services = [
+            [
+                'icon' => '◈',
+                'title' => 'Web App & App Custom',
+                'short' => 'Dashboard, sistem & aplikasi bisnis',
+                'desc' => 'Spesialis membangun web app dan app custom — dashboard, sistem internal, dan aplikasi bisnis yang cepat, aman, dan mudah diskalakan. Dirancang sesuai alur kerja Anda, lengkap dengan testing dan dokumentasi sejak hari pertama.',
+                'points' => ['Dashboard & sistem internal', 'Auth, roles & permission', 'API & integrasi siap pakai', 'Testing & dokumentasi'],
+            ],
+            [
+                'icon' => '◎',
+                'title' => 'Website Company Profile',
+                'short' => 'Ringan & SEO-friendly',
+                'desc' => 'Website bisnis yang ringan, cepat, dan mudah dikelola — fokus pada kecepatan, SEO teknis, dan konversi. Cocok untuk company profile, landing page, dan katalog.',
+                'points' => ['Desain responsif & cepat', 'SEO teknis & meta rapi', 'Mudah dikelola / CMS ringan', 'Siap dihubungkan ke WhatsApp & formulir'],
+            ],
+            [
+                'icon' => '⬡',
+                'title' => 'WordPress Development',
+                'short' => 'Theme, plugin & WooCommerce',
+                'desc' => 'Berpengalaman mengerjakan WordPress — custom theme, custom plugin, Elementor/Gutenberg, hingga WooCommerce. Rapi, aman, dan tidak berat.',
+                'points' => ['Custom theme & child theme', 'Custom plugin & Gutenberg block', 'Elementor / Gutenberg yang rapi', 'WooCommerce & payment gateway'],
+            ],
+            [
+                'icon' => '↗',
+                'title' => 'Optimasi & Percepatan WordPress',
+                'short' => 'Core Web Vitals lebih hijau',
+                'desc' => 'Audit menyeluruh untuk WordPress yang lambat atau bermasalah — performa, keamanan, dan SEO teknis. Hasil terukur, sebelum vs sesudah.',
+                'points' => ['Audit kecepatan & Core Web Vitals', 'Hardening keamanan & cleanup', 'Optimasi database & caching', 'SEO teknis & struktur data'],
+            ],
+            [
+                'icon' => '✦',
+                'title' => 'API & Integrasi Web',
+                'short' => 'Payment & pihak ketiga',
+                'desc' => 'REST API, payment gateway, dan integrasi layanan pihak ketiga untuk website maupun web app — sinkronisasi data yang andal.',
+                'points' => ['REST API & webhook', 'Payment gateway (Midtrans, Xendit, dll)', 'Integrasi ERP / CRM / spreadsheet', 'Dokumentasi API yang jelas'],
+            ],
+            [
+                'icon' => '☰',
+                'title' => 'Maintenance Website',
+                'short' => 'Update, backup & support',
+                'desc' => 'Update, backup, monitoring, dan support rutin khusus website & web app — termasuk WordPress. Website tetap aman tanpa Anda repot.',
+                'points' => ['Update rutin & backup', 'Monitoring uptime & error', 'Perbaikan bug prioritas', 'Laporan berkala yang jelas'],
+            ],
+        ];
+    @endphp
+
+    {{-- Layanan — carousel tab dua kolom: kiri daftar judul, kanan deskripsi bergantian (DESIGN.md feature-card) --}}
     <section id="layanan" class="border-y border-[#ebe7e1] bg-[#f5f1ec]">
         <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
-                <p class="text-sm font-medium tracking-wide text-[#626260]">Layanan &amp; Jasa</p>
-                <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Satu tim untuk seluruh kebutuhan digital Anda</h2>
-                <p class="mt-3 text-base leading-7 text-[#626260]">Dari website company profile hingga aplikasi kompleks — kami rancang, bangun, dan rawat produk Anda.</p>
+                <p class="text-sm font-medium tracking-wide text-[#626260]">Layanan</p>
+                <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Developer website &amp; web app saja</h2>
+                <p class="mt-3 text-base leading-7 text-[#626260]">Pilih layanan di kiri — detailnya tampil di kanan dan berganti otomatis. Klik judul untuk melompat ke layanan tertentu.</p>
             </div>
-            <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">◈</div>
-                    <h3 class="mt-4 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Website &amp; Aplikasi</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Laravel, Livewire, Next.js. Cepat, aman, dan mudah diskalakan. CMS ringan sesuai kebutuhan.</p>
+            <div
+                data-service-tabs
+                x-data="{ active: 0, total: {{ count($services) }}, timer: null, start() { if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; this.stop(); this.timer = setInterval(() => { this.active = (this.active + 1) % this.total; }, 6000); }, stop() { if (this.timer) clearInterval(this.timer); this.timer = null; }, next() { this.active = (this.active + 1) % this.total; this.stop(); this.start(); }, prev() { this.active = (this.active - 1 + this.total) % this.total; this.stop(); this.start(); }, go(i) { this.active = i; this.stop(); this.start(); }, pause() { this.stop(); }, resume() { this.start(); } }"
+                x-init="start()"
+                @mouseenter="pause()"
+                @mouseleave="resume()"
+                @focusin="pause()"
+                @focusout="resume()"
+                @visibilitychange.window="document.hidden ? pause() : resume()"
+                class="mt-10 grid gap-6 lg:grid-cols-12 lg:items-stretch"
+            >
+                {{-- Kolom kiri: daftar judul layanan --}}
+                <div
+                    role="tablist"
+                    aria-label="Daftar layanan"
+                    aria-orientation="vertical"
+                    @keydown.arrow-down.prevent="next()"
+                    @keydown.arrow-up.prevent="prev()"
+                    @keydown.arrow-right.prevent="next()"
+                    @keydown.arrow-left.prevent="prev()"
+                    @keydown.home.prevent="go(0)"
+                    @keydown.end.prevent="go(total - 1)"
+                    class="flex gap-3 overflow-x-auto pb-2 lg:col-span-5 lg:flex-col lg:overflow-visible lg:pb-0"
+                >
+                    @foreach($services as $i => $service)
+                        <button
+                            type="button"
+                            role="tab"
+                            id="layanan-tab-{{ $i }}"
+                            aria-controls="layanan-panel-{{ $i }}"
+                            :aria-selected="active === {{ $i }} ? 'true' : 'false'"
+                            :tabindex="active === {{ $i }} ? '0' : '-1'"
+                            @click="go({{ $i }})"
+                            :class="active === {{ $i }} ? 'border-[#111111] bg-white shadow-sm' : 'border-[#d3cec6] bg-transparent hover:border-[#9c9fa5] hover:bg-white/60'"
+                            class="flex w-64 shrink-0 items-center gap-4 rounded-xl border p-4 text-left transition lg:w-full"
+                        >
+                            <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">{{ $service['icon'] }}</span>
+                            <span class="min-w-0">
+                                <span class="flex items-baseline gap-2">
+                                    <span aria-hidden="true" class="text-xs font-medium tabular-nums text-[#9c9fa5]">0{{ $i + 1 }}</span>
+                                    <span class="truncate text-[15px] font-medium text-[#111111]">{{ $service['title'] }}</span>
+                                </span>
+                                <span class="mt-0.5 block truncate text-sm text-[#626260]">{{ $service['short'] }}</span>
+                            </span>
+                        </button>
+                    @endforeach
                 </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">◎</div>
-                    <h3 class="mt-4 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Branding &amp; UI/UX</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Desain yang fokus pada konversi — design system, prototype, dan usability yang terukur.</p>
-                </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">⬡</div>
-                    <h3 class="mt-4 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">API &amp; Integrasi</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Payment gateway, ERP, dan layanan pihak ketiga — sinkronisasi data yang andal.</p>
-                </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">↗</div>
-                    <h3 class="mt-4 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">SEO &amp; Growth</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Audit teknis, konten, dan optimasi performa untuk akuisisi organik yang berkelanjutan.</p>
-                </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">✦</div>
-                    <h3 class="mt-4 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Maintenance &amp; Support</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Monitoring, backup, dan SLA. Produk tetap aman setelah launch.</p>
-                </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                    <div class="flex size-10 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">☰</div>
-                    <h3 class="mt-4 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Konsultasi Digital</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Butuh peta jalan? Kami bantu audit dan susun roadmap prioritas yang realistis.</p>
+
+                {{-- Kolom kanan: deskripsi layanan bergantian — tinggi disamakan dengan kolom daftar --}}
+                <div class="flex flex-col lg:col-span-7">
+                    <div class="relative flex-1 overflow-hidden rounded-xl border border-[#d3cec6] bg-white p-6 sm:p-8">
+                        @foreach($services as $i => $service)
+                            <div
+                                role="tabpanel"
+                                id="layanan-panel-{{ $i }}"
+                                aria-labelledby="layanan-tab-{{ $i }}"
+                                tabindex="0"
+                                x-show="active === {{ $i }}"
+                                x-cloak
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-3"
+                                x-transition:enter-end="opacity-100 translate-y-0"
+                            >
+                                <div class="flex items-center gap-4">
+                                    <span aria-hidden="true" class="flex size-12 items-center justify-center rounded-xl bg-[#f5f1ec] text-xl text-[#111111]">{{ $service['icon'] }}</span>
+                                    <div>
+                                        <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">Layanan 0{{ $i + 1 }} / 0{{ count($services) }}</p>
+                                        <h3 class="mt-1 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">{{ $service['title'] }}</h3>
+                                    </div>
+                                </div>
+                                <p class="mt-4 text-base leading-7 text-[#626260]">{{ $service['desc'] }}</p>
+                                <ul class="mt-5 grid gap-2 sm:grid-cols-2">
+                                    @foreach($service['points'] as $point)
+                                        <li class="flex items-start gap-2 text-sm leading-6 text-[#111111]">
+                                            <span aria-hidden="true" class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[#f5f1ec] text-xs">✓</span>
+                                            <span>{{ $point }}</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                <div class="mt-6 flex flex-wrap gap-3">
+                                    <a href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasikan kebutuhan ini</a>
+                                    <a href="#proses" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Lihat proses kerja</a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Kontrol carousel --}}
+                    <div class="mt-4 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="prev()" aria-label="Layanan sebelumnya" class="inline-flex size-10 items-center justify-center rounded-full border border-[#d3cec6] bg-white text-[#111111] hover:bg-[#ebe7e1]">←</button>
+                            <button type="button" @click="next()" aria-label="Layanan berikutnya" class="inline-flex size-10 items-center justify-center rounded-full border border-[#d3cec6] bg-white text-[#111111] hover:bg-[#ebe7e1]">→</button>
+                        </div>
+
+                        <p class="text-sm tabular-nums text-[#626260]" aria-live="polite"><span x-text="active + 1"></span> / {{ count($services) }}</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -87,7 +200,7 @@
                 <div>
                     <p class="text-sm font-medium tracking-wide text-[#626260]">Profil</p>
                     <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Tentang {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</h2>
-                    <p class="mt-4 max-w-xl text-base leading-7 text-[#626260]">{{ $profile['about'] ?? 'IdeyaWeb adalah digital agency yang fokus pada pengembangan website dan aplikasi berkualitas — mengutamakan kecepatan, keamanan, dan pengalaman pengguna.' }}</p>
+                    <p class="mt-4 max-w-xl text-base leading-7 text-[#626260]">{{ $profile['about'] ?? 'IdeyaWeb adalah developer website, web app, dan app — spesialis membangun web app & app custom, dan berpengalaman mengerjakan WordPress, dari pembuatan hingga optimasi dan perawatan.' }}</p>
                     <div class="mt-8 grid gap-4 sm:grid-cols-3">
                         <div class="rounded-xl border border-[#d3cec6] bg-white p-5 text-center">
                             <p class="text-[28px] font-medium tracking-tight text-[#111111]">50+</p>
@@ -105,20 +218,20 @@
                 </div>
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Fokus pada hasil</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Setiap keputusan desain diukur terhadap tujuan bisnis Anda.</p>
+                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Spesialis web app & app</h3>
+                        <p class="mt-2 text-sm leading-6 text-[#626260]">Fokus ke web app & app custom yang cepat, aman, dan mudah diskalakan.</p>
                     </div>
                     <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Komunikasi terbuka</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Demo rutin, laporan jelas, tanpa kejutan di akhir.</p>
+                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Berpengalaman WordPress</h3>
+                        <p class="mt-2 text-sm leading-6 text-[#626260]">Custom theme &amp; plugin, WooCommerce, migrasi, dan hardening keamanan.</p>
                     </div>
                     <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
                         <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Kualitas terjaga</h3>
                         <p class="mt-2 text-sm leading-6 text-[#626260]">Code review, testing, dan dokumentasi sejak hari pertama.</p>
                     </div>
                     <div class="rounded-xl border border-[#d3cec6] bg-[#ebe7e1] p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Jangka panjang</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Kami bangun fondasi yang mudah dirawat dan dikembangkan.</p>
+                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Support jangka panjang</h3>
+                        <p class="mt-2 text-sm leading-6 text-[#626260]">Maintenance rutin untuk website, web app, dan WordPress Anda.</p>
                     </div>
                 </div>
             </div>
@@ -166,8 +279,8 @@
             <div class="rounded-xl border border-[#d3cec6] bg-white p-8 sm:p-12">
                 <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                     <div>
-                        <h2 class="text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Siap wujudkan ide Anda?</h2>
-                        <p class="mt-3 max-w-xl text-base leading-7 text-[#626260]">Ceritakan kebutuhan Anda — kami beri estimasi dan rekomendasi tanpa komitmen.</p>
+                        <h2 class="text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Butuh website atau web app baru?</h2>
+                        <p class="mt-3 max-w-xl text-base leading-7 text-[#626260]">Ceritakan kebutuhan website, web app, atau WordPress Anda — kami beri estimasi dan rekomendasi tanpa komitmen.</p>
                     </div>
                     <div class="flex flex-wrap gap-3">
                         <a href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Hubungi Kami</a>

@@ -13,8 +13,8 @@ final class SettingSeeder extends Seeder
     {
         $defaults = [
             'company_name' => 'IdeyaWeb',
-            'tagline' => 'Digital Agency & IT Solution',
-            'about' => 'IdeyaWeb adalah digital agency yang fokus pada website, aplikasi, dan solusi IT untuk membantu bisnis bertumbuh di era digital.',
+            'tagline' => 'Developer Website & Web App',
+            'about' => 'IdeyaWeb adalah developer website, web app, dan app — spesialis membangun web app & app custom, dan berpengalaman mengerjakan WordPress, dari pembuatan hingga optimasi dan perawatan.',
             'email' => 'hello@ideyaweb.com',
             'phone' => '+62 812-3456-7890',
             'address' => 'Jl. Teknologi No.123, Jakarta Selatan',

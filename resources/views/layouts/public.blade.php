@@ -40,15 +40,15 @@
                         <x-app-logo-icon class="size-7 text-[#111111]" />
                         <span class="font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</span>
                     </div>
-                    <p class="mt-3 text-sm leading-6 text-[#626260]">{{ $profile['tagline'] ?? 'Digital Agency & IT Solution — membangun produk digital yang cepat, aman, dan mudah diskalakan.' }}</p>
+                    <p class="mt-3 text-sm leading-6 text-[#626260]">{{ ($profile['tagline'] ?? '') ?: 'Developer Website & Web App — spesialis web app & berpengalaman di WordPress.' }}</p>
                 </div>
                 <div>
                     <h3 class="text-sm font-semibold tracking-tight text-[#111111]">Layanan</h3>
                     <ul class="mt-3 space-y-2 text-sm text-[#626260]">
-                        <li><a href="#layanan" class="hover:text-[#111111]">Website & Aplikasi</a></li>
-                        <li><a href="#layanan" class="hover:text-[#111111]">Branding & UI/UX</a></li>
-                        <li><a href="#layanan" class="hover:text-[#111111]">Growth & SEO</a></li>
-                        <li><a href="#layanan" class="hover:text-[#111111]">API & Integrasi</a></li>
+                        <li><a href="#layanan" class="hover:text-[#111111]">Web App Custom</a></li>
+                        <li><a href="#layanan" class="hover:text-[#111111]">Website Company Profile</a></li>
+                        <li><a href="#layanan" class="hover:text-[#111111]">WordPress Development</a></li>
+                        <li><a href="#layanan" class="hover:text-[#111111]">Optimasi WordPress</a></li>
                     </ul>
                 </div>
                 <div>

@@ -67,8 +67,8 @@ final class MetaService
         $profile = Setting::profile();
         $seo = Setting::seo();
         $company = $profile['company_name'] ?: (string) config('app.name', 'IdeyaWeb');
-        $tagline = $profile['tagline'] ?: 'Digital Agency & IT Solution';
-        $about = $profile['about'] ?: 'Membangun produk digital yang cepat & bermakna.';
+        $tagline = $profile['tagline'] ?: 'Developer Website & Web App';
+        $about = $profile['about'] ?: 'Spesialis membangun web app & app custom, dan berpengalaman mengerjakan WordPress.';
 
         $defaultTitle = filled($seo['seo_title']) ? $seo['seo_title'] : $company.' — '.$tagline;
         $defaultDescription = filled($seo['seo_description']) ? $seo['seo_description'] : Str::limit(trim($about), 160);
@@ -140,7 +140,7 @@ final class MetaService
         $rawDescription = $this->strOrNull($this->data['description'] ?? null)
             ?? $seoDescription
             ?? ($this->withDefaults ? ($profile['about'] ?? null) : null)
-            ?? ($company.' — '.(config('app.name') ? $appName : 'Digital Agency & IT Solution'));
+            ?? ($company.' — '.(config('app.name') ? $appName : 'Developer Website & Web App'));
         $description = Str::limit(trim((string) $rawDescription), 160);
 
         $image = $this->strOrNull($this->data['image'] ?? null) ?? $this->strOrNull($seoImage);
