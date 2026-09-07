@@ -209,46 +209,45 @@
         </div>
     </section>
 
-    {{-- Tentang / Profil — lift onto white cards --}}
-    <section id="tentang" class="bg-[#f5f1ec]">
-        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-            <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
-                <div>
-                    <p class="text-sm font-medium tracking-wide text-[#626260]">Profil</p>
-                    <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Tentang {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</h2>
-                    <p class="mt-4 max-w-xl text-base leading-7 text-[#626260]">{{ $profile['about'] ?? 'IdeyaWeb adalah developer website, web app, dan app — spesialis membangun web app & app custom, dan berpengalaman mengerjakan WordPress, dari pembuatan hingga optimasi dan perawatan.' }}</p>
-                    <div class="mt-8 grid gap-4 sm:grid-cols-3">
-                        <div class="rounded-xl border border-[#d3cec6] bg-white p-5 text-center">
-                            <p class="text-[28px] font-medium tracking-tight text-[#111111]">50+</p>
-                            <p class="mt-1 text-sm text-[#626260]">Proyek selesai</p>
-                        </div>
-                        <div class="rounded-xl border border-[#d3cec6] bg-white p-5 text-center">
-                            <p class="text-[28px] font-medium tracking-tight text-[#111111]">98%</p>
-                            <p class="mt-1 text-sm text-[#626260]">Kepuasan klien</p>
-                        </div>
-                        <div class="rounded-xl border border-[#d3cec6] bg-white p-5 text-center">
-                            <p class="text-[28px] font-medium tracking-tight text-[#111111]">5★</p>
-                            <p class="mt-1 text-sm text-[#626260]">Rating layanan</p>
-                        </div>
+    {{-- Tentang / Profil — DESIGN.md: surface-1 section (96px), eyebrow sentence-case, headline 28/500; nilai di bawah sebagai strip flat tanpa rounded tanpa gap, hanya dibatasi border --}}
+    <section id="tentang" class="bg-white">
+        <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+            <div>
+                <p class="text-sm font-medium text-[#626260]">Profil</p>
+                <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Tentang {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</h2>
+                <p class="mt-4 text-[18px] leading-7 tracking-[-0.1px] text-[#626260]">{{ $profile['about'] ?? 'IdeyaWeb adalah developer website, web app, dan app — spesialis membangun web app & app custom, dan berpengalaman mengerjakan WordPress, dari pembuatan hingga optimasi dan perawatan.' }}</p>
+                <div class="mt-10 grid gap-8 pt-8 sm:grid-cols-3 text-center">
+                    <div>
+                        <p class="text-[40px] xl:text-[70px] font-medium tabular-nums leading-[1.15] tracking-[-0.8px] text-[#111111]">50+</p>
+                        <p class="mt-1 text-sm text-[#626260]">Proyek selesai</p>
+                    </div>
+                    <div>
+                        <p class="text-[40px] xl:text-[70px] font-medium tabular-nums leading-[1.15] tracking-[-0.8px] text-[#111111]">98%</p>
+                        <p class="mt-1 text-sm text-[#626260]">Kepuasan klien</p>
+                    </div>
+                    <div>
+                        <p class="text-[40px] xl:text-[70px] font-medium tabular-nums leading-[1.15] tracking-[-0.8px] text-[#111111]">5★</p>
+                        <p class="mt-1 text-sm text-[#626260]">Rating layanan</p>
                     </div>
                 </div>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Spesialis web app & app</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Fokus ke web app & app custom yang cepat, aman, dan mudah diskalakan.</p>
-                    </div>
-                    <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Berpengalaman WordPress</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Custom theme &amp; plugin, WooCommerce, migrasi, dan hardening keamanan.</p>
-                    </div>
-                    <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Kualitas terjaga</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Code review, testing, dan dokumentasi sejak hari pertama.</p>
-                    </div>
-                    <div class="rounded-xl border border-[#d3cec6] bg-[#ebe7e1] p-6">
-                        <h3 class="text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Support jangka panjang</h3>
-                        <p class="mt-2 text-sm leading-6 text-[#626260]">Maintenance rutin untuk website, web app, dan WordPress Anda.</p>
-                    </div>
+            </div>
+            {{-- Strip nilai: flat, tanpa rounded, tanpa gap — hanya dibatasi border hairline-soft --}}
+            <div class="mt-12 grid border-y border-[#d3cec6] sm:grid-cols-2 lg:grid-cols-4">
+                <div class="border-b border-[#ebe7e1] px-6 py-6 sm:border-r lg:border-b-0">
+                    <h3 class="text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Spesialis web app & app</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Fokus ke web app & app custom yang cepat, aman, dan mudah diskalakan.</p>
+                </div>
+                <div class="border-b border-[#ebe7e1] px-6 py-6 lg:border-r lg:border-b-0">
+                    <h3 class="text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Berpengalaman WordPress</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Custom theme &amp; plugin, WooCommerce, migrasi, dan hardening keamanan.</p>
+                </div>
+                <div class="border-b border-[#ebe7e1] px-6 py-6 sm:border-b-0 sm:border-r">
+                    <h3 class="text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Kualitas terjaga</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Code review, testing, dan dokumentasi sejak hari pertama.</p>
+                </div>
+                <div class="px-6 py-6">
+                    <h3 class="text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Support jangka panjang</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Maintenance rutin untuk website, web app, dan WordPress Anda.</p>
                 </div>
             </div>
         </div>
