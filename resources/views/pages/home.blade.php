@@ -292,20 +292,18 @@
     </section>
 
     {{-- CTA banner — surface-1, rounded lg, padding 48px (DESIGN.md cta-banner) --}}
-    <section class="bg-[#f5f1ec]">
-        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div class="rounded-xl border border-[#d3cec6] bg-white p-8 sm:p-12">
-                <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+    <section class="bg-linear-to-bl from-cyan-100 to-blue-300">
+        <div class="mx-auto max-w-7xl px-6 py-15 sm:px-6 lg:px-8 lg:py-20">
+                <div class="flex flex-col gap-6 justify-center items-center text-center">
                     <div>
-                        <h2 class="text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Butuh website atau web app baru?</h2>
-                        <p class="mt-3 max-w-xl text-base leading-7 text-[#626260]">Ceritakan kebutuhan website, web app, atau WordPress Anda — kami beri estimasi dan rekomendasi tanpa komitmen.</p>
+                        <h2 class="text-xl md:text-4xl font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Butuh website atau app baru?</h2>
+                        <p class="mt-3 max-w-xl text-base leading-7 text-[#626260]">Ceritakan kebutuhan website, web app, atau WordPress Anda. kami beri estimasi dan rekomendasi tanpa komitmen.</p>
                     </div>
-                    <div class="flex flex-wrap gap-3">
+                    <div class="flex flex-col md:flex-row md:justify-center gap-3">
                         <a href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Hubungi Kami</a>
                         <a href="#layanan" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Pelajari layanan</a>
                     </div>
                 </div>
-            </div>
         </div>
     </section>
 </x-layouts.public>
