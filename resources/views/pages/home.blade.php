@@ -38,6 +38,52 @@
         </div>
     </section>
 
+    {{-- Keunggulan — Mengapa Memilih IdeyaWeb: nilai tambah vs kompetitor. Flat berjajar 4 kolom ala tabel (bukan kartu): border-y hairline luar + divider hairline-soft antar sel --}}
+    <section id="keunggulan" class="bg-white">
+        <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+            <div class="max-w-2xl">
+                <p class="text-sm font-medium tracking-wide text-[#626260]">Keunggulan</p>
+                <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Mengapa Memilih {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}?</h2>
+                <p class="mt-3 text-base leading-7 text-[#626260]">Lebih dari sekadar membangun website — kami memastikan hasilnya tampil memukau di semua perangkat, cepat diakses, aman, dan siap mendampingi bisnis Anda jangka panjang.</p>
+            </div>
+            <div class="mt-12 grid border-[#d3cec6] sm:grid-cols-2 lg:grid-cols-4">
+                <div class="border-b border-[#ebe7e1] px-6 py-8 sm:border-r lg:border-b-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
+                        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                        <path d="M8 21h8"></path>
+                        <path d="M12 17v4"></path>
+                    </svg>
+                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Desain Modern &amp; Responsif</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Tampilan elegan dan sempurna di semua perangkat — HP, tablet, hingga laptop.</p>
+                </div>
+                <div class="border-b border-[#ebe7e1] px-6 py-8 lg:border-r lg:border-b-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Performa Cepat &amp; Aksesibel</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Dibangun dengan struktur kode yang bersih agar website cepat diakses dan ramah SEO (Search Engine Optimization).</p>
+                </div>
+                <div class="border-b border-[#ebe7e1] px-6 py-8 sm:border-b-0 sm:border-r">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="m9 12 2 2 4-4"></path>
+                    </svg>
+                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Skalabel &amp; Aman</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Siap berkembang mengikuti kebutuhan bisnis Anda, didukung sistem keamanan yang andal.</p>
+                </div>
+                <div class="px-6 py-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Dukungan &amp; Pemeliharaan</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#626260]">Layanan support dan perawatan berkala setelah website selesai diluncurkan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     @php
         $services = [
             [
