@@ -4,10 +4,15 @@
     @include('partials.head')
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="min-h-screen bg-[#f5f1ec] antialiased">
+<body class="min-h-screen bg-white antialiased">
     @php $profile = $profile ?? \App\Models\Setting::profile(); @endphp
-    <header class="sticky top-0 z-40 w-full border-b border-[#ebe7e1] bg-white/90 backdrop-blur">
-        <div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+    <header
+        x-data="{ scrolled: false }"
+        x-init="scrolled = window.scrollY > 8; window.addEventListener('scroll', () => { scrolled = window.scrollY > 8; }, { passive: true })"
+        class="fixed top-0 z-40 w-full border-b transition-all duration-300">
+        <div
+            :class="scrolled ? 'border-[#ebe7e1] bg-white/85 shadow-[0_1px_12px_rgba(17,17,17,0.06)] backdrop-blur-md' : 'border-transparent bg-transparent'"
+            class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5">
                 <x-app-logo-icon class="size-7 text-[#111111]" />
                 <span class="text-[15px] font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}</span>

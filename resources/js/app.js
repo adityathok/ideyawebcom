@@ -1,15 +1,15 @@
 import { animate, stagger, scroll } from 'motion';
 
-// Aurora + hero text + sky parallax — runs on home page only
-function initAuroraHero() {
-    const hero = document.querySelector('[data-aurora-hero]');
+// Hero entrance + ikon bertebangan — runs on home page only
+function initHeroAnim() {
+    const hero = document.querySelector('[data-hero-anim]');
     if (!hero) {
         return;
     }
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const blobs = hero.querySelectorAll('[data-aurora-blob]');
+    const icons = hero.querySelectorAll('[data-hero-icon]');
     const heading = hero.querySelector('[data-hero-heading]');
     const sub = hero.querySelector('[data-hero-sub]');
     const desc = hero.querySelector('[data-hero-desc]');
@@ -26,29 +26,9 @@ function initAuroraHero() {
         }
     }
 
-    // Aurora blobs: slow drift + scale loop (disabled if reduced motion)
-    if (prefersReducedMotion || !blobs.length) {
-        return;
-    }
-
-    blobs.forEach((el, i) => {
-        const dx = 18 + i * 6;
-        const dur = 14 + i * 3;
-        // x drift
-        animate(el, { x: [0, dx, -dx * 0.6, 0] }, { duration: dur, repeat: Infinity, easing: 'ease-in-out' });
-        // subtle scale breathe (offset phase)
-        animate(
-            el,
-            { scale: [1, 1.06, 0.98, 1] },
-            { duration: dur * 0.75, repeat: Infinity, easing: 'ease-in-out', delay: i * 0.9 },
-        );
-        // opacity pulse
-        animate(el, { opacity: [0.55, 0.8, 0.5, 0.55] }, { duration: dur * 0.6, repeat: Infinity, easing: 'ease-in-out', delay: i * 0.6 });
-    });
-
     // Sky parallax — subtle y drift on scroll (disabled if reduced motion)
     const skyImg = hero.querySelector('[data-hero-sky]');
-    if (skyImg && !prefersReducedMotion && typeof scroll === 'function') {
+    if (!prefersReducedMotion && skyImg && typeof scroll === 'function') {
         try {
             scroll(animate(skyImg, { y: [0, 28] }, { easing: 'linear' }), {
                 target: hero,
@@ -58,12 +38,33 @@ function initAuroraHero() {
             // Motion scroll not available in this env — ignore
         }
     }
+
+    // Ikon bertebangan: drift naik/turun + goyang pelan (disabled if reduced motion)
+    if (prefersReducedMotion || !icons.length) {
+        return;
+    }
+
+    icons.forEach((el, i) => {
+        const dur = 9 + i * 1.8;
+        // drift lembut: naik-turun + geser kiri-kanan
+        animate(
+            el,
+            { y: [0, -16, 0, 8, 0], x: [0, 10, -8, 0] },
+            { duration: dur, repeat: Infinity, easing: 'ease-in-out', delay: i * 0.5 },
+        );
+        // goyang rotasi pelan (fase berbeda per ikon)
+        animate(
+            el,
+            { rotate: [0, 5, -4, 0] },
+            { duration: dur * 1.5, repeat: Infinity, easing: 'ease-in-out', delay: i * 0.5 },
+        );
+    });
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAuroraHero);
+    document.addEventListener('DOMContentLoaded', initHeroAnim);
 } else {
-    initAuroraHero();
+    initHeroAnim();
 }
 
-document.addEventListener('livewire:navigated', initAuroraHero);
+document.addEventListener('livewire:navigated', initHeroAnim);

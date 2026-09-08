@@ -4,17 +4,21 @@
         $heroSky = file_exists(public_path('images/hero-sky.jpg')) ? asset('images/hero-sky.jpg') : 'https://images.unsplash.com/photo-1570483358100-6d222cdea6ff?auto=format&fit=crop&w=2400&q=80';
     @endphp
 
-    {{-- Hero Agency — foto langit + overlay lembut + aurora tipis + Motion (center: heading / subheading / description + 2 CTA) --}}
-    <section data-aurora-hero class="relative isolate overflow-hidden bg-[#bae6fd]">
+    {{-- Hero Agency — foto langit + overlay lembut + ikon bertebangan (tanpa aurora), center: heading / subheading / description + 2 CTA --}}
+    <section data-hero-anim class="relative isolate overflow-hidden bg-[#bae6fd]">
         {{-- Latar: foto langit biru (ganti src dengan /images/hero-sky.jpg bila punya asset sendiri) --}}
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            <img data-hero-sky src="{{ $heroSky }}" alt="" class="h-full w-full object-cover object-center" loading="eager" fetchpriority="high" />
+            <img data-hero-sky src="{{ $heroSky }}" alt="" class="absolute -top-8 left-0 h-[calc(100%+4rem)] w-full object-cover object-center" loading="eager" fetchpriority="high" />
             {{-- Wash agar teks ink #111111 tetap kontras di atas foto (DESIGN.md) --}}
             <div class="absolute inset-0 bg-gradient-to-b from-[#f0f9ff]/70 via-[#e0f2fe]/45 to-[#f5f1ec]"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-white/10"></div>
-            {{-- Aurora tipis di atas foto — tetap di-animate via Motion --}}
-            <div data-aurora-blob class="absolute left-[4%] top-[-10%] h-[520px] w-[680px] rounded-full opacity-35 blur-[80px] will-change-transform" style="background: radial-gradient(ellipse 70% 60% at 40% 35%, rgba(125,211,252,0.55) 0%, rgba(56,189,248,0.30) 36%, transparent 70%);"></div>
-            <div data-aurora-blob class="absolute right-[2%] top-[6%] h-[480px] w-[600px] rounded-full opacity-25 blur-[90px] will-change-transform" style="background: radial-gradient(ellipse 75% 65% at 60% 40%, rgba(14,165,233,0.32) 0%, transparent 72%);"></div>
+            {{-- Ikon bertebangan — dekoratif, di-animate via Motion --}}
+            <span data-hero-icon class="absolute left-[6%] top-[16%] flex size-12 items-center justify-center rounded-xl bg-white/60 text-xl text-[#111111] opacity-80 shadow-sm will-change-transform">◈</span>
+            <span data-hero-icon class="absolute bottom-[20%] left-[12%] flex size-10 items-center justify-center rounded-full bg-white/60 text-lg text-[#111111] opacity-70 shadow-sm will-change-transform">◎</span>
+            <span data-hero-icon class="absolute right-[8%] top-[18%] flex size-12 items-center justify-center rounded-xl bg-white/60 text-xl text-[#111111] opacity-80 shadow-sm will-change-transform">⬡</span>
+            <span data-hero-icon class="absolute bottom-[22%] right-[12%] flex size-10 items-center justify-center rounded-full bg-white/60 text-lg text-[#111111] opacity-70 shadow-sm will-change-transform">↗</span>
+            <span data-hero-icon class="absolute left-[30%] top-[10%] flex size-8 items-center justify-center rounded-lg bg-white/60 text-base text-[#111111] opacity-60 shadow-sm will-change-transform">✦</span>
+            <span data-hero-icon class="absolute bottom-[14%] right-[30%] flex size-8 items-center justify-center rounded-lg bg-white/60 text-base text-[#111111] opacity-60 shadow-sm will-change-transform">☰</span>
         </div>
 
         <div class="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center px-4 py-24 text-center sm:min-h-[640px] sm:px-6 sm:py-32 lg:min-h-[760px] lg:py-40">
