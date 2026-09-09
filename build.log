@@ -1,0 +1,18 @@
+
+> build
+> vp build
+
+[33m[plugin laravel:fonts] Optimized font fallbacks require the optional "fontaine" package. Install it, or set "optimizedFallbacks: false" on your fonts to disable the feature.[39m
+transforming...
+✓ 287 modules transformed.
+rendering chunks...
+computing gzip size...
+public/build/manifest.json                                              0.79 kB │ gzip:  0.26 kB
+public/build/fonts-manifest.json                                        7.70 kB │ gzip:  0.74 kB
+public/build/assets/plus-jakarta-sans-variable-normal-eXO_dkmS.woff2   27.34 kB
+public/build/assets/lora-variable-normal-BiLcIKcI.woff2                37.78 kB
+public/build/assets/fonts-4cCRl0hi.css                                  3.29 kB │ gzip:  0.39 kB
+public/build/assets/app-B4ki6r4f.css                                  241.94 kB │ gzip: 33.41 kB
+public/build/assets/app-cvLLWpbR.js                                    70.43 kB │ gzip: 24.89 kB
+
+[32m✓ built in 1.89s[39m

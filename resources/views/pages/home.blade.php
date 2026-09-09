@@ -256,9 +256,9 @@
         </div>
     </section>
 
-    {{-- Proses — numbered cards --}}
-    <section id="proses" class="border-y border-[#ebe7e1] bg-[#f5f1ec]">
-        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    {{-- Proses — flat 4 kolom ala tabel; highlight biru berjalan satu-satu 1→2→3→4→3→2→1 lalu ulang (lihat initProsesAnim di app.js) --}}
+    <section id="proses" class="bg-white">
+        <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <p class="text-sm font-medium tracking-wide text-[#626260]">Cara kerja</p>
@@ -266,23 +266,23 @@
                 </div>
                 <p class="max-w-md text-sm leading-6 text-[#626260]">Transparan dari discovery hingga launch — Anda tahu apa yang dikerjakan dan kapan selesai.</p>
             </div>
-            <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
+            <div class="mt-12 grid border-[#d3cec6] sm:grid-cols-2 lg:grid-cols-4">
+                <div data-proses-step class="border-b border-[#ebe7e1] px-6 py-8 transition-colors duration-500 sm:border-r lg:border-b-0">
                     <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">01</p>
                     <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Diskusi &amp; Discovery</h3>
                     <p class="mt-2 text-sm leading-6 text-[#626260]">Gali tujuan, audiens, dan batasan. Output: scope &amp; estimasi jelas.</p>
                 </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
+                <div data-proses-step class="border-b border-[#ebe7e1] px-6 py-8 transition-colors duration-500 lg:border-r lg:border-b-0">
                     <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">02</p>
                     <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Desain &amp; Prototipe</h3>
                     <p class="mt-2 text-sm leading-6 text-[#626260]">Wireframe → UI → prototipe interaktif untuk validasi cepat.</p>
                 </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
+                <div data-proses-step class="border-b border-[#ebe7e1] px-6 py-8 transition-colors duration-500 sm:border-b-0 sm:border-r">
                     <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">03</p>
                     <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Develop &amp; QA</h3>
                     <p class="mt-2 text-sm leading-6 text-[#626260]">Build iteratif, code review, dan testing sebelum rilis.</p>
                 </div>
-                <div class="rounded-xl border border-[#d3cec6] bg-white p-6">
+                <div data-proses-step class="px-6 py-8 transition-colors duration-500">
                     <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">04</p>
                     <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Launch &amp; Scale</h3>
                     <p class="mt-2 text-sm leading-6 text-[#626260]">Deploy, monitoring, dan iterasi berbasis data pengguna.</p>
