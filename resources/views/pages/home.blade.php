@@ -1,84 +1,86 @@
 <x-layouts.public :title="($profile['company_name'] ?? config('app.name', 'IdeyaWeb'))">
     @php
         $profile = $profile ?? \App\Models\Setting::profile();
-        $heroSky = file_exists(public_path('images/hero-sky.jpg')) ? asset('images/hero-sky.jpg') : 'https://images.unsplash.com/photo-1570483358100-6d222cdea6ff?auto=format&fit=crop&w=2400&q=80';
+
+        // Rootly gradient emphasis lands on the final word of the tagline.
+        $tagline = trim(($profile['tagline'] ?? '') ?: 'Developer Website & Web App');
+        $words = preg_split('/\s+/', $tagline) ?: [$tagline];
+        $tailWord = count($words) > 1 ? (string) array_pop($words) : '';
+        $heroHead = implode(' ', $words) ?: $tagline;
     @endphp
 
-    {{-- Hero Agency — foto langit + overlay lembut + ikon bertebangan (tanpa aurora), center: heading / subheading / description + 2 CTA --}}
-    <section data-hero-anim class="relative isolate overflow-hidden bg-[#bae6fd]">
-        {{-- Latar: foto langit biru (ganti src dengan /images/hero-sky.jpg bila punya asset sendiri) --}}
-        <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            <img data-hero-sky src="{{ $heroSky }}" alt="" class="absolute -top-8 left-0 h-[calc(100%+4rem)] w-full object-cover object-center" loading="eager" fetchpriority="high" />
-            {{-- Wash agar teks ink #111111 tetap kontras di atas foto (DESIGN.md) --}}
-            <div class="absolute inset-0 bg-gradient-to-b from-[#f0f9ff]/70 via-[#e0f2fe]/45 to-[#f5f1ec]"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-white/20 via-transparent to-white/10"></div>
-            {{-- Ikon bertebangan — dekoratif, di-animate via Motion --}}
-            <span data-hero-icon class="absolute left-[6%] top-[16%] flex size-12 items-center justify-center rounded-xl bg-white/60 text-xl text-[#111111] opacity-80 shadow-sm will-change-transform">◈</span>
-            <span data-hero-icon class="absolute bottom-[20%] left-[12%] flex size-10 items-center justify-center rounded-full bg-white/60 text-lg text-[#111111] opacity-70 shadow-sm will-change-transform">◎</span>
-            <span data-hero-icon class="absolute right-[8%] top-[18%] flex size-12 items-center justify-center rounded-xl bg-white/60 text-xl text-[#111111] opacity-80 shadow-sm will-change-transform">⬡</span>
-            <span data-hero-icon class="absolute bottom-[22%] right-[12%] flex size-10 items-center justify-center rounded-full bg-white/60 text-lg text-[#111111] opacity-70 shadow-sm will-change-transform">↗</span>
-            <span data-hero-icon class="absolute left-[30%] top-[10%] flex size-8 items-center justify-center rounded-lg bg-white/60 text-base text-[#111111] opacity-60 shadow-sm will-change-transform">✦</span>
-            <span data-hero-icon class="absolute bottom-[14%] right-[30%] flex size-8 items-center justify-center rounded-lg bg-white/60 text-base text-[#111111] opacity-60 shadow-sm will-change-transform">☰</span>
-        </div>
+    {{-- Hero — bluish sky canvas, gradient accent on the tagline, deep blue primary CTA (DESIGN.md: hero) --}}
+    <section data-hero-anim class="relative isolate overflow-hidden bg-[linear-gradient(180deg,#b9cdff_0%,#dae4ff_36%,#f1f5ff_68%,#ffffff_100%)]">
+        {{-- Langit kebiruan: glow lembut di puncak + bauran biru di sudut atas --}}
+        <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_0%,#ffffff8c,transparent_72%),radial-gradient(45%_50%_at_88%_10%,#7d95ff33,transparent_70%),radial-gradient(42%_45%_at_10%_4%,#ffffff66,transparent_70%)]"></div>
 
-        <div class="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center px-4 py-24 text-center sm:min-h-[640px] sm:px-6 sm:py-32 lg:min-h-[760px] lg:py-40">
-            <div class="w-full">
-            <p data-hero-sub class="text-sm font-medium tracking-wide text-[#626260]">{{ ($profile['company_name'] ?? 'IdeyaWeb') }}</p>
-            <h1 data-hero-heading class="mx-auto mt-4 max-w-2xl text-4xl font-bold leading-[1.05] tracking-[-0.8px] text-[#111111] sm:text-5xl lg:text-[56px] lg:leading-[1.10] lg:tracking-[-1.4px]">
-                {{ ($profile['tagline'] ?? '') ?: 'Developer Website & Web App' }}
+        <div class="mx-auto max-w-4xl px-4 pb-16 pt-32 text-center sm:px-6 sm:pt-40 lg:pb-20 lg:pt-44">
+            <span data-hero-sub class="inline-flex items-center gap-2 rounded-[16px] bg-white/85 px-4 py-2 text-sm font-medium tracking-[-0.16px] text-[#0a1589] ring-1 ring-inset ring-[#c7d6ff]">
+                <span aria-hidden="true" class="size-1.5 rounded-full bg-[#2b4bff]"></span>
+                {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}
+            </span>
+            <h1 data-hero-heading class="mx-auto mt-6 max-w-3xl text-[38px] font-medium leading-[1.05] tracking-[-1.2px] text-[#100f12] sm:text-[52px] sm:tracking-[-1.4px] lg:text-[60px] lg:leading-[1.03]">
+                {{ $heroHead }}@if($tailWord) <span class="text-gradient">{{ $tailWord }}</span>@endif
             </h1>
-            <p data-hero-desc class="mx-auto mt-6 max-w-2xl text-base leading-7 text-[#626260] sm:text-[18px] sm:leading-7">
+            <p data-hero-desc class="mx-auto mt-6 max-w-2xl text-[17px] leading-8 tracking-[-0.16px] text-[#65646e] sm:text-[18px]">
                 {{ !empty($profile['about']) ? \Illuminate\Support\Str::limit($profile['about'], 200) : 'Kami membangun website & app custom, dan berpengalaman membangun, mengoptimasi, dan merawat Aplikasi dan Web WordPress, dari company profile hingga WooCommerce.' }}
             </p>
-            <div class="mt-8 flex items-center justify-center gap-3">
-                <a data-hero-cta href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasi Gratis</a>
-                <a data-hero-cta href="#layanan" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Lihat Layanan</a>
-            </div>
+            <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a data-hero-cta href="#kontak" class="inline-flex w-full items-center justify-center rounded-[20px] bg-[#0a1589] px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-white transition hover:bg-[#06105a] sm:w-auto sm:text-[18px]">Konsultasi Gratis</a>
+                <a data-hero-cta href="#layanan" class="inline-flex w-full items-center justify-center rounded-[20px] border border-[#e3eaff] bg-white px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-[#100f12] transition hover:bg-[#f3f6ff] sm:w-auto sm:text-[18px]">Lihat Layanan</a>
             </div>
         </div>
     </section>
 
-    {{-- Keunggulan — Mengapa Memilih IdeyaWeb: nilai tambah vs kompetitor. Flat berjajar 4 kolom ala tabel (bukan kartu): border-y hairline luar + divider hairline-soft antar sel --}}
+    {{-- Keunggulan — blue lift cards with blue icon tiles (DESIGN.md feature-card) --}}
     <section id="keunggulan" class="bg-white">
         <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
-                <p class="text-sm font-medium tracking-wide text-[#626260]">Keunggulan</p>
-                <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Mengapa Memilih {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}?</h2>
-                <p class="mt-3 text-base leading-7 text-[#626260]">Lebih dari sekadar membangun website, kami memastikan hasilnya tampil memukau di semua perangkat, cepat diakses, aman, dan siap mendampingi bisnis Anda jangka panjang.</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">Keunggulan</p>
+                <h2 class="mt-3 text-[32px] font-medium leading-[1.15] tracking-[-0.8px] text-[#100f12] sm:text-[40px]">Mengapa Memilih {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}?</h2>
+                <p class="mt-4 text-[18px] leading-7 tracking-[-0.16px] text-[#65646e]">Lebih dari sekadar membangun website, kami memastikan hasilnya tampil memukau di semua perangkat, cepat diakses, aman, dan siap mendampingi bisnis Anda jangka panjang.</p>
             </div>
-            <div class="mt-12 grid border-[#d3cec6] sm:grid-cols-2 lg:grid-cols-4">
-                <div class="border-b border-[#ebe7e1] px-6 py-8 sm:border-r lg:border-b-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
-                        <rect x="2" y="3" width="20" height="14" rx="2"></rect>
-                        <path d="M8 21h8"></path>
-                        <path d="M12 17v4"></path>
-                    </svg>
-                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Desain Modern &amp; Responsif</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Tampilan elegan dan sempurna di semua perangkat — HP, tablet, hingga laptop.</p>
+            <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_5px_#0a158933]">
+                    <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-[12px] bg-[#f3f6ff] text-[#0a1589]">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" focusable="false">
+                            <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+                            <path d="M8 21h8"></path>
+                            <path d="M12 17v4"></path>
+                        </svg>
+                    </span>
+                    <h3 class="mt-5 text-[20px] font-semibold leading-[1.25] tracking-[-0.16px] text-[#100f12]">Desain Modern &amp; Responsif</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Tampilan elegan dan sempurna di semua perangkat — HP, tablet, hingga laptop.</p>
                 </div>
-                <div class="border-b border-[#ebe7e1] px-6 py-8 lg:border-r lg:border-b-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Performa Cepat &amp; Aksesibel</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Dibangun dengan struktur kode yang bersih agar website cepat diakses dan ramah SEO (Search Engine Optimization).</p>
+                <div class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_5px_#0a158933]">
+                    <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-[12px] bg-[#f3f6ff] text-[#0a1589]">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" focusable="false">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                    </span>
+                    <h3 class="mt-5 text-[20px] font-semibold leading-[1.25] tracking-[-0.16px] text-[#100f12]">Performa Cepat &amp; Aksesibel</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Dibangun dengan struktur kode yang bersih agar website cepat diakses dan ramah SEO (Search Engine Optimization).</p>
                 </div>
-                <div class="border-b border-[#ebe7e1] px-6 py-8 sm:border-b-0 sm:border-r">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                        <path d="m9 12 2 2 4-4"></path>
-                    </svg>
-                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Skalabel &amp; Aman</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Siap berkembang mengikuti kebutuhan bisnis Anda, didukung sistem keamanan yang andal.</p>
+                <div class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_5px_#0a158933]">
+                    <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-[12px] bg-[#f3f6ff] text-[#0a1589]">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" focusable="false">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </span>
+                    <h3 class="mt-5 text-[20px] font-semibold leading-[1.25] tracking-[-0.16px] text-[#100f12]">Skalabel &amp; Aman</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Siap berkembang mengikuti kebutuhan bisnis Anda, didukung sistem keamanan yang andal.</p>
                 </div>
-                <div class="px-6 py-8">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-blue-700" aria-hidden="true" focusable="false">
-                        <polyline points="23 4 23 10 17 10"></polyline>
-                        <polyline points="1 20 1 14 7 14"></polyline>
-                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-                    </svg>
-                    <h3 class="mt-4 text-[22px] font-medium leading-[1.25] tracking-[-0.3px] text-[#111111]">Dukungan &amp; Pemeliharaan</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Layanan support dan perawatan berkala setelah website selesai diluncurkan.</p>
+                <div class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_5px_#0a158933]">
+                    <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-[12px] bg-[#f3f6ff] text-[#0a1589]">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" focusable="false">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                    </span>
+                    <h3 class="mt-5 text-[20px] font-semibold leading-[1.25] tracking-[-0.16px] text-[#100f12]">Dukungan &amp; Pemeliharaan</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Layanan support dan perawatan berkala setelah website selesai diluncurkan.</p>
                 </div>
             </div>
         </div>
@@ -137,13 +139,13 @@
         ];
     @endphp
 
-    {{-- Layanan — carousel tab dua kolom: kiri daftar judul, kanan deskripsi bergantian (DESIGN.md feature-card) --}}
-    <section id="layanan" class="border-y border-[#ebe7e1] bg-[#f5f1ec]">
-        <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    {{-- Layanan — blue tint block, blue pill tabs, framed panel (DESIGN.md: pricing-tab + content-image-frame) --}}
+    <section id="layanan" class="bg-[#f3f6ff]">
+        <div class="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
-                <p class="text-sm font-medium tracking-wide text-[#626260]">Layanan</p>
-                <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Apa yang kami kerjakan</h2>
-                <p class="mt-3 text-base leading-7 text-[#626260]">Kami berpengalaman bertahun-tahun dalam membangun, merawat dan memelihara website profesional. Kami juga berpengalaman mengerjakan web app dashboard, saas, aplikasi internal untuk berbagai kebutuhan.</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">Layanan</p>
+                <h2 class="mt-3 text-[32px] font-medium leading-[1.15] tracking-[-0.8px] text-[#100f12] sm:text-[40px]">Apa yang kami kerjakan</h2>
+                <p class="mt-4 text-[18px] leading-7 tracking-[-0.16px] text-[#65646e]">Kami berpengalaman bertahun-tahun dalam membangun, merawat dan memelihara website profesional. Kami juga berpengalaman mengerjakan web app dashboard, saas, aplikasi internal untuk berbagai kebutuhan.</p>
             </div>
             <div
                 data-service-tabs
@@ -178,16 +180,16 @@
                             :aria-selected="active === {{ $i }} ? 'true' : 'false'"
                             :tabindex="active === {{ $i }} ? '0' : '-1'"
                             @click="go({{ $i }})"
-                            :class="active === {{ $i }} ? 'border-[#111111] bg-white shadow-sm' : 'border-[#d3cec6] bg-transparent hover:border-[#9c9fa5] hover:bg-white/60'"
-                            class="flex w-64 shrink-0 items-center gap-4 rounded-xl border p-4 text-left transition lg:w-full"
+                            :class="active === {{ $i }} ? 'border-[#0a1589] bg-[#0a1589] shadow-[0_2px_5px_#0a158933]' : 'border-[#e3eaff] bg-white/70 hover:border-[#c7d6ff] hover:bg-white'"
+                            class="flex w-64 shrink-0 items-center gap-4 rounded-[16px] border p-4 text-left transition lg:w-full"
                         >
-                            <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#f5f1ec] text-[#111111]">{{ $service['icon'] }}</span>
+                            <span aria-hidden="true" :class="active === {{ $i }} ? 'bg-white/20 text-white' : 'bg-[#f3f6ff] text-[#0a1589]'" class="flex size-10 shrink-0 items-center justify-center rounded-[12px] transition">{{ $service['icon'] }}</span>
                             <span class="min-w-0">
                                 <span class="flex items-baseline gap-2">
-                                    <span aria-hidden="true" class="text-xs font-medium tabular-nums text-[#9c9fa5]">0{{ $i + 1 }}</span>
-                                    <span class="truncate text-[15px] font-medium text-[#111111]">{{ $service['title'] }}</span>
+                                    <span aria-hidden="true" :class="active === {{ $i }} ? 'text-white/70' : 'text-[#aaa9ae]'" class="text-xs font-semibold tabular-nums transition">0{{ $i + 1 }}</span>
+                                    <span :class="active === {{ $i }} ? 'text-white' : 'text-[#100f12]'" class="truncate text-[15px] font-medium transition">{{ $service['title'] }}</span>
                                 </span>
-                                <span class="mt-0.5 block truncate text-sm text-[#626260]">{{ $service['short'] }}</span>
+                                <span :class="active === {{ $i }} ? 'text-white/80' : 'text-[#65646e]'" class="mt-0.5 block truncate text-sm transition">{{ $service['short'] }}</span>
                             </span>
                         </button>
                     @endforeach
@@ -195,7 +197,7 @@
 
                 {{-- Kolom kanan: deskripsi layanan bergantian — tiap layanan punya background image sendiri, tinggi disamakan dengan kolom daftar --}}
                 <div class="flex flex-col lg:col-span-7">
-                    <div class="relative flex-1 overflow-hidden rounded-xl border border-[#d3cec6] bg-white">
+                    <div class="relative flex-1 overflow-hidden rounded-[32px] border border-[#e3eaff] bg-white">
                         @foreach($services as $i => $service)
                             <div
                                 role="tabpanel"
@@ -218,24 +220,24 @@
                                 <div aria-hidden="true" class="h-52 shrink-0 sm:h-72"></div>
                                 <div class="h-full p-6 pt-2 sm:p-8 sm:pt-3">
                                 <div class="flex items-center gap-4">
-                                    <span aria-hidden="true" class="flex size-12 items-center justify-center rounded-xl bg-[#f5f1ec] text-xl text-[#111111]">{{ $service['icon'] }}</span>
+                                    <span aria-hidden="true" class="flex size-12 items-center justify-center rounded-[14px] bg-[#f3f6ff] text-xl text-[#0a1589]">{{ $service['icon'] }}</span>
                                     <div>
-                                        <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">Layanan 0{{ $i + 1 }} / 0{{ count($services) }}</p>
-                                        <h3 class="mt-1 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">{{ $service['title'] }}</h3>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#aaa9ae]">Layanan 0{{ $i + 1 }} / 0{{ count($services) }}</p>
+                                        <h3 class="mt-1 text-[26px] font-semibold leading-tight tracking-[-0.16px] text-[#100f12]">{{ $service['title'] }}</h3>
                                     </div>
                                 </div>
-                                <p class="mt-4 text-base leading-7 text-[#626260]">{{ $service['desc'] }}</p>
+                                <p class="mt-4 text-base leading-7 text-[#65646e]">{{ $service['desc'] }}</p>
                                 <ul class="mt-5 grid gap-2 sm:grid-cols-2">
                                     @foreach($service['points'] as $point)
-                                        <li class="flex items-start gap-2 text-sm leading-6 text-[#111111]">
-                                            <span aria-hidden="true" class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[#f5f1ec] text-xs">✓</span>
+                                        <li class="flex items-start gap-2 text-sm leading-6 text-[#100f12]">
+                                            <span aria-hidden="true" class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-[#f3f6ff] text-xs text-[#0a1589]">✓</span>
                                             <span>{{ $point }}</span>
                                         </li>
                                     @endforeach
                                 </ul>
                                 <div class="mt-6 flex flex-wrap gap-3">
-                                    <a href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Konsultasikan kebutuhan ini</a>
-                                    <a href="#proses" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Lihat proses kerja</a>
+                                    <a href="#kontak" class="inline-flex items-center justify-center rounded-[14px] bg-[#0a1589] px-6 py-3 text-[15px] font-medium leading-none text-white transition hover:bg-[#06105a]">Konsultasikan kebutuhan ini</a>
+                                    <a href="#proses" class="inline-flex items-center justify-center rounded-[14px] border border-[#e3eaff] bg-white px-6 py-3 text-[15px] font-medium leading-none text-[#100f12] transition hover:bg-[#f3f6ff]">Lihat proses kerja</a>
                                 </div>
                                 </div>
                             </div>
@@ -245,65 +247,64 @@
                     {{-- Kontrol carousel --}}
                     <div class="mt-4 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-2">
-                            <button type="button" @click="prev()" aria-label="Layanan sebelumnya" class="inline-flex size-10 items-center justify-center rounded-full border border-[#d3cec6] bg-white text-[#111111] hover:bg-[#ebe7e1]">←</button>
-                            <button type="button" @click="next()" aria-label="Layanan berikutnya" class="inline-flex size-10 items-center justify-center rounded-full border border-[#d3cec6] bg-white text-[#111111] hover:bg-[#ebe7e1]">→</button>
+                            <button type="button" @click="prev()" aria-label="Layanan sebelumnya" class="inline-flex size-10 items-center justify-center rounded-full border border-[#e3eaff] bg-white text-[#100f12] transition hover:bg-[#f3f6ff]">←</button>
+                            <button type="button" @click="next()" aria-label="Layanan berikutnya" class="inline-flex size-10 items-center justify-center rounded-full border border-[#e3eaff] bg-white text-[#100f12] transition hover:bg-[#f3f6ff]">→</button>
                         </div>
 
-                        <p class="text-sm tabular-nums text-[#626260]" aria-live="polite"><span x-text="active + 1"></span> / {{ count($services) }}</p>
+                        <p class="text-sm tabular-nums text-[#65646e]" aria-live="polite"><span x-text="active + 1"></span> / {{ count($services) }}</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- Proses — flat 4 kolom ala tabel; highlight biru berjalan satu-satu 1→2→3→4→3→2→1 lalu ulang (lihat initProsesAnim di app.js) --}}
+    {{-- Proses — blue cards; highlight dikelola lewat .is-active (lihat app.css + app.js) --}}
     <section id="proses" class="bg-white">
         <div class="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <p class="text-sm font-medium tracking-wide text-[#626260]">Cara kerja</p>
-                    <h2 class="mt-2 text-[28px] font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Proses yang sederhana &amp; terukur</h2>
+                <div class="max-w-2xl">
+                    <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">Cara kerja</p>
+                    <h2 class="mt-3 text-[32px] font-medium leading-[1.15] tracking-[-0.8px] text-[#100f12] sm:text-[40px]">Proses yang sederhana &amp; terukur</h2>
                 </div>
-                <p class="max-w-md text-sm leading-6 text-[#626260]">Transparan dari discovery hingga launch — Anda tahu apa yang dikerjakan dan kapan selesai.</p>
+                <p class="max-w-md text-sm leading-6 text-[#65646e]">Transparan dari discovery hingga launch — Anda tahu apa yang dikerjakan dan kapan selesai.</p>
             </div>
-            <div class="mt-12 grid border-[#d3cec6] sm:grid-cols-2 lg:grid-cols-4">
-                <div data-proses-step class="border-b border-[#ebe7e1] px-6 py-8 transition-colors duration-500 sm:border-r lg:border-b-0">
-                    <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">01</p>
-                    <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Diskusi &amp; Discovery</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Gali tujuan, audiens, dan batasan. Output: scope &amp; estimasi jelas.</p>
+            <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div data-proses-step class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-8 transition-colors duration-500">
+                    <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">01</p>
+                    <h3 class="mt-3 text-[20px] font-semibold leading-tight tracking-[-0.16px] text-[#100f12]">Diskusi &amp; Discovery</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Gali tujuan, audiens, dan batasan. Output: scope &amp; estimasi jelas.</p>
                 </div>
-                <div data-proses-step class="border-b border-[#ebe7e1] px-6 py-8 transition-colors duration-500 lg:border-r lg:border-b-0">
-                    <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">02</p>
-                    <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Desain &amp; Prototipe</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Wireframe → UI → prototipe interaktif untuk validasi cepat.</p>
+                <div data-proses-step class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-8 transition-colors duration-500">
+                    <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">02</p>
+                    <h3 class="mt-3 text-[20px] font-semibold leading-tight tracking-[-0.16px] text-[#100f12]">Desain &amp; Prototipe</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Wireframe → UI → prototipe interaktif untuk validasi cepat.</p>
                 </div>
-                <div data-proses-step class="border-b border-[#ebe7e1] px-6 py-8 transition-colors duration-500 sm:border-b-0 sm:border-r">
-                    <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">03</p>
-                    <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Develop &amp; QA</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Build iteratif, code review, dan testing sebelum rilis.</p>
+                <div data-proses-step class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-8 transition-colors duration-500">
+                    <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">03</p>
+                    <h3 class="mt-3 text-[20px] font-semibold leading-tight tracking-[-0.16px] text-[#100f12]">Develop &amp; QA</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Build iteratif, code review, dan testing sebelum rilis.</p>
                 </div>
-                <div data-proses-step class="px-6 py-8 transition-colors duration-500">
-                    <p class="text-xs font-medium uppercase tracking-widest text-[#9c9fa5]">04</p>
-                    <h3 class="mt-2 text-[22px] font-medium leading-tight tracking-[-0.3px] text-[#111111]">Launch &amp; Scale</h3>
-                    <p class="mt-2 text-sm leading-6 text-[#626260]">Deploy, monitoring, dan iterasi berbasis data pengguna.</p>
+                <div data-proses-step class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-8 transition-colors duration-500">
+                    <p class="text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">04</p>
+                    <h3 class="mt-3 text-[20px] font-semibold leading-tight tracking-[-0.16px] text-[#100f12]">Launch &amp; Scale</h3>
+                    <p class="mt-2 text-sm leading-6 text-[#65646e]">Deploy, monitoring, dan iterasi berbasis data pengguna.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    {{-- CTA banner — surface-1, rounded lg, padding 48px (DESIGN.md cta-banner) --}}
-    <section class="bg-linear-to-bl from-cyan-100 to-blue-300">
-        <div class="mx-auto max-w-7xl px-6 py-15 sm:px-6 lg:px-8 lg:py-20">
-                <div class="flex flex-col gap-6 justify-center items-center text-center">
-                    <div>
-                        <h2 class="text-xl md:text-4xl font-medium leading-[1.2] tracking-[-0.5px] text-[#111111]">Butuh website atau app baru?</h2>
-                        <p class="mt-3 max-w-xl text-base leading-7 text-[#626260]">Ceritakan kebutuhan website, web app, atau WordPress Anda. kami beri estimasi dan rekomendasi tanpa komitmen.</p>
-                    </div>
-                    <div class="flex flex-col md:flex-row md:justify-center gap-3">
-                        <a href="#kontak" class="rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black">Hubungi Kami</a>
-                        <a href="#layanan" class="rounded-lg border border-[#d3cec6] bg-white px-[18px] py-[10px] text-[15px] font-medium leading-none text-[#111111] hover:bg-[#ebe7e1]">Pelajari layanan</a>
-                    </div>
+    {{-- CTA banner — blue panel, serif accent + blue CTA (DESIGN.md: cta-banner) --}}
+    <section class="bg-white">
+        <div class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+            <div class="relative isolate overflow-hidden rounded-[32px] border border-[#e3eaff] bg-[#f3f6ff] px-6 py-16 text-center sm:px-12 lg:py-20">
+                <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_120%_at_100%_0%,#e3eaff,transparent)]"></div>
+                <h2 class="mx-auto max-w-2xl font-serif text-[30px] font-normal leading-[1.2] tracking-[-0.5px] text-[#100f12] sm:text-[40px]">Butuh website atau <span class="text-gradient">app baru?</span></h2>
+                <p class="mx-auto mt-4 max-w-xl text-base leading-7 text-[#65646e]">Ceritakan kebutuhan website, web app, atau WordPress Anda. Kami beri estimasi dan rekomendasi tanpa komitmen.</p>
+                <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                    <a href="#kontak" class="inline-flex w-full items-center justify-center rounded-[20px] bg-[#0a1589] px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-white transition hover:bg-[#06105a] sm:w-auto sm:text-[18px]">Hubungi Kami</a>
+                    <a href="#layanan" class="inline-flex w-full items-center justify-center rounded-[20px] border border-[#e3eaff] bg-white px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-[#100f12] transition hover:bg-[#fafbff] sm:w-auto sm:text-[18px]">Pelajari layanan</a>
                 </div>
+            </div>
         </div>
     </section>
 </x-layouts.public>

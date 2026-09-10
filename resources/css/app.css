@@ -7,24 +7,47 @@
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
 @theme {
-    --font-sans: 'Lora', ui-serif, Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Lora', ui-serif, Georgia, serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-    /* DESIGN.md — Intercom canvas system */
-    --color-ink: #111111;
-    --color-ink-muted: #626260;
-    --color-ink-subtle: #7b7b78;
-    --color-ink-tertiary: #9c9fa5;
-    --color-canvas: #f5f1ec;
-    --color-surface-1: #ffffff;
-    --color-surface-2: #ebe7e1;
-    --color-hairline: #d3cec6;
-    --color-hairline-soft: #ebe7e1;
-    --color-fin-orange: #ff5600;
-    --color-brand-blue: #0007cb;
+    /* DESIGN.md — Rootly system */
+    /* Brand: deep blue for CTAs/badges, vivid blue for accents */
+    --color-primary: #0a1589;
+    --color-primary-deep: #06105a;
+    --color-accent-vivid: #2b4bff;
+    --color-accent-soft: #7d95ff;
 
-    /* keep zinc for admin/Flux but primary is ink */
+    /* Text */
+    --color-ink: #100f12;
+    --color-ink-muted: #65646e;
+    --color-ink-subtle: #787685;
+    --color-ink-tertiary: #aaa9ae;
+
+    /* Surfaces — white canvas + blue tints */
+    --color-canvas: #ffffff;
+    --color-surface-1: #fafbff;
+    --color-surface-2: #f3f6ff;
+    --color-surface-3: #e3eaff;
+    --color-hairline: #e3eaff;
+    --color-hairline-soft: #c7d6ff;
+
+    /* Dark grounds */
+    --color-navy: #131a38;
+    --color-dark: #111319;
+    --color-slate: #3a4566;
+
+    /* Warm accents */
+    --color-amber: #f0883e;
+    --color-amber-soft: #ffc387;
+    --color-blush: #f5bbc3;
+
+    /* Semantic */
+    --color-error: #c62424;
+    --color-success: #25742d;
+
+    /* keep zinc for admin/Flux but primary is deep blue */
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
     --color-zinc-200: #e5e5e5;
@@ -37,8 +60,8 @@
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
 
-    --color-accent: #111111;
-    --color-accent-content: #111111;
+    --color-accent: #0a1589;
+    --color-accent-content: #06105a;
     --color-accent-foreground: #ffffff;
 }
 
@@ -48,7 +71,7 @@
     ::before,
     ::backdrop,
     ::file-selector-button {
-        border-color: var(--color-hairline-soft, currentColor);
+        border-color: var(--color-hairline, currentColor);
     }
     html {
         background: var(--color-canvas);
@@ -57,6 +80,7 @@
         background: var(--color-canvas);
         color: var(--color-ink);
         font-family: var(--font-sans);
+        font-weight: 400;
     }
     h1,
     h2,
@@ -77,8 +101,26 @@
         opacity: 1;
     }
     ::selection {
-        background: var(--color-ink);
-        color: var(--color-surface-1);
+        background: var(--color-primary);
+        color: #ffffff;
+    }
+}
+
+@layer components {
+    /* Rootly gradient emphasis — blue → pink, clipped to text (DESIGN.md) */
+    .text-gradient {
+        background-image: linear-gradient(112deg, #2b4bff, #f5bbc3 80%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    /* Proses highlight — toggled by resources/js/app.js */
+    [data-proses-step].is-active {
+        background-color: var(--color-surface-2);
+        border-color: var(--color-hairline-soft);
+        box-shadow: 0 2px 5px #0a158933;
     }
 }
 
@@ -132,10 +174,10 @@
     --tw-prose-links: var(--color-ink);
     --tw-prose-bold: var(--color-ink);
     --tw-prose-counters: var(--color-ink-muted);
-    --tw-prose-bullets: var(--color-hairline);
+    --tw-prose-bullets: var(--color-hairline-soft);
     --tw-prose-hr: var(--color-hairline);
     --tw-prose-quotes: var(--color-ink);
-    --tw-prose-quote-borders: var(--color-ink);
+    --tw-prose-quote-borders: var(--color-primary);
     --tw-prose-captions: var(--color-ink-muted);
     --tw-prose-code: var(--color-ink);
     --tw-prose-pre-code: var(--color-ink);
@@ -145,13 +187,13 @@
     color: var(--color-ink);
 }
 .prose a {
-    color: var(--color-ink);
+    color: var(--color-primary-deep);
     text-decoration: underline;
     text-underline-offset: 3px;
-    text-decoration-color: var(--color-hairline);
+    text-decoration-color: var(--color-hairline-soft);
 }
 .prose a:hover {
-    text-decoration-color: var(--color-ink);
+    text-decoration-color: var(--color-primary);
 }
 .prose strong {
     color: var(--color-ink);
@@ -161,7 +203,7 @@
 }
 .prose :where(blockquote) {
     color: var(--color-ink-muted);
-    border-left-color: var(--color-ink);
+    border-left-color: var(--color-primary);
 }
 
 input:focus[data-flux-control],

@@ -4,69 +4,73 @@
     @include('partials.head')
     <style>[x-cloak]{display:none!important}</style>
 </head>
-<body class="min-h-screen bg-white antialiased">
+<body class="min-h-screen bg-white text-[#100f12] antialiased">
     @php $profile = $profile ?? \App\Models\Setting::profile(); @endphp
     <header
         x-data="{ scrolled: false }"
         x-init="scrolled = window.scrollY > 8; window.addEventListener('scroll', () => { scrolled = window.scrollY > 8; }, { passive: true })"
-        class="fixed top-0 z-40 w-full border-b transition-all duration-300">
+        class="fixed top-0 z-40 w-full transition-all duration-300">
         <div
-            :class="scrolled ? 'border-[#ebe7e1] bg-white/85 shadow-[0_1px_12px_rgba(17,17,17,0.06)] backdrop-blur-md' : 'border-transparent bg-transparent'"
-            class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5">
-                <x-app-logo-icon class="size-7 text-[#111111]" />
-                <span class="text-[15px] font-semibold tracking-tight text-[#111111]">{{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}</span>
-            </a>
-            <nav class="hidden items-center gap-1 md:flex">
-                <a href="{{ route('home') }}" class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('home') ? 'bg-[#111111] text-white' : 'text-[#626260] hover:bg-[#ebe7e1] hover:text-[#111111]' }}">Beranda</a>
-                <a href="{{ route('home') }}#layanan" class="rounded-lg px-3 py-2 text-sm font-medium text-[#626260] hover:bg-[#ebe7e1] hover:text-[#111111]">Layanan</a>
-                <a href="{{ route('home') }}#tentang" class="rounded-lg px-3 py-2 text-sm font-medium text-[#626260] hover:bg-[#ebe7e1] hover:text-[#111111]">Tentang</a>
-                <a href="{{ route('home') }}#proses" class="rounded-lg px-3 py-2 text-sm font-medium text-[#626260] hover:bg-[#ebe7e1] hover:text-[#111111]">Proses</a>
-                <a href="#kontak" class="rounded-lg px-3 py-2 text-sm font-medium text-[#626260] hover:bg-[#ebe7e1] hover:text-[#111111]">Kontak</a>
-            </nav>
-            <div class="flex items-center gap-2">
-                <a href="#kontak" class="hidden rounded-lg bg-[#111111] px-[18px] py-[10px] text-[15px] font-medium leading-none text-white hover:bg-black sm:inline-flex">Konsultasi Gratis</a>
-                @auth
-                    <a href="{{ route('dashboard') }}" wire:navigate class="inline-flex rounded-lg border border-[#d3cec6] bg-white px-3 py-2 text-sm font-medium text-[#111111] hover:bg-[#ebe7e1]">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}" wire:navigate class="rounded-full border border-[#111111] bg-white px-4 py-2 text-sm font-medium text-[#111111] hover:bg-[#ebe7e1] sm:inline-flex">Login</a>
-                @endauth
+            :class="scrolled ? 'border-[#e3eaff] bg-white/85 shadow-[0_1px_12px_rgba(43,75,255,0.10)] backdrop-blur-md' : 'border-transparent bg-transparent'"
+            class="border-b">
+            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                <a href="{{ route('home') }}" class="flex items-center gap-2.5">
+                    <x-app-logo-icon class="size-7 text-[#100f12]" />
+                    <span class="font-display text-[16px] font-medium tracking-[-0.16px] text-[#100f12]">{{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}</span>
+                </a>
+                <nav class="hidden items-center gap-1 md:flex">
+                    <a href="{{ route('home') }}" class="rounded-[12px] px-3.5 py-2 text-sm font-medium tracking-[-0.16px] transition {{ request()->routeIs('home') ? 'bg-[#f3f6ff] text-[#0a1589]' : 'text-[#65646e] hover:bg-[#f3f6ff] hover:text-[#100f12]' }}">Beranda</a>
+                    <a href="{{ route('home') }}#layanan" class="rounded-[12px] px-3.5 py-2 text-sm font-medium tracking-[-0.16px] text-[#65646e] transition hover:bg-[#f3f6ff] hover:text-[#100f12]">Layanan</a>
+                    <a href="{{ route('home') }}#keunggulan" class="rounded-[12px] px-3.5 py-2 text-sm font-medium tracking-[-0.16px] text-[#65646e] transition hover:bg-[#f3f6ff] hover:text-[#100f12]">Keunggulan</a>
+                    <a href="{{ route('home') }}#proses" class="rounded-[12px] px-3.5 py-2 text-sm font-medium tracking-[-0.16px] text-[#65646e] transition hover:bg-[#f3f6ff] hover:text-[#100f12]">Proses</a>
+                    <a href="#kontak" class="rounded-[12px] px-3.5 py-2 text-sm font-medium tracking-[-0.16px] text-[#65646e] transition hover:bg-[#f3f6ff] hover:text-[#100f12]">Kontak</a>
+                </nav>
+                <div class="flex items-center gap-2">
+                    <a href="#kontak" class="hidden items-center justify-center rounded-[14px] bg-[#0a1589] px-5 py-2.5 text-sm font-medium leading-none text-white transition hover:bg-[#06105a] sm:inline-flex">Konsultasi Gratis</a>
+                    @auth
+                        <a href="{{ route('dashboard') }}" wire:navigate class="inline-flex items-center justify-center rounded-[14px] border border-[#e3eaff] bg-white px-4 py-2.5 text-sm font-medium leading-none text-[#100f12] transition hover:bg-[#f3f6ff]">Dashboard</a>
+                    @else
+                        <a href="{{ route('login') }}" wire:navigate class="inline-flex items-center justify-center rounded-[14px] border border-[#e3eaff] bg-white px-4 py-2.5 text-sm font-medium leading-none text-[#100f12] transition hover:bg-[#f3f6ff]">Login</a>
+                    @endauth
+                </div>
             </div>
         </div>
     </header>
 
     <main>{{ $slot ?? '' }} @yield('content')</main>
 
-    <footer id="kontak" class="border-t border-white/10 bg-[#111111] text-white">
-        <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div class="grid gap-10 md:grid-cols-3">
+    <footer id="kontak" class="relative overflow-hidden rounded-t-[48px] bg-[#06105a] text-white sm:rounded-t-[80px] lg:rounded-t-[120px]">
+        <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-[radial-gradient(60%_120%_at_50%_130%,rgba(43,75,255,0.55),transparent)]"></div>
+        <div class="relative mx-auto max-w-7xl px-6 pb-10 pt-16 sm:px-8 sm:pt-20 lg:px-12 lg:pt-24">
+            <div class="grid gap-12 md:grid-cols-3">
                 <div>
                     <div class="flex items-center gap-2.5">
                         <x-app-logo-icon class="size-7 text-white" />
-                        <span class="font-semibold tracking-tight text-white">{{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</span>
+                        <span class="font-display text-[16px] font-medium tracking-[-0.16px] text-white">{{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}</span>
                     </div>
-                    <p class="mt-3 text-sm leading-6 text-[#9c9fa5]">{{ ($profile['tagline'] ?? '') ?: 'Developer Website & Web App — spesialis web app & berpengalaman di WordPress.' }}</p>
+                    <p class="mt-4 max-w-xs text-sm leading-6 tracking-[-0.16px] text-white/75">{{ ($profile['tagline'] ?? '') ?: 'Developer Website & Web App — spesialis web app & berpengalaman di WordPress.' }}</p>
                 </div>
                 <div>
-                    <h3 class="text-sm font-semibold tracking-tight text-white">Layanan</h3>
-                    <ul class="mt-3 space-y-2 text-sm text-[#9c9fa5]">
-                        <li><a href="#layanan" class="hover:text-white">Web App Custom</a></li>
-                        <li><a href="#layanan" class="hover:text-white">Website Company Profile</a></li>
-                        <li><a href="#layanan" class="hover:text-white">WordPress Development</a></li>
-                        <li><a href="#layanan" class="hover:text-white">Optimasi WordPress</a></li>
+                    <h3 class="text-sm font-semibold tracking-[-0.16px] text-white">Layanan</h3>
+                    <ul class="mt-4 space-y-3 text-sm tracking-[-0.16px] text-white/75">
+                        <li><a href="#layanan" class="transition hover:text-white">Web App Custom</a></li>
+                        <li><a href="#layanan" class="transition hover:text-white">Website Company Profile</a></li>
+                        <li><a href="#layanan" class="transition hover:text-white">WordPress Development</a></li>
+                        <li><a href="#layanan" class="transition hover:text-white">Optimasi WordPress</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="text-sm font-semibold tracking-tight text-white">Kontak</h3>
-                    <ul class="mt-3 space-y-2 text-sm text-[#9c9fa5]">
-                        @if(!empty($profile['email']))<li><a href="mailto:{{ $profile['email'] }}" class="hover:text-white hover:underline">{{ $profile['email'] }}</a></li>@endif
+                    <h3 class="text-sm font-semibold tracking-[-0.16px] text-white">Kontak</h3>
+                    <ul class="mt-4 space-y-3 text-sm tracking-[-0.16px] text-white/75">
+                        @if(!empty($profile['email']))<li><a href="mailto:{{ $profile['email'] }}" class="transition hover:text-white hover:underline">{{ $profile['email'] }}</a></li>@endif
                         @if(!empty($profile['phone']))<li>{{ $profile['phone'] }}</li>@endif
-                        @if(!empty($profile['address']))<li class="leading-6 text-[#9c9fa5]">{{ $profile['address'] }}</li>@endif
+                        @if(!empty($profile['address']))<li class="leading-6">{{ $profile['address'] }}</li>@endif
                     </ul>
                 </div>
             </div>
-            <div class="mt-10 border-t border-white/10 pt-6 text-center text-sm text-[#9c9fa5]">
-                &copy; {{ date('Y') }} {{ ($profile['company_name'] ?? '') ?: config('app.name') }}. All rights reserved.
+            <div class="mt-12 flex flex-col items-center gap-4 border-t border-white/15 pt-8 text-sm tracking-[-0.16px] text-white/70 sm:flex-row sm:justify-between">
+                <p>&copy; {{ date('Y') }} {{ ($profile['company_name'] ?? '') ?: config('app.name') }}. All rights reserved.</p>
+                <a href="#kontak" class="inline-flex items-center justify-center rounded-full bg-white px-5 py-2.5 text-sm font-medium leading-none text-[#06105a] transition hover:bg-[#f3f6ff]">Konsultasi Gratis</a>
             </div>
         </div>
     </footer>
