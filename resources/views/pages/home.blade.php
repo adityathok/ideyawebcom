@@ -8,8 +8,8 @@
         $tailWord = count($words) > 1 ? (string) array_pop($words) : '';
         $heroHead = implode(' ', $words) ?: $tagline;
 
-        // Latar hero: foto langit biru (ganti URL di sini untuk mengganti gambar).
-        $heroSky = 'https://images.unsplash.com/photo-1592207896291-e813d0419bc9?auto=format&fit=crop&w=2400&q=80';
+        // Latar hero: foto langit biru lokal.
+        $heroSky = asset('images/hero-sky.jpg');
     @endphp
 
     {{-- Hero — foto langit kebiruan, gradient accent on the tagline, deep blue primary CTA (DESIGN.md: hero) --}}
@@ -17,8 +17,8 @@
         {{-- Latar: foto langit (ganti $heroSky untuk mengganti gambar) --}}
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
             <img src="{{ $heroSky }}" alt="" class="absolute inset-0 size-full object-cover object-top" loading="eager" fetchpriority="high" />
-            {{-- Wash biru-putih: jaga teks tetap terbaca di atas siluet kota + transisi mulus ke section putih --}}
-            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(243,246,255,0.6)_40%,rgba(255,255,255,0.9)_76%,#ffffff_100%)]"></div>
+            {{-- Wash tipis: jaga teks tetap terbaca di atas langit biru + transisi mulus ke section putih --}}
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.88)_82%,#ffffff_100%)]"></div>
         </div>
 
         <div class="mx-auto w-full max-w-4xl px-4 pb-20 pt-32 text-center sm:px-6 sm:pb-24 sm:pt-40 lg:pb-28 lg:pt-44">
@@ -47,7 +47,7 @@
                 <h2 class="mt-3 text-[32px] font-medium leading-[1.15] tracking-[-0.8px] text-[#100f12] sm:text-[40px]">Mengapa Memilih {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}?</h2>
                 <p class="mt-4 text-[18px] leading-7 tracking-[-0.16px] text-[#65646e]">Lebih dari sekadar membangun website, kami memastikan hasilnya tampil memukau di semua perangkat, cepat diakses, aman, dan siap mendampingi bisnis Anda jangka panjang.</p>
             </div>
-            <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="mt-12 grid gap-4 sm:grid-cols-2">
                 <div class="rounded-[16px] border border-[#e3eaff] bg-[#fafbff] p-6 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_2px_5px_#0a158933]">
                     <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-[12px] bg-[#f3f6ff] text-[#0a1589]">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-5" focusable="false">
