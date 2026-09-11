@@ -41,3 +41,15 @@ test('tags differing only in case are stored once', function () {
 
     expect(Tag::where('slug', 'laravel')->count())->toBe(1);
 });
+
+test('saving a post stays on the form instead of redirecting', function () {
+    $post = Post::factory()->published()->create();
+
+    Livewire::test('pages::admin.post-form.index', ['id' => $post->id])
+        ->set('title', 'Judul Diperbarui')
+        ->call('save')
+        ->assertNoRedirect()
+        ->assertSet('isEdit', true)
+        ->assertSet('id', $post->id)
+        ->assertSet('slug', $post->fresh()->slug);
+});

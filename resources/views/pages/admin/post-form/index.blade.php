@@ -146,9 +146,16 @@ new #[Title('Form Post')] class extends Component
         $post = Post::updateOrCreate(['id' => $this->id], $data);
         $post->tags()->sync($this->resolveTagIds());
 
-        Flux::toast(variant: 'success', text: $this->isEdit ? 'Post diperbarui.' : 'Post dibuat.');
+        $message = $this->isEdit ? 'Post diperbarui.' : 'Post dibuat.';
 
-        $this->redirect(route('admin.posts'), navigate: true);
+        $this->id = $post->id;
+        $this->isEdit = true;
+        $this->slug = $post->slug;
+        $this->published_at = $post->published_at?->format('Y-m-d\TH:i');
+        $this->imageUpload = null;
+        $this->existingImage = $post->imageUrl();
+
+        Flux::toast(variant: 'success', text: $message);
     }
 }; ?>
 <section class="w-full max-w-3xl mx-auto">
