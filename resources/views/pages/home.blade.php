@@ -7,14 +7,21 @@
         $words = preg_split('/\s+/', $tagline) ?: [$tagline];
         $tailWord = count($words) > 1 ? (string) array_pop($words) : '';
         $heroHead = implode(' ', $words) ?: $tagline;
+
+        // Latar hero: foto langit biru (ganti URL di sini untuk mengganti gambar).
+        $heroSky = 'https://images.unsplash.com/photo-1592207896291-e813d0419bc9?auto=format&fit=crop&w=2400&q=80';
     @endphp
 
-    {{-- Hero — bluish sky canvas, gradient accent on the tagline, deep blue primary CTA (DESIGN.md: hero) --}}
-    <section data-hero-anim class="relative isolate overflow-hidden bg-[linear-gradient(180deg,#b9cdff_0%,#dae4ff_36%,#f1f5ff_68%,#ffffff_100%)]">
-        {{-- Langit kebiruan: glow lembut di puncak + bauran biru di sudut atas --}}
-        <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_0%,#ffffff8c,transparent_72%),radial-gradient(45%_50%_at_88%_10%,#7d95ff33,transparent_70%),radial-gradient(42%_45%_at_10%_4%,#ffffff66,transparent_70%)]"></div>
+    {{-- Hero — foto langit kebiruan, gradient accent on the tagline, deep blue primary CTA (DESIGN.md: hero) --}}
+    <section data-hero-anim class="relative isolate flex min-h-[600px] items-center overflow-hidden bg-[#b9cdff] sm:min-h-[720px] lg:min-h-[820px]">
+        {{-- Latar: foto langit (ganti $heroSky untuk mengganti gambar) --}}
+        <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+            <img src="{{ $heroSky }}" alt="" class="absolute inset-0 size-full object-cover object-top" loading="eager" fetchpriority="high" />
+            {{-- Wash biru-putih: jaga teks tetap terbaca di atas siluet kota + transisi mulus ke section putih --}}
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.16)_0%,rgba(243,246,255,0.6)_40%,rgba(255,255,255,0.9)_76%,#ffffff_100%)]"></div>
+        </div>
 
-        <div class="mx-auto max-w-4xl px-4 pb-16 pt-32 text-center sm:px-6 sm:pt-40 lg:pb-20 lg:pt-44">
+        <div class="mx-auto w-full max-w-4xl px-4 pb-20 pt-32 text-center sm:px-6 sm:pb-24 sm:pt-40 lg:pb-28 lg:pt-44">
             <span data-hero-sub class="inline-flex items-center gap-2 rounded-[16px] bg-white/85 px-4 py-2 text-sm font-medium tracking-[-0.16px] text-[#0a1589] ring-1 ring-inset ring-[#c7d6ff]">
                 <span aria-hidden="true" class="size-1.5 rounded-full bg-[#2b4bff]"></span>
                 {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}

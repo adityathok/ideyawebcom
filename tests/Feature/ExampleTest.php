@@ -19,6 +19,7 @@ test('applies the rootly design system to the home page', function () {
     // Deep-blue rounded footer ground.
     $response->assertSee('06105a', false);
 
-    // Bluish sky hero canvas (top gradient stop).
+    // Bluish sky hero canvas (fallback ground) and sky photo background.
     $response->assertSee('b9cdff', false);
+    $response->assertSee('1592207896291-e813d0419bc9', false);
 });
