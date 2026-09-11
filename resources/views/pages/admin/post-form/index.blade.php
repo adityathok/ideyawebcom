@@ -174,7 +174,7 @@ new #[Title('Form Post')] class extends Component
         <flux:input wire:model="title" label="Judul" required placeholder="Judul artikel..." />
         <flux:input wire:model="slug" label="Slug" description="Kosongkan untuk auto-generate" placeholder="judul-artikel" />
         <flux:textarea wire:model="excerpt" label="Excerpt" rows="2" description="Ringkasan, kosongkan untuk auto dari body" placeholder="Ringkasan singkat..." />
-        <flux:textarea wire:model="body" label="Body" rows="8" required placeholder="Isi artikel..." />
+        <x-wysiwyg wire:model="body" label="Body" placeholder="Tulis isi artikel..." description="Gunakan toolbar untuk memformat teks." />
 
         <div class="grid gap-4 sm:grid-cols-2">
             <flux:select wire:model="category_id" label="Kategori" placeholder="Pilih kategori">

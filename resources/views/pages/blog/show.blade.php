@@ -35,8 +35,9 @@
             <p class="mt-8 text-lg leading-7 text-[#626260] border-l-4 border-[#111111] pl-4">{{ $post->excerpt }}</p>
         @endif
 
+        @php $bodyIsHtml = strip_tags($post->body) !== $post->body; @endphp
         <div class="prose prose-neutral mt-8 max-w-none prose-headings:font-semibold prose-a:text-[#111111] prose-a:underline-offset-2">
-            {!! nl2br(e($post->body)) !!}
+            {!! $bodyIsHtml ? $post->body : nl2br(e($post->body)) !!}
         </div>
 
         @if($post->tags->isNotEmpty())

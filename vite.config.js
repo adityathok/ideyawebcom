@@ -22,6 +22,9 @@ export default defineConfig({
         }),
         tailwindcss(),
     ]),
+    optimizeDeps: {
+        include: ['quill'],
+    },
     server: {
         cors: true,
         watch: {

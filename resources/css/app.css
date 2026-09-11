@@ -162,6 +162,72 @@
             animation: none;
         }
     }
+
+}
+
+/* WYSIWYG editor (Quill) — kept unlayered so these beat the
+   JS-imported quill.snow.css regardless of bundle order. */
+.wysiwyg .ql-toolbar.ql-snow {
+    border-color: var(--color-hairline-soft);
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    background: var(--color-surface-1);
+}
+.wysiwyg .ql-container.ql-snow {
+    border-color: var(--color-hairline-soft);
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+}
+.wysiwyg .ql-container .ql-editor {
+    min-height: 16rem;
+    line-height: 1.7;
+    color: var(--color-ink);
+}
+.wysiwyg .ql-container .ql-editor.ql-blank::before {
+    color: var(--color-ink-subtle);
+    font-style: normal;
+}
+.wysiwyg:focus-within .ql-toolbar.ql-snow,
+.wysiwyg:focus-within .ql-container.ql-snow {
+    border-color: var(--color-ink);
+}
+.wysiwyg .ql-editor :where(p) {
+    margin: 0.5rem 0;
+}
+.wysiwyg .ql-editor :where(h2) {
+    margin: 1rem 0 0.5rem;
+    font-size: 1.375rem;
+    font-weight: 600;
+}
+.wysiwyg .ql-editor :where(h3) {
+    margin: 0.875rem 0 0.5rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+.wysiwyg .ql-editor :where(blockquote) {
+    margin: 0.75rem 0;
+    border-left: 3px solid var(--color-hairline-soft);
+    padding-left: 0.75rem;
+    color: var(--color-ink-muted);
+}
+.wysiwyg .ql-editor :where(a) {
+    color: var(--color-primary-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.wysiwyg .ql-editor :where(pre.ql-syntax) {
+    margin: 0.75rem 0;
+    overflow-x: auto;
+    border-radius: 0.5rem;
+    background: var(--color-surface-2);
+    padding: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+}
+.wysiwyg .ql-editor :where(code) {
+    font-family: var(--font-mono);
 }
 
 [data-flux-field]:not(ui-radio, ui-checkbox) {

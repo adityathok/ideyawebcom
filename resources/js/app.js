@@ -1,4 +1,5 @@
 import { animate, stagger } from 'motion';
+import './wysiwyg';
 
 // Hero entrance — runs on home page only
 function initHeroAnim() {
