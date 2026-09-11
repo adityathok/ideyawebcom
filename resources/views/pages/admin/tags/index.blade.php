@@ -14,6 +14,8 @@ new #[Title('Tags')] class extends Component {
     public string $slug = '';
     public ?int $editingId = null;
     public bool $showForm = false;
+    public ?int $deletingId = null;
+    public string $deletingName = '';
 
     public function updatedSearch(): void { $this->resetPage(); }
 
@@ -55,10 +57,23 @@ new #[Title('Tags')] class extends Component {
         Flux::toast(variant: 'success', text: 'Tag disimpan.');
     }
 
-    public function delete(int $id): void
+    public function confirmDelete(int $id): void
     {
-        Tag::findOrFail($id)->delete();
-        Flux::toast(variant: 'success', text: 'Tag dihapus.');
+        $tag = Tag::findOrFail($id);
+        $this->deletingId = $tag->id;
+        $this->deletingName = $tag->name;
+        Flux::modal('confirm-tag-deletion')->show();
+    }
+
+    public function delete(): void
+    {
+        if ($this->deletingId !== null) {
+            Tag::findOrFail($this->deletingId)->delete();
+            Flux::toast(variant: 'success', text: 'Tag dihapus.');
+        }
+
+        $this->reset(['deletingId', 'deletingName']);
+        Flux::modal('confirm-tag-deletion')->close();
     }
 
     public function cancel(): void { $this->reset(['name','slug','editingId','showForm']); }
@@ -90,32 +105,63 @@ new #[Title('Tags')] class extends Component {
         </div>
     @endif
 
-    <div class="mt-6 overflow-hidden rounded-xl border border-[#d3cec6]">
+    @php
+        $tags = \App\Models\Tag::when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
+            ->withCount('posts')
+            ->orderBy('name')
+            ->paginate(10);
+    @endphp
+
+    <div class="mt-6 overflow-hidden rounded-xl border border-[#d3cec6] bg-white">
         <table class="w-full text-left text-sm">
             <thead class="bg-[#f5f1ec]">
                 <tr>
                     <th class="px-4 py-3 font-semibold">Nama</th>
                     <th class="px-4 py-3 font-semibold">Slug</th>
                     <th class="px-4 py-3 font-semibold">Posts</th>
-                    <th class="px-4 py-3 font-semibold">Aksi</th>
+                    <th class="px-4 py-3 font-semibold text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-[#ebe7e1]">
-                @foreach(\App\Models\Tag::when($search, fn($q) => $q->where('name','like',"%{$search}%"))->withCount('posts')->orderBy('name')->paginate(10) as $tag)
-                    <tr class="bg-white">
+                @forelse ($tags as $tag)
+                    <tr wire:key="tag-{{ $tag->id }}" class="bg-white hover:bg-[#f5f1ec]/60 transition">
                         <td class="px-4 py-3 font-medium">#{{ $tag->name }}</td>
                         <td class="px-4 py-3 text-[#626260]">{{ $tag->slug }}</td>
                         <td class="px-4 py-3">{{ $tag->posts_count }}</td>
-                        <td class="px-4 py-3 flex gap-1">
-                            <flux:button size="sm" variant="ghost" wire:click="edit({{ $tag->id }})">Edit</flux:button>
-                            <flux:button size="sm" variant="danger" wire:click="delete({{ $tag->id }})" wire:confirm="Hapus tag ini?">Hapus</flux:button>
+                        <td class="px-4 py-3">
+                            <div class="flex justify-end gap-1.5">
+                                <flux:button size="sm" variant="ghost" wire:click="edit({{ $tag->id }})">Edit</flux:button>
+                                <flux:button size="sm" variant="danger" wire:click="confirmDelete({{ $tag->id }})">Hapus</flux:button>
+                            </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-4 py-12 text-center text-sm text-[#626260]">Tidak ada tag ditemukan.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
-        <div class="p-4 bg-white">
-            {{ \App\Models\Tag::when($search, fn($q) => $q->where('name','like',"%{$search}%"))->orderBy('name')->paginate(10)->links() }}
+        <div class="border-t border-[#ebe7e1] bg-white p-4">
+            {{ $tags->links() }}
         </div>
     </div>
+
+    <flux:modal name="confirm-tag-deletion" class="max-w-md">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Hapus tag ini?</flux:heading>
+                <flux:subheading>
+                    Tag "{{ $deletingName }}" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.
+                </flux:subheading>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button variant="danger" wire:click="delete">Hapus</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </section>

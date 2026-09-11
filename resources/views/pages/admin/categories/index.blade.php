@@ -16,6 +16,8 @@ new #[Title('Kategori')] class extends Component {
     public string $color = '#52525b';
     public ?int $editingId = null;
     public bool $showForm = false;
+    public ?int $deletingId = null;
+    public string $deletingName = '';
 
     public function updatedSearch(): void { $this->resetPage(); }
 
@@ -69,10 +71,23 @@ new #[Title('Kategori')] class extends Component {
         Flux::toast(variant: 'success', text: 'Kategori disimpan.');
     }
 
-    public function delete(int $id): void
+    public function confirmDelete(int $id): void
     {
-        Category::findOrFail($id)->delete();
-        Flux::toast(variant: 'success', text: 'Kategori dihapus.');
+        $category = Category::findOrFail($id);
+        $this->deletingId = $category->id;
+        $this->deletingName = $category->name;
+        Flux::modal('confirm-category-deletion')->show();
+    }
+
+    public function delete(): void
+    {
+        if ($this->deletingId !== null) {
+            Category::findOrFail($this->deletingId)->delete();
+            Flux::toast(variant: 'success', text: 'Kategori dihapus.');
+        }
+
+        $this->reset(['deletingId', 'deletingName']);
+        Flux::modal('confirm-category-deletion')->close();
     }
 
     public function cancel(): void
@@ -130,7 +145,7 @@ new #[Title('Kategori')] class extends Component {
                         <td class="px-4 py-3">{{ $cat->posts_count }}</td>
                         <td class="px-4 py-3 flex gap-1">
                             <flux:button size="sm" variant="ghost" wire:click="edit({{ $cat->id }})">Edit</flux:button>
-                            <flux:button size="sm" variant="danger" wire:click="delete({{ $cat->id }})" wire:confirm="Hapus kategori ini?">Hapus</flux:button>
+                            <flux:button size="sm" variant="danger" wire:click="confirmDelete({{ $cat->id }})">Hapus</flux:button>
                         </td>
                     </tr>
                 @endforeach
@@ -140,4 +155,22 @@ new #[Title('Kategori')] class extends Component {
             {{ \App\Models\Category::when($search, fn($q) => $q->where('name','like',"%{$search}%"))->orderBy('name')->paginate(10)->links() }}
         </div>
     </div>
+
+    <flux:modal name="confirm-category-deletion" class="max-w-md">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Hapus kategori ini?</flux:heading>
+                <flux:subheading>
+                    Kategori "{{ $deletingName }}" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.
+                </flux:subheading>
+            </div>
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button variant="danger" wire:click="delete">Hapus</flux:button>
+            </div>
+        </div>
+    </flux:modal>
 </section>
