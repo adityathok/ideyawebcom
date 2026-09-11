@@ -94,25 +94,10 @@
     @endphp
 
     {{-- Hero --}}
-    <section class="relative isolate overflow-hidden bg-[#0a1589]">
-        <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
-            <div class="absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_0%,rgba(43,75,255,0.35),transparent_70%)]"></div>
-            <div class="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.45)_55%,#ffffff_100%)]"></div>
-        </div>
-        <div class="mx-auto max-w-4xl px-4 pb-28 pt-32 text-center sm:px-6 sm:pb-32 sm:pt-40 lg:px-8">
-            <nav aria-label="Breadcrumb" class="flex items-center justify-center gap-2 text-sm text-white/70">
-                <a href="{{ route('home') }}" class="transition hover:text-white">Beranda</a>
-                <span aria-hidden="true">/</span>
-                <span class="text-white">Kebijakan Privasi</span>
-            </nav>
-            <h1 class="mx-auto mt-6 max-w-3xl text-[36px] font-medium leading-[1.08] tracking-[-1.1px] text-white sm:text-[48px] sm:tracking-[-1.4px] lg:text-[56px] lg:leading-[1.05]">
-                Kebijakan <span class="text-gradient-dark">Privasi</span>
-            </h1>
-            <p class="mx-auto mt-6 max-w-2xl text-[17px] leading-8 tracking-[-0.16px] text-white/80 sm:text-[18px]">
-                Terakhir diperbarui: {{ $lastUpdated }}
-            </p>
-        </div>
-    </section>
+    <x-page-hero breadcrumb="Kebijakan Privasi">
+        <x-slot:title>Kebijakan <span class="text-gradient-dark">Privasi</span></x-slot:title>
+        <x-slot:subtitle>Terakhir diperbarui: {{ $lastUpdated }}</x-slot:subtitle>
+    </x-page-hero>
 
     {{-- Isi --}}
     <section class="bg-white">

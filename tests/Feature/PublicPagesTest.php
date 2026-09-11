@@ -12,6 +12,19 @@ test('renders the layanan page', function () {
         ->assertSee('WordPress Development', false);
 });
 
+test('renders the shared page hero with a rich heading on inner pages', function () {
+    $this->get(route('layanan'))
+        ->assertOk()
+        ->assertSee('aria-label="Breadcrumb"', false)
+        ->assertSee('<span class="text-gradient-dark">dari ide sampai scale</span>', false)
+        ->assertSee('page-hero-sky.jpg')
+        ->assertSee('Lihat Layanan');
+
+    $this->get(route('privacy'))
+        ->assertOk()
+        ->assertSee('<span class="text-gradient-dark">Privasi</span>', false);
+});
+
 test('renders page specific seo meta through the layout', function () {
     $this->get(route('layanan'))
         ->assertOk()
