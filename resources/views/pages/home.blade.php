@@ -10,31 +10,63 @@
 
         // Latar hero: foto langit biru lokal.
         $heroSky = asset('images/hero-sky.jpg');
+
+        // Stack logo marquee di hero — urutan tampil.
+        $stack = [
+            ['name' => 'PHP', 'file' => 'php.svg'],
+            ['name' => 'JavaScript', 'file' => 'javascript.svg'],
+            ['name' => 'WordPress', 'file' => 'wordpress.svg'],
+            ['name' => 'Laravel', 'file' => 'laravel.svg'],
+            ['name' => 'MySQL', 'file' => 'mysql.svg'],
+            ['name' => 'Node.js', 'file' => 'nodejs.svg'],
+            ['name' => 'Bun', 'file' => 'bun.svg'],
+            ['name' => 'Nuxt', 'file' => 'nuxt.svg'],
+        ];
     @endphp
 
-    {{-- Hero — foto langit kebiruan, gradient accent on the tagline, deep blue primary CTA (DESIGN.md: hero) --}}
-    <section data-hero-anim class="relative isolate flex min-h-[600px] items-center overflow-hidden bg-[#b9cdff] sm:min-h-[720px] lg:min-h-[820px]">
-        {{-- Latar: foto langit (ganti $heroSky untuk mengganti gambar) --}}
+    {{-- Hero — foto langit dengan scrim biru gelap, gradient accent on the tagline, white primary CTA (DESIGN.md: hero) --}}
+    <section data-hero-anim class="relative isolate flex min-h-[600px] items-center overflow-hidden bg-[#0a1589] sm:min-h-[720px] lg:min-h-[820px]">
+        {{-- Latar: foto langit (ganti $heroSky untuk mengganti gambar) — digelapkan tipis agar teks putih terbaca --}}
         <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-            <img src="{{ $heroSky }}" alt="" class="absolute inset-0 size-full object-cover object-top" loading="eager" fetchpriority="high" />
-            {{-- Wash tipis: jaga teks tetap terbaca di atas langit biru + transisi mulus ke section putih --}}
-            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.35)_50%,rgba(255,255,255,0.88)_82%,#ffffff_100%)]"></div>
+            <img src="{{ $heroSky }}" alt="" class="absolute inset-0 size-full object-cover object-top brightness-90" loading="eager" fetchpriority="high" />
+            {{-- Scrim biru tua tipis: jaga kontras teks putih tanpa membuat langit terlalu gelap --}}
+            <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,16,90,0.62)_0%,rgba(6,16,90,0.56)_40%,rgba(6,16,90,0.52)_72%,rgba(6,16,90,0.40)_86%)]"></div>
+            {{-- Glow biru untuk kedalaman (DESIGN.md: decorative depth) --}}
+            <div class="absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_0%,rgba(43,75,255,0.22),transparent_70%)]"></div>
+            {{-- Gradasi ke putih di dasar: area lebar untuk transisi mulus ke section putih di bawah --}}
+            <div class="absolute inset-x-0 bottom-0 h-32 bg-[linear-gradient(180deg,transparent_0%,rgba(255,255,255,0.45)_45%,rgba(255,255,255,0.85)_80%,#ffffff_100%)] sm:h-40 lg:h-48"></div>
         </div>
 
-        <div class="mx-auto w-full max-w-4xl px-4 pb-20 pt-32 text-center sm:px-6 sm:pb-24 sm:pt-40 lg:pb-28 lg:pt-44">
-            <span data-hero-sub class="inline-flex items-center gap-2 rounded-[16px] bg-white/85 px-4 py-2 text-sm font-medium tracking-[-0.16px] text-[#0a1589] ring-1 ring-inset ring-[#c7d6ff]">
-                <span aria-hidden="true" class="size-1.5 rounded-full bg-[#2b4bff]"></span>
+        <div class="mx-auto w-full max-w-4xl px-4 pb-40 pt-32 text-center sm:px-6 sm:pb-48 sm:pt-40 lg:pb-56 lg:pt-44">
+            <span data-hero-sub class="inline-flex items-center gap-2 rounded-[16px] bg-white/10 px-4 py-2 text-sm font-medium tracking-[-0.16px] text-white ring-1 ring-inset ring-white/25">
+                <span aria-hidden="true" class="size-1.5 rounded-full bg-[#7d95ff]"></span>
                 {{ ($profile['company_name'] ?? '') ?: 'IdeyaWeb' }}
             </span>
-            <h1 data-hero-heading class="mx-auto mt-6 max-w-3xl text-[38px] font-medium leading-[1.05] tracking-[-1.2px] text-[#100f12] sm:text-[52px] sm:tracking-[-1.4px] lg:text-[60px] lg:leading-[1.03]">
-                {{ $heroHead }}@if($tailWord) <span class="text-gradient">{{ $tailWord }}</span>@endif
+            <h1 data-hero-heading class="mx-auto mt-6 max-w-3xl text-[38px] font-medium leading-[1.05] tracking-[-1.2px] text-white sm:text-[52px] sm:tracking-[-1.4px] lg:text-[60px] lg:leading-[1.03]">
+                {{ $heroHead }}@if($tailWord) <span class="text-gradient-dark">{{ $tailWord }}</span>@endif
             </h1>
-            <p data-hero-desc class="mx-auto mt-6 max-w-2xl text-[17px] leading-8 tracking-[-0.16px] text-[#65646e] sm:text-[18px]">
+            <p data-hero-desc class="mx-auto mt-6 max-w-2xl text-[17px] leading-8 tracking-[-0.16px] text-white/80 sm:text-[18px]">
                 {{ !empty($profile['about']) ? \Illuminate\Support\Str::limit($profile['about'], 200) : 'Kami membangun website & app custom, dan berpengalaman membangun, mengoptimasi, dan merawat Aplikasi dan Web WordPress, dari company profile hingga WooCommerce.' }}
             </p>
             <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <a data-hero-cta href="#kontak" class="inline-flex w-full items-center justify-center rounded-[20px] bg-[#0a1589] px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-white transition hover:bg-[#06105a] sm:w-auto sm:text-[18px]">Konsultasi Gratis</a>
-                <a data-hero-cta href="#layanan" class="inline-flex w-full items-center justify-center rounded-[20px] border border-[#e3eaff] bg-white px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-[#100f12] transition hover:bg-[#f3f6ff] sm:w-auto sm:text-[18px]">Lihat Layanan</a>
+                <a data-hero-cta href="#kontak" class="inline-flex w-full items-center justify-center rounded-[20px] bg-white px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-[#0a1589] transition hover:bg-[#e3eaff] sm:w-auto sm:text-[18px]">Konsultasi Gratis</a>
+                <a data-hero-cta href="#layanan" class="inline-flex w-full items-center justify-center rounded-[20px] border border-white/30 bg-white/10 px-8 pb-4 pt-[18px] text-[16px] font-medium leading-none text-white transition hover:bg-white/20 sm:w-auto sm:text-[18px]">Lihat Layanan</a>
+            </div>
+
+            {{-- Marquee logo stack — loop mulus, berhenti saat hover (resources/css/app.css: .marquee) --}}
+            <div class="mt-14 sm:mt-16">
+                <div class="marquee mt-6">
+                    <ul class="marquee-track flex w-max items-center">
+                        @foreach (range(1, 2) as $copy)
+                            @foreach ($stack as $tech)
+                                <li @if ($copy === 2) aria-hidden="true" @endif class="flex shrink-0 items-center gap-2.5 pl-8 sm:pl-12">
+                                    <img src="{{ asset('images/logos/'.$tech['file']) }}" alt="" class="h-6 w-auto brightness-0 invert opacity-90 sm:h-7" loading="eager" decoding="async" />
+                                    <span class="whitespace-nowrap text-[15px] font-medium tracking-[-0.16px] text-white/80">{{ $tech['name'] }}</span>
+                                </li>
+                            @endforeach
+                        @endforeach
+                    </ul>
+                </div>
             </div>
         </div>
     </section>
