@@ -20,10 +20,11 @@ test('tag list renders edit and delete actions', function () {
 test('a tag can be created', function () {
     Livewire::test('pages::admin.tags.index')
         ->call('create')
-        ->assertSet('showForm', true)
+        ->assertDispatched('modal-show', name: 'tag-form')
         ->set('name', 'Laravel')
         ->call('save')
-        ->assertHasNoErrors();
+        ->assertHasNoErrors()
+        ->assertDispatched('modal-close', name: 'tag-form');
 
     expect(Tag::where('slug', 'laravel')->exists())->toBeTrue();
 });
@@ -36,7 +37,7 @@ test('editing a tag loads its values into the form', function () {
         ->assertSet('editingId', $tag->id)
         ->assertSet('name', 'Laravel')
         ->assertSet('slug', 'laravel')
-        ->assertSet('showForm', true);
+        ->assertDispatched('modal-show', name: 'tag-form');
 });
 
 test('a tag can be updated while keeping its slug', function () {

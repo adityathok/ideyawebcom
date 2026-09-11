@@ -15,7 +15,6 @@ new #[Title('Kategori')] class extends Component {
     public string $description = '';
     public string $color = '#52525b';
     public ?int $editingId = null;
-    public bool $showForm = false;
     public ?int $deletingId = null;
     public string $deletingName = '';
 
@@ -32,7 +31,7 @@ new #[Title('Kategori')] class extends Component {
     {
         $this->reset(['name','slug','description','editingId']);
         $this->color = '#52525b';
-        $this->showForm = true;
+        Flux::modal('category-form')->show();
     }
 
     public function edit(int $id): void
@@ -43,7 +42,7 @@ new #[Title('Kategori')] class extends Component {
         $this->slug = $cat->slug;
         $this->description = $cat->description ?? '';
         $this->color = $cat->color ?? '#52525b';
-        $this->showForm = true;
+        Flux::modal('category-form')->show();
     }
 
     public function save(): void
@@ -66,9 +65,10 @@ new #[Title('Kategori')] class extends Component {
             'color' => $this->color ?: null,
         ]);
 
-        $this->reset(['name','slug','description','editingId','showForm']);
+        $this->reset(['name','slug','description','editingId']);
         $this->color = '#52525b';
         Flux::toast(variant: 'success', text: 'Kategori disimpan.');
+        Flux::modal('category-form')->close();
     }
 
     public function confirmDelete(int $id): void
@@ -89,12 +89,6 @@ new #[Title('Kategori')] class extends Component {
         $this->reset(['deletingId', 'deletingName']);
         Flux::modal('confirm-category-deletion')->close();
     }
-
-    public function cancel(): void
-    {
-        $this->reset(['name','slug','description','editingId','showForm']);
-        $this->color = '#52525b';
-    }
 }; ?>
 <section class="w-full">
     <div class="flex items-center justify-between">
@@ -108,22 +102,6 @@ new #[Title('Kategori')] class extends Component {
     <div class="mt-6">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Cari kategori..." icon="magnifying-glass" />
     </div>
-
-    @if($showForm)
-        <div class="mt-6 rounded-2xl border border-[#d3cec6] bg-white p-6">
-            <flux:heading>{{ $editingId ? 'Edit Kategori' : 'Tambah Kategori' }}</flux:heading>
-            <form wire:submit="save" class="mt-4 space-y-4">
-                <flux:input wire:model="name" label="Nama" required />
-                <flux:input wire:model="slug" label="Slug" description="Otomatis dari nama, bisa diedit" />
-                <flux:textarea wire:model="description" label="Deskripsi" rows="2" />
-                <flux:input wire:model="color" label="Warna" type="color" />
-                <div class="flex gap-2">
-                    <flux:button type="submit" variant="primary">{{ $editingId ? 'Update' : 'Simpan' }}</flux:button>
-                    <flux:button type="button" variant="ghost" wire:click="cancel">Batal</flux:button>
-                </div>
-            </form>
-        </div>
-    @endif
 
     <div class="mt-6 overflow-hidden rounded-xl border border-[#d3cec6]">
         <table class="w-full text-left text-sm">
@@ -155,6 +133,27 @@ new #[Title('Kategori')] class extends Component {
             {{ \App\Models\Category::when($search, fn($q) => $q->where('name','like',"%{$search}%"))->orderBy('name')->paginate(10)->links() }}
         </div>
     </div>
+
+    <flux:modal name="category-form" class="max-w-lg">
+        <form wire:submit="save" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ $editingId ? 'Edit Kategori' : 'Tambah Kategori' }}</flux:heading>
+                <flux:subheading>{{ $editingId ? 'Perbarui detail kategori.' : 'Buat kategori baru untuk artikel.' }}</flux:subheading>
+            </div>
+
+            <flux:input wire:model="name" label="Nama" required />
+            <flux:input wire:model="slug" label="Slug" description="Otomatis dari nama, bisa diedit" />
+            <flux:textarea wire:model="description" label="Deskripsi" rows="2" />
+            <flux:input wire:model="color" label="Warna" type="color" />
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button type="button" variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="primary">{{ $editingId ? 'Update' : 'Simpan' }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
 
     <flux:modal name="confirm-category-deletion" class="max-w-md">
         <div class="space-y-6">

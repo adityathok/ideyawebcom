@@ -6,6 +6,15 @@
 @source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
 @source '../../vendor/livewire/flux/stubs/**/*.blade.php';
 
+/*
+ * Dark mode is intentionally disabled (see the Appearance settings page).
+ * Tailwind v4 defaults `dark:` to `prefers-color-scheme: dark`, which flipped
+ * Flux components to their dark colors on dark-OS machines while the rest of
+ * the UI is hard-coded light — e.g. ghost buttons became white on white rows.
+ * Rebinding `dark:` to a class keeps it off unless `.dark` is explicitly present.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
     --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;

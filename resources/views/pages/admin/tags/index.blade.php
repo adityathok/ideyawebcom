@@ -13,7 +13,6 @@ new #[Title('Tags')] class extends Component {
     public string $name = '';
     public string $slug = '';
     public ?int $editingId = null;
-    public bool $showForm = false;
     public ?int $deletingId = null;
     public string $deletingName = '';
 
@@ -29,7 +28,7 @@ new #[Title('Tags')] class extends Component {
     public function create(): void
     {
         $this->reset(['name','slug','editingId']);
-        $this->showForm = true;
+        Flux::modal('tag-form')->show();
     }
 
     public function edit(int $id): void
@@ -38,7 +37,7 @@ new #[Title('Tags')] class extends Component {
         $this->editingId = $tag->id;
         $this->name = $tag->name;
         $this->slug = $tag->slug;
-        $this->showForm = true;
+        Flux::modal('tag-form')->show();
     }
 
     public function save(): void
@@ -53,8 +52,9 @@ new #[Title('Tags')] class extends Component {
             'slug' => $this->slug ?: Str::slug($this->name),
         ]);
 
-        $this->reset(['name','slug','editingId','showForm']);
+        $this->reset(['name','slug','editingId']);
         Flux::toast(variant: 'success', text: 'Tag disimpan.');
+        Flux::modal('tag-form')->close();
     }
 
     public function confirmDelete(int $id): void
@@ -75,8 +75,6 @@ new #[Title('Tags')] class extends Component {
         $this->reset(['deletingId', 'deletingName']);
         Flux::modal('confirm-tag-deletion')->close();
     }
-
-    public function cancel(): void { $this->reset(['name','slug','editingId','showForm']); }
 }; ?>
 <section class="w-full">
     <div class="flex items-center justify-between">
@@ -90,20 +88,6 @@ new #[Title('Tags')] class extends Component {
     <div class="mt-6">
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Cari tag..." icon="magnifying-glass" />
     </div>
-
-    @if($showForm)
-        <div class="mt-6 rounded-2xl border border-[#d3cec6] bg-white p-6">
-            <flux:heading>{{ $editingId ? 'Edit Tag' : 'Tambah Tag' }}</flux:heading>
-            <form wire:submit="save" class="mt-4 space-y-4">
-                <flux:input wire:model="name" label="Nama" required />
-                <flux:input wire:model="slug" label="Slug" />
-                <div class="flex gap-2">
-                    <flux:button type="submit" variant="primary">{{ $editingId ? 'Update' : 'Simpan' }}</flux:button>
-                    <flux:button type="button" variant="ghost" wire:click="cancel">Batal</flux:button>
-                </div>
-            </form>
-        </div>
-    @endif
 
     @php
         $tags = \App\Models\Tag::when($search, fn ($q) => $q->where('name', 'like', "%{$search}%"))
@@ -146,6 +130,25 @@ new #[Title('Tags')] class extends Component {
             {{ $tags->links() }}
         </div>
     </div>
+
+    <flux:modal name="tag-form" class="max-w-lg">
+        <form wire:submit="save" class="space-y-6">
+            <div>
+                <flux:heading size="lg">{{ $editingId ? 'Edit Tag' : 'Tambah Tag' }}</flux:heading>
+                <flux:subheading>{{ $editingId ? 'Perbarui nama atau slug tag.' : 'Buat tag baru untuk mengelompokkan artikel.' }}</flux:subheading>
+            </div>
+
+            <flux:input wire:model="name" label="Nama" required />
+            <flux:input wire:model="slug" label="Slug" description="Otomatis dari nama, bisa diedit" />
+
+            <div class="flex justify-end gap-2">
+                <flux:modal.close>
+                    <flux:button type="button" variant="ghost">Batal</flux:button>
+                </flux:modal.close>
+                <flux:button type="submit" variant="primary">{{ $editingId ? 'Update' : 'Simpan' }}</flux:button>
+            </div>
+        </form>
+    </flux:modal>
 
     <flux:modal name="confirm-tag-deletion" class="max-w-md">
         <div class="space-y-6">

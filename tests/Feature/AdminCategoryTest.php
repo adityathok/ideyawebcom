@@ -33,3 +33,29 @@ test('deleting a category requires confirmation through the modal', function () 
 
     expect(Category::find($category->id))->toBeNull();
 });
+
+test('the category form opens as a modal when creating', function () {
+    Livewire::test('pages::admin.categories.index')
+        ->call('create')
+        ->assertDispatched('modal-show', name: 'category-form');
+});
+
+test('the category form opens as a modal when editing', function () {
+    $category = Category::factory()->create(['name' => 'Berita', 'slug' => 'berita']);
+
+    Livewire::test('pages::admin.categories.index')
+        ->call('edit', $category->id)
+        ->assertSet('editingId', $category->id)
+        ->assertDispatched('modal-show', name: 'category-form');
+});
+
+test('a category can be saved from the modal', function () {
+    Livewire::test('pages::admin.categories.index')
+        ->call('create')
+        ->set('name', 'Berita')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertDispatched('modal-close', name: 'category-form');
+
+    expect(Category::where('slug', 'berita')->exists())->toBeTrue();
+});
