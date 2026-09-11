@@ -31,8 +31,7 @@ new #[Title('Form Post')] class extends Component
 
     public ?int $category_id = null;
 
-    /** @var int[] */
-    public array $tag_ids = [];
+    public string $tags = '';
 
     public ?string $published_at = null;
 
@@ -55,7 +54,7 @@ new #[Title('Form Post')] class extends Component
             $this->body = $post->body;
             $this->status = $post->status->value;
             $this->category_id = $post->category_id;
-            $this->tag_ids = $post->tags->pluck('id')->toArray();
+            $this->tags = $post->tags->pluck('name')->implode(', ');
             $this->published_at = $post->published_at?->format('Y-m-d\TH:i');
             $this->image_caption = $post->image_caption ?? '';
             $this->existingImage = $post->imageUrl();
@@ -83,6 +82,26 @@ new #[Title('Form Post')] class extends Component
         $this->image_caption = '';
     }
 
+    /**
+     * Parse the comma-separated tag input into tag IDs, creating missing tags.
+     *
+     * @return int[]
+     */
+    private function resolveTagIds(): array
+    {
+        $names = collect(explode(',', $this->tags))
+            ->map(fn (string $name): string => trim($name))
+            ->filter()
+            ->unique(fn (string $name): string => Str::lower($name))
+            ->values();
+
+        return $names->map(function (string $name): int {
+            $slug = Str::slug($name) ?: Str::lower(Str::random(8));
+
+            return Tag::firstOrCreate(['slug' => $slug], ['name' => $name])->id;
+        })->all();
+    }
+
     public function save(): void
     {
         $this->validate([
@@ -92,8 +111,7 @@ new #[Title('Form Post')] class extends Component
             'body' => 'required|string',
             'status' => 'required|in:draft,published,archived',
             'category_id' => 'nullable|exists:categories,id',
-            'tag_ids' => 'array',
-            'tag_ids.*' => 'exists:tags,id',
+            'tags' => 'nullable|string|max:1000',
             'published_at' => 'nullable|date',
             'imageUpload' => 'nullable|image|max:4096',
             'image_caption' => 'nullable|string|max:500',
@@ -126,7 +144,7 @@ new #[Title('Form Post')] class extends Component
         ];
 
         $post = Post::updateOrCreate(['id' => $this->id], $data);
-        $post->tags()->sync($this->tag_ids);
+        $post->tags()->sync($this->resolveTagIds());
 
         Flux::toast(variant: 'success', text: $this->isEdit ? 'Post diperbarui.' : 'Post dibuat.');
 
@@ -192,17 +210,7 @@ new #[Title('Form Post')] class extends Component
             <flux:input wire:model="image_caption" label="Caption Gambar" placeholder="Keterangan gambar (opsional)" description="Maks 500 karakter" />
         </div>
 
-        <div>
-            <label class="text-sm font-medium text-[#111111]">Tags</label>
-            <div class="mt-2 flex flex-wrap gap-2">
-                @foreach (\App\Models\Tag::orderBy('name')->get() as $tag)
-                    <label class="flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm {{ in_array($tag->id, $tag_ids) ? 'bg-[#111111] text-white border-[#111111]' : 'border-[#d3cec6] bg-white text-[#111111] hover:bg-[#f5f1ec]' }}">
-                        <input type="checkbox" value="{{ $tag->id }}" wire:model.live="tag_ids" class="sr-only" />
-                        #{{ $tag->name }}
-                    </label>
-                @endforeach
-            </div>
-        </div>
+        <flux:textarea wire:model="tags" label="Tags" rows="2" description="Pisahkan dengan koma, contoh: laravel, livewire, php" placeholder="laravel, livewire, php" />
 
         <div class="flex justify-end gap-2 border-t border-[#ebe7e1] pt-4">
             <a href="{{ route('admin.posts') }}" wire:navigate class="inline-flex items-center rounded-lg border border-[#d3cec6] bg-white px-4 py-2 text-sm font-medium text-[#111111] hover:bg-[#f5f1ec]">Batal</a>
