@@ -57,30 +57,30 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-semibold tracking-tight text-white">Layanan</h3>
-                    <ul class="mt-3 space-y-2 text-sm text-slate-50">
-                        <li><a href="{{ route('layanan') }}" class="hover:text-white">Web App Custom</a></li>
-                        <li><a href="{{ route('layanan') }}" class="hover:text-white">Website Company Profile</a></li>
-                        <li><a href="{{ route('layanan') }}" class="hover:text-white">WordPress Development</a></li>
-                        <li><a href="{{ route('layanan') }}" class="hover:text-white">Optimasi WordPress</a></li>
-                        <li><a href="{{ route('layanan') }}" class="hover:text-white">Maintenance Website</a></li>
+                    <ul class="mt-3 space-y-2 text-sm text-white">
+                        <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">Web App Custom</a></li>
+                        <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">Website Company Profile</a></li>
+                        <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">WordPress Development</a></li>
+                        <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">Optimasi WordPress</a></li>
+                        <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">Maintenance Website</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-sm font-semibold tracking-tight text-white">Kontak</h3>
                     <ul class="mt-3 space-y-2 text-sm text-[#c7d6ff]">
-                        @if(!empty($profile['email']))<li><a href="mailto:{{ $profile['email'] }}" class="hover:text-white hover:underline">{{ $profile['email'] }}</a></li>@endif
-                        @if(!empty($profile['phone']))<li><a href="tel:{{ preg_replace('/\s+/', '', $profile['phone']) }}" class="hover:text-white">{{ $profile['phone'] }}</a></li>@endif
+                        @if(!empty($profile['email']))<li><a href="mailto:{{ $profile['email'] }}" class="text-white transition hover:underline">{{ $profile['email'] }}</a></li>@endif
+                        @if(!empty($profile['phone']))<li><a href="tel:{{ preg_replace('/\s+/', '', $profile['phone']) }}" class="text-white transition hover:underline">{{ $profile['phone'] }}</a></li>@endif
                         @if(!empty($profile['address']))<li class="leading-6 text-[#c7d6ff]">{{ $profile['address'] }}</li>@endif
                         @if(empty($profile['email']) && empty($profile['phone']) && empty($profile['address']))
                             <li class="text-[#c7d6ff]">Hubungi kami untuk konsultasi proyek Anda.</li>
                         @endif
-                        <li><a href="{{ route('kontak') }}" class="hover:text-white hover:underline">Formulir Kontak</a></li>
+                        <li><a href="{{ route('kontak') }}" class="text-white transition hover:underline">Formulir Kontak</a></li>
                     </ul>
                     @php $social = array_filter(['facebook' => $profile['facebook'] ?? null, 'instagram' => $profile['instagram'] ?? null, 'twitter' => $profile['twitter'] ?? null, 'linkedin' => $profile['linkedin'] ?? null]); @endphp
                     @if(!empty($social))
                         <div class="mt-4 flex flex-wrap gap-3">
                             @foreach($social as $key => $url)
-                                <a href="{{ $url }}" target="_blank" rel="noopener" class="text-sm font-medium text-[#c7d6ff] hover:text-white hover:underline">{{ ucfirst($key) }}</a>
+                                <a href="{{ $url }}" target="_blank" rel="noopener" class="text-sm font-medium text-white transition hover:underline">{{ ucfirst($key) }}</a>
                             @endforeach
                         </div>
                     @endif
@@ -89,8 +89,8 @@
             <div class="mt-10 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-[#c7d6ff] sm:flex-row">
                 <p>&copy; {{ date('Y') }} {{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}. All rights reserved.</p>
                 <div class="flex items-center gap-5">
-                    <a href="{{ route('kontak') }}" class="transition hover:text-white">Kontak</a>
-                    <a href="{{ route('privacy') }}" class="transition hover:text-white">Kebijakan Privasi</a>
+                    <a href="{{ route('kontak') }}" class="text-white transition hover:underline">Kontak</a>
+                    <a href="{{ route('privacy') }}" class="text-white transition hover:underline">Kebijakan Privasi</a>
                 </div>
             </div>
         </div>
