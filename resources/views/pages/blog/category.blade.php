@@ -1,25 +1,32 @@
 <x-layouts.public :title="$category->name">
-    <div class="border-b border-[#ebe7e1] bg-[#f5f1ec]">
-        <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap items-center gap-3">
-                <span class="size-3 rounded-full" style="background: {{ $category->color ?? '#52525b' }}"></span>
-                <h1 class="text-[40px] font-medium leading-[1.15] tracking-[-0.8px] text-[#111111]">{{ $category->name }}</h1>
-                <span class="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#626260] ring-1 ring-[#d3cec6]">{{ $posts->total() }} artikel</span>
+    {{-- Header — blue tint block (surface-2) di atas canvas putih --}}
+    <div class="border-b border-[#e3eaff] bg-[#f3f6ff]">
+        <div class="mx-auto max-w-5xl px-4 pb-10 pt-28 sm:px-6 lg:px-8">
+            <span class="inline-flex items-center gap-2 rounded-[16px] border border-[#e3eaff] bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.5px] text-[#0a1589]">
+                <span aria-hidden="true" class="size-1.5 rounded-full bg-[#2b4bff]"></span>
+                Kategori
+            </span>
+            <div class="mt-5 flex flex-wrap items-center gap-3">
+                <span class="size-3 rounded-full" style="background: {{ $category->color ?? '#7d95ff' }}"></span>
+                <h1 class="text-[40px] font-medium leading-[1.15] tracking-[-0.8px] text-[#100f12] sm:text-[48px] sm:tracking-[-1px]">{{ $category->name }}</h1>
+                <span class="rounded-full border border-[#e3eaff] bg-white px-3 py-1 text-xs font-medium text-[#0a1589]">{{ $posts->total() }} artikel</span>
             </div>
-            @if($category->description)<p class="mt-3 max-w-2xl text-[18px] leading-7 text-[#626260]">{{ $category->description }}</p>@endif
-            <a href="{{ route('blog.index') }}" class="mt-4 inline-flex text-sm font-medium text-[#626260] hover:text-[#111111]">← Semua artikel</a>
+            @if($category->description)<p class="mt-3 max-w-2xl text-[18px] leading-7 tracking-[-0.16px] text-[#65646e]">{{ $category->description }}</p>@endif
+            <a href="{{ route('blog.index') }}" class="mt-5 inline-flex text-sm font-medium text-[#0a1589] transition hover:text-[#06105a]">← Semua artikel</a>
         </div>
     </div>
-    <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+
+    {{-- Feed — white canvas --}}
+    <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
         @if($posts->count())
-            <div class="divide-y divide-[#ebe7e1] border-y border-[#ebe7e1]">
+            <div class="divide-y divide-[#e3eaff] border-y border-[#e3eaff]">
                 @foreach($posts as $post)<x-blog.post-card :post="$post" />@endforeach
             </div>
             <div class="mt-8">{{ $posts->links() }}</div>
         @else
-            <div class="rounded-xl border border-dashed border-[#d3cec6] bg-white p-10 text-center">
-                <p class="text-sm font-medium text-[#111111]">Belum ada artikel di kategori ini</p>
-                <a href="{{ route('blog.index') }}" class="mt-3 inline-flex text-sm font-medium text-[#111111] underline">Jelajahi semua artikel</a>
+            <div class="rounded-[32px] border border-dashed border-[#c7d6ff] bg-[#fafbff] p-10 text-center">
+                <p class="text-sm font-semibold text-[#100f12]">Belum ada artikel di kategori ini</p>
+                <a href="{{ route('blog.index') }}" class="mt-5 inline-flex items-center justify-center rounded-[20px] bg-[#0a1589] px-6 pb-3.5 pt-4 text-[15px] font-medium leading-none text-white transition hover:bg-[#06105a]">Jelajahi semua artikel</a>
             </div>
         @endif
     </div>

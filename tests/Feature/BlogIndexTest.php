@@ -1,0 +1,49 @@
+<?php
+
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\Tag;
+
+test('renders the blog index with published posts', function () {
+    $post = Post::factory()->published()->create(['title' => 'Panduan Web App']);
+
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertSee('Blog')
+        ->assertSee('Panduan Web App')
+        ->assertSee(route('blog.show', $post), false);
+});
+
+test('applies the rootly design system to the blog index', function () {
+    Post::factory()->published()->create();
+
+    $response = $this->get(route('blog.index'))->assertOk();
+
+    // Deep-blue primary CTA, blue tint surfaces, and hairline borders (DESIGN.md).
+    $response->assertSee('0a1589', false);
+    $response->assertSee('f3f6ff', false);
+    $response->assertSee('e3eaff', false);
+    $response->assertSee('100f12', false);
+
+    // The old cream/off-white palette is gone.
+    $response->assertDontSee('f5f1ec', false);
+    $response->assertDontSee('ebe7e1', false);
+});
+
+test('renders the blog index empty state', function () {
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertSee('Tidak ada artikel ditemukan');
+});
+
+test('renders the blog index with active filters', function () {
+    $category = Category::factory()->create(['name' => 'Laravel']);
+    $tag = Tag::factory()->create(['name' => 'Testing']);
+    $post = Post::factory()->published()->create(['category_id' => $category->id]);
+    $post->tags()->attach($tag);
+
+    $this->get(route('blog.index', ['category' => $category->slug, 'tag' => $tag->slug]))
+        ->assertOk()
+        ->assertSee('kategori: '.$category->slug)
+        ->assertSee('#'.$tag->slug);
+});
