@@ -3,6 +3,7 @@
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\User;
 
 test('renders the blog index with published posts', function () {
     $post = Post::factory()->published()->create(['title' => 'Panduan Web App']);
@@ -12,6 +13,16 @@ test('renders the blog index with published posts', function () {
         ->assertSee('Blog')
         ->assertSee('Panduan Web App')
         ->assertSee(route('blog.show', $post), false);
+});
+
+test('renders the blog index cards without the post author or view count', function () {
+    $author = User::factory()->create(['name' => 'Budi Penulis']);
+    Post::factory()->published()->create(['user_id' => $author->id, 'view_count' => 1234]);
+
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertDontSee('Budi Penulis')
+        ->assertDontSee('1234 views');
 });
 
 test('applies the rootly design system to the blog index', function () {

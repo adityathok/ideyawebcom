@@ -52,9 +52,11 @@
         @endif
 
         <!-- Share / Nav -->
-        <div class="mt-8 flex items-center justify-between border-t border-[#e3eaff] pt-6">
-            <a href="{{ route('blog.index') }}" class="text-sm font-medium text-[#65646e] transition hover:text-[#0a1589]">← Semua artikel</a>
-            <div class="flex gap-2">
+        <div class="mt-8 border-t border-[#e3eaff] pt-6">
+            <x-blog.share-buttons :post="$post" />
+
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <a href="{{ route('blog.index') }}" class="text-sm font-medium text-[#65646e] transition hover:text-[#0a1589]">← Semua artikel</a>
                 @if($post->category)
                     <a href="{{ route('blog.category', $post->category) }}" class="rounded-full border border-[#e3eaff] px-4 py-2 text-sm font-medium text-[#100f12] transition hover:bg-[#f3f6ff]">Kategori: {{ $post->category->name }}</a>
                 @endif
