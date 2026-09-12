@@ -22,6 +22,9 @@
                 <flux:navbar.item icon="tag" :href="route('admin.tags')" :current="request()->routeIs('admin.tags*')" wire:navigate>
                     {{ __('Tags') }}
                 </flux:navbar.item>
+                <flux:navbar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users*')" wire:navigate>
+                    {{ __('Users') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />

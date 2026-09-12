@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::livewire('admin/post-form', 'pages::admin.post-form.index')->name('admin.post-form');
     Route::livewire('admin/categories', 'pages::admin.categories.index')->name('admin.categories');
     Route::livewire('admin/tags', 'pages::admin.tags.index')->name('admin.tags');
+    Route::livewire('admin/users', 'pages::admin.users.index')->name('admin.users');
     Route::livewire('admin/settings', 'pages::admin.settings.index')->name('admin.settings');
 });
 

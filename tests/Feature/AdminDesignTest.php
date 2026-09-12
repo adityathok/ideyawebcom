@@ -13,6 +13,7 @@ test('applies the rootly design system to the admin screens', function () {
         'pages::admin.post-form.index',
         'pages::admin.categories.index',
         'pages::admin.tags.index',
+        'pages::admin.users.index',
         'pages::admin.settings.index',
     ];
 

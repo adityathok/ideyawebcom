@@ -1,6 +1,6 @@
 <x-layouts::app :title="__('Dashboard')">
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
+        <div class="grid auto-rows-min gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <a href="{{ route('admin.posts') }}" wire:navigate class="relative flex flex-col justify-center gap-2 overflow-hidden rounded-xl border border-[#e3eaff] bg-white p-6">
                 <div class="flex items-center gap-2 text-sm font-medium text-[#65646e]"><span class="size-2 rounded-full bg-green-500"></span> Posts</div>
                 <div class="text-2xl font-bold text-[#100f12]">{{ \App\Models\Post::count() }}</div>
@@ -15,6 +15,11 @@
                 <div class="flex items-center gap-2 text-sm font-medium text-[#65646e]"><span class="size-2 rounded-full bg-amber-500"></span> Tags</div>
                 <div class="text-2xl font-bold text-[#100f12]">{{ \App\Models\Tag::count() }}</div>
                 <div class="text-xs text-[#65646e]">Tags blog</div>
+            </a>
+            <a href="{{ route('admin.users') }}" wire:navigate class="relative flex flex-col justify-center gap-2 overflow-hidden rounded-xl border border-[#e3eaff] bg-white p-6">
+                <div class="flex items-center gap-2 text-sm font-medium text-[#65646e]"><span class="size-2 rounded-full bg-violet-500"></span> Users</div>
+                <div class="text-2xl font-bold text-[#100f12]">{{ \App\Models\User::count() }}</div>
+                <div class="text-xs text-[#65646e]">Akun admin</div>
             </a>
         </div>
         <div class="grid gap-4 md:grid-cols-2">
