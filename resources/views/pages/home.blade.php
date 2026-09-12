@@ -9,7 +9,7 @@
         $heroHead = implode(' ', $words) ?: $tagline;
 
         // Latar hero: foto langit biru lokal.
-        $heroSky = asset('images/hero-sky.jpg');
+        $heroSky = asset('images/hero-sky.webp');
 
         // Stack logo marquee di hero — urutan tampil.
         $stack = [
