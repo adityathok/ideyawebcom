@@ -15,6 +15,21 @@ test('renders the blog index with published posts', function () {
         ->assertSee(route('blog.show', $post), false);
 });
 
+test('links to the blog from the public header navigation', function () {
+    Post::factory()->published()->create();
+
+    // The menu item is exposed across public pages, inactive off the blog.
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee(route('blog.index'), false)
+        ->assertSee('hover:text-[#100f12]">Blog</a>', false);
+
+    // Blog pages highlight it as the active item.
+    $this->get(route('blog.index'))
+        ->assertOk()
+        ->assertSee('bg-[#f3f6ff] text-[#0a1589]">Blog</a>', false);
+});
+
 test('renders the blog index cards without the post author or view count', function () {
     $author = User::factory()->create(['name' => 'Budi Penulis']);
     Post::factory()->published()->create(['user_id' => $author->id, 'view_count' => 1234]);
