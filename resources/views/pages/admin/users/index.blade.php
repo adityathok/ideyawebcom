@@ -4,6 +4,8 @@ use Livewire\WithPagination;
 use Livewire\Component;
 use App\Models\User;
 use Flux\Flux;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 new #[Title('Users')] class extends Component {
     use WithPagination;
@@ -16,6 +18,8 @@ new #[Title('Users')] class extends Component {
     public ?int $editingId = null;
     public ?int $deletingId = null;
     public string $deletingName = '';
+    public int $deletingPostsCount = 0;
+    public string $reassignTo = '';
 
     public function updatedSearch(): void { $this->resetPage(); }
 
@@ -87,6 +91,9 @@ new #[Title('Users')] class extends Component {
         $user = User::findOrFail($id);
         $this->deletingId = $user->id;
         $this->deletingName = $user->name;
+        $this->deletingPostsCount = $user->posts()->withTrashed()->count();
+        $this->reassignTo = '';
+        $this->resetValidation('reassignTo');
         Flux::modal('confirm-user-deletion')->show();
     }
 
@@ -97,17 +104,41 @@ new #[Title('Users')] class extends Component {
         }
 
         if ($this->deletingId === auth()->id()) {
-            $this->reset(['deletingId', 'deletingName']);
+            $this->resetDeletion();
             Flux::modal('confirm-user-deletion')->close();
             Flux::toast(variant: 'danger', text: 'Tidak bisa menghapus akun yang sedang login.');
             return;
         }
 
-        User::findOrFail($this->deletingId)->delete();
+        $user = User::findOrFail($this->deletingId);
 
-        $this->reset(['deletingId', 'deletingName']);
+        // Post tidak ikut terhapus: wajib dipindahkan ke penulis lain dulu.
+        // Termasuk post yang sudah di-soft delete, karena barisnya masih
+        // mereferensikan user ini dan akan ditolak foreign key.
+        if ($user->posts()->withTrashed()->exists()) {
+            $this->validate([
+                'reassignTo' => ['required', 'integer', Rule::exists('users', 'id')->whereNot('id', $user->id)],
+            ], [
+                'reassignTo.required' => 'Pilih penulis baru untuk memindahkan post.',
+                'reassignTo.exists' => 'Penulis baru tidak valid.',
+            ]);
+
+            DB::transaction(function () use ($user): void {
+                $user->posts()->withTrashed()->update(['user_id' => (int) $this->reassignTo]);
+                $user->delete();
+            });
+        } else {
+            $user->delete();
+        }
+
+        $this->resetDeletion();
         Flux::toast(variant: 'success', text: 'User dihapus.');
         Flux::modal('confirm-user-deletion')->close();
+    }
+
+    private function resetDeletion(): void
+    {
+        $this->reset(['deletingId', 'deletingName', 'deletingPostsCount', 'reassignTo']);
     }
 }; ?>
 <section class="w-full">
@@ -210,6 +241,23 @@ new #[Title('Users')] class extends Component {
                     Akun "{{ $deletingName }}" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.
                 </flux:subheading>
             </div>
+
+            @if ($deletingPostsCount > 0)
+                @php
+                    $reassignableUsers = \App\Models\User::whereKeyNot($deletingId)->orderBy('name')->get();
+                @endphp
+
+                <div class="rounded-lg border border-[#e3eaff] bg-[#f3f6ff] p-4 text-sm leading-6 text-[#65646e]">
+                    User ini punya <span class="font-semibold text-[#100f12]">{{ $deletingPostsCount }} post</span>.
+                    Post tidak ikut terhapus — pindahkan ke penulis lain terlebih dahulu.
+                </div>
+
+                <flux:select wire:model="reassignTo" label="Pindahkan post ke" placeholder="Pilih penulis baru" required>
+                    @foreach ($reassignableUsers as $user)
+                        <flux:select.option value="{{ $user->id }}">{{ $user->name }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+            @endif
 
             <div class="flex justify-end gap-2">
                 <flux:modal.close>
