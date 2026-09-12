@@ -1,4 +1,4 @@
-<x-layouts.public :title="$post->title">
+<x-layouts.public :title="$post->title" :seo-meta="$seoMeta">
     <article class="mx-auto max-w-3xl px-4 pb-16 pt-28 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-center gap-2 text-sm">
             <a href="{{ route('blog.index') }}" class="text-[#65646e] transition hover:text-[#0a1589]">← Kembali ke Blog</a>

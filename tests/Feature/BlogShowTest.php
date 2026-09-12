@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 test('renders an html post body without escaping it', function () {
     $post = Post::factory()->published()->create([
@@ -21,6 +22,27 @@ test('keeps line breaks when the post body is plain text', function () {
         ->assertOk()
         ->assertSee('Baris satu<br', false)
         ->assertSee('Baris dua');
+});
+
+test('uses the post image as the og:image', function () {
+    $post = Post::factory()->published()->create([
+        'image' => 'posts/og-cover.jpg',
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('property="og:image" content="'.Storage::disk('public')->url('posts/og-cover.jpg').'"', false);
+});
+
+test('uses an absolute cover image as the og:image', function () {
+    $post = Post::factory()->published()->create([
+        'image' => null,
+        'cover_image' => 'https://cdn.example.com/cover.jpg',
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('property="og:image" content="https://cdn.example.com/cover.jpg"', false);
 });
 
 test('applies the rootly design system to a post page', function () {
