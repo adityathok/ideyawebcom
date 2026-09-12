@@ -39,7 +39,7 @@
         @endif
 
         @php $bodyIsHtml = strip_tags($post->body) !== $post->body; @endphp
-        <div class="prose prose-neutral mt-8 max-w-none prose-headings:font-semibold prose-a:text-[#0a1589] prose-a:underline-offset-2">
+        <div class="prose mt-8 max-w-none">
             {!! $bodyIsHtml ? $post->body : nl2br(e($post->body)) !!}
         </div>
 
