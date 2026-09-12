@@ -121,7 +121,7 @@ new #[Title('Pengaturan Website')] class extends Component {
     <flux:heading size="xl">Pengaturan Website</flux:heading>
     <flux:subheading>Kelola profil perusahaan & pengaturan umum (disimpan di tabel settings).</flux:subheading>
 
-    <form wire:submit="save" class="mt-6 space-y-4 max-w-2xl rounded-2xl border border-[#d3cec6] bg-white p-6">
+    <form wire:submit="save" class="mt-6 space-y-4 max-w-2xl rounded-2xl border border-[#e3eaff] bg-white p-6">
         <flux:input wire:model="company_name" label="Nama Perusahaan" required />
         <flux:input wire:model="tagline" label="Tagline" />
         <flux:textarea wire:model="about" label="Tentang" rows="4" required />
@@ -139,14 +139,14 @@ new #[Title('Pengaturan Website')] class extends Component {
 
         <flux:separator class="my-2" />
         <flux:heading size="sm">SEO Default (fallback site-wide)</flux:heading>
-        <p class="text-sm leading-6 text-[#626260]">Dipakai <code class="rounded bg-[#f5f1ec] px-1 py-0.5 text-xs">MetaService</code> sebagai default jika halaman tidak set meta sendiri. Kosongkan untuk fallback ke Nama Perusahaan / Tentang. Bisa di-override per-controller via <code class="rounded bg-[#f5f1ec] px-1 py-0.5 text-xs">forHome()</code> / <code class="rounded bg-[#f5f1ec] px-1 py-0.5 text-xs">set([...])</code>.</p>
+        <p class="text-sm leading-6 text-[#65646e]">Dipakai <code class="rounded bg-[#f3f6ff] px-1 py-0.5 text-xs">MetaService</code> sebagai default jika halaman tidak set meta sendiri. Kosongkan untuk fallback ke Nama Perusahaan / Tentang. Bisa di-override per-controller via <code class="rounded bg-[#f3f6ff] px-1 py-0.5 text-xs">forHome()</code> / <code class="rounded bg-[#f3f6ff] px-1 py-0.5 text-xs">set([...])</code>.</p>
         <flux:input wire:model="seo_title" label="SEO Title" placeholder="Contoh: IdeyaWeb — Digital Agency & IT Solution" description="Judul default (title tag). Ideal ≤60 karakter." />
         <flux:textarea wire:model="seo_description" label="SEO Description" rows="3" placeholder="Deskripsi singkat untuk hasil pencarian & share..." description="Ideal 150–160 karakter." />
         <flux:input wire:model="seo_keywords" label="SEO Keywords" placeholder="laravel, agency, website, aplikasi" description="Pisahkan dengan koma." />
-        <div class="space-y-3 rounded-xl border border-[#d3cec6] bg-[#f5f1ec] p-4">
+        <div class="space-y-3 rounded-xl border border-[#e3eaff] bg-[#fafbff] p-4">
             <div class="flex items-center justify-between">
-                <label class="text-sm font-medium text-[#111111]">OG Image Default</label>
-                <span class="text-xs text-[#626260]">JPG/PNG/WebP max 4MB — dipakai og:image & twitter:image</span>
+                <label class="text-sm font-medium text-[#100f12]">OG Image Default</label>
+                <span class="text-xs text-[#65646e]">JPG/PNG/WebP max 4MB — dipakai og:image & twitter:image</span>
             </div>
             @php
                 $ogPreview = null;
@@ -160,22 +160,22 @@ new #[Title('Pengaturan Website')] class extends Component {
                 }
             @endphp
             @if($ogPreview)
-                <div class="overflow-hidden rounded-lg border border-[#d3cec6] bg-white p-2">
+                <div class="overflow-hidden rounded-lg border border-[#e3eaff] bg-white p-2">
                     <img src="{{ $ogPreview }}" alt="OG preview" class="h-48 w-full rounded-md object-cover" />
                     <div class="mt-2 flex gap-2">
                         <flux:button size="sm" variant="danger" wire:click="removeSeoOgImage" type="button">Hapus Gambar</flux:button>
                     </div>
                 </div>
             @endif
-            <input type="file" wire:model="seoOgImageUpload" accept="image/*" class="block w-full rounded-lg border border-[#d3cec6] bg-white px-3 py-2 text-sm text-[#111111] file:mr-3 file:rounded-md file:border-0 file:bg-[#111111] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-black" />
-            <div wire:loading wire:target="seoOgImageUpload" class="text-xs text-[#626260]">Mengunggah...</div>
+            <input type="file" wire:model="seoOgImageUpload" accept="image/*" class="block w-full rounded-lg border border-[#e3eaff] bg-white px-3 py-2 text-sm text-[#100f12] file:mr-3 file:rounded-md file:border-0 file:bg-[#0a1589] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-[#06105a]" />
+            <div wire:loading wire:target="seoOgImageUpload" class="text-xs text-[#65646e]">Mengunggah...</div>
             @error('seoOgImageUpload')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
             <flux:input wire:model="seo_og_image" label="Atau URL / path" placeholder="https://... atau /images/og-default.jpg" description="Jika upload di atas dipakai, field ini akan terisi otomatis dengan path storage." />
         </div>
 
         <div class="pt-4 flex gap-2">
             <flux:button type="submit" variant="primary">Simpan Pengaturan</flux:button>
-            <a href="{{ route('home') }}" target="_blank" class="inline-flex items-center rounded-lg border px-4 py-2 text-sm hover:bg-[#f5f1ec]">Lihat Homepage</a>
+            <a href="{{ route('home') }}" target="_blank" class="inline-flex items-center rounded-lg border px-4 py-2 text-sm hover:bg-[#f3f6ff]">Lihat Homepage</a>
         </div>
     </form>
 </section>

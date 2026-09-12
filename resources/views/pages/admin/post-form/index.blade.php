@@ -160,7 +160,7 @@ new #[Title('Form Post')] class extends Component
 }; ?>
 <section class="w-full max-w-3xl mx-auto">
     <div class="flex items-center gap-3">
-        <a href="{{ route('admin.posts') }}" wire:navigate class="inline-flex items-center gap-1 text-sm font-medium text-[#626260] hover:text-[#111111]">
+        <a href="{{ route('admin.posts') }}" wire:navigate class="inline-flex items-center gap-1 text-sm font-medium text-[#65646e] hover:text-[#100f12]">
             <span>←</span> Kembali ke Posts
         </a>
     </div>
@@ -170,7 +170,7 @@ new #[Title('Form Post')] class extends Component
         <flux:subheading>{{ $isEdit ? 'Perbarui artikel #'.$id.' dan simpan perubahan.' : 'Buat artikel baru, lengkapi gambar dan caption bila perlu.' }}</flux:subheading>
     </div>
 
-    <form wire:submit="save" class="mt-6 space-y-4 rounded-2xl border border-[#d3cec6] bg-white p-6" enctype="multipart/form-data">
+    <form wire:submit="save" class="mt-6 space-y-4 rounded-2xl border border-[#e3eaff] bg-white p-6" enctype="multipart/form-data">
         <flux:input wire:model="title" label="Judul" required placeholder="Judul artikel..." />
         <flux:input wire:model="slug" label="Slug" description="Kosongkan untuk auto-generate" placeholder="judul-artikel" />
         <flux:textarea wire:model="excerpt" label="Excerpt" rows="2" description="Ringkasan, kosongkan untuk auto dari body" placeholder="Ringkasan singkat..." />
@@ -192,13 +192,13 @@ new #[Title('Form Post')] class extends Component
         <flux:input wire:model="published_at" label="Published At" type="datetime-local" />
 
         <!-- Gambar -->
-        <div class="space-y-3 rounded-xl border border-[#d3cec6] bg-[#f5f1ec] p-4">
+        <div class="space-y-3 rounded-xl border border-[#e3eaff] bg-[#fafbff] p-4">
             <div class="flex items-center justify-between">
-                <label class="text-sm font-medium text-[#111111]">Gambar</label>
-                <span class="text-xs text-[#626260]">JPG/PNG/WebP max 4MB</span>
+                <label class="text-sm font-medium text-[#100f12]">Gambar</label>
+                <span class="text-xs text-[#65646e]">JPG/PNG/WebP max 4MB</span>
             </div>
             @if ($existingImage || $imageUpload)
-                <div class="overflow-hidden rounded-lg border border-[#d3cec6] bg-white p-2">
+                <div class="overflow-hidden rounded-lg border border-[#e3eaff] bg-white p-2">
                     @if ($imageUpload)
                         <img src="{{ $imageUpload->temporaryUrl() }}" alt="Preview" class="h-52 w-full rounded-md object-cover" />
                     @else
@@ -209,8 +209,8 @@ new #[Title('Form Post')] class extends Component
                     </div>
                 </div>
             @endif
-            <input type="file" wire:model="imageUpload" accept="image/*" class="block w-full rounded-lg border border-[#d3cec6] bg-white px-3 py-2 text-sm text-[#111111] file:mr-3 file:rounded-md file:border-0 file:bg-[#111111] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-black" />
-            <div wire:loading wire:target="imageUpload" class="text-xs text-[#626260]">Mengunggah...</div>
+            <input type="file" wire:model="imageUpload" accept="image/*" class="block w-full rounded-lg border border-[#e3eaff] bg-white px-3 py-2 text-sm text-[#100f12] file:mr-3 file:rounded-md file:border-0 file:bg-[#0a1589] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-[#06105a]" />
+            <div wire:loading wire:target="imageUpload" class="text-xs text-[#65646e]">Mengunggah...</div>
             @error('imageUpload')
                 <p class="text-xs text-red-600">{{ $message }}</p>
             @enderror
@@ -219,8 +219,8 @@ new #[Title('Form Post')] class extends Component
 
         <flux:textarea wire:model="tags" label="Tags" rows="2" description="Pisahkan dengan koma, contoh: laravel, livewire, php" placeholder="laravel, livewire, php" />
 
-        <div class="flex justify-end gap-2 border-t border-[#ebe7e1] pt-4">
-            <a href="{{ route('admin.posts') }}" wire:navigate class="inline-flex items-center rounded-lg border border-[#d3cec6] bg-white px-4 py-2 text-sm font-medium text-[#111111] hover:bg-[#f5f1ec]">Batal</a>
+        <div class="flex justify-end gap-2 border-t border-[#e3eaff] pt-4">
+            <a href="{{ route('admin.posts') }}" wire:navigate class="inline-flex items-center rounded-lg border border-[#e3eaff] bg-white px-4 py-2 text-sm font-medium text-[#100f12] hover:bg-[#f3f6ff]">Batal</a>
             <flux:button type="submit" variant="primary">{{ $isEdit ? 'Update' : 'Simpan' }}</flux:button>
         </div>
     </form>

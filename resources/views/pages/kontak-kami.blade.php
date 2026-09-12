@@ -16,7 +16,7 @@
             'linkedin' => $profile['linkedin'] ?? null,
         ]);
 
-        $inputClass = 'w-full rounded-[12px] border border-[#d3cec6] bg-white px-4 py-3 text-sm text-[#100f12] placeholder:text-[#9c9fa5] focus:border-[#0a1589] focus:outline-none focus:ring-1 focus:ring-[#0a1589]';
+        $inputClass = 'w-full rounded-[12px] border border-[#e3eaff] bg-white px-4 py-3 text-sm text-[#100f12] placeholder:text-[#aaa9ae] focus:border-[#0a1589] focus:outline-none focus:ring-1 focus:ring-[#0a1589]';
         $labelClass = 'mb-1.5 block text-sm font-medium text-[#100f12]';
     @endphp
 
@@ -37,14 +37,14 @@
                         <p class="mt-2 text-sm leading-6 text-[#65646e]">Isi formulir di bawah ini, kami akan menghubungi Anda kembali dalam 1&times;24 jam kerja.</p>
 
                         @if (session('contact_status'))
-                            <div role="status" class="mt-6 flex items-start gap-3 rounded-[12px] border border-[#bbf7d0] bg-[#f0fdf4] p-4 text-sm leading-6 text-[#166534]">
+                            <div role="status" class="mt-6 flex items-start gap-3 rounded-[12px] border border-[#25742d] bg-[#f0fdf4] p-4 text-sm leading-6 text-[#25742d]">
                                 <span aria-hidden="true">✓</span>
                                 <span>{{ session('contact_status') }}</span>
                             </div>
                         @endif
 
                         @if ($errors->any())
-                            <div role="alert" class="mt-6 rounded-[12px] border border-[#fecaca] bg-[#fef2f2] p-4 text-sm leading-6 text-[#b91c1c]">
+                            <div role="alert" class="mt-6 rounded-[12px] border border-[#c62424] bg-[#fef2f2] p-4 text-sm leading-6 text-[#c62424]">
                                 <p class="font-medium">Mohon periksa kembali data Anda:</p>
                                 <ul class="mt-2 list-inside list-disc space-y-1">
                                     @foreach ($errors->all() as $error)

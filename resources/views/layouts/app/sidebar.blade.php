@@ -3,8 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-[#f5f1ec] antialiased">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-[#d3cec6] bg-[#f5f1ec]">
+    <body class="min-h-screen bg-white antialiased">
+        <flux:sidebar sticky collapsible="mobile" class="border-e border-[#e3eaff] bg-[#fafbff]">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />

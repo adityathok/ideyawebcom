@@ -39,6 +39,18 @@ test('renders the kontak page with a working contact form', function () {
         ->assertSee('name="website"', false);
 });
 
+test('applies the rootly design system to the kontak page', function () {
+    $response = $this->get(route('kontak'))->assertOk();
+
+    // Hairline inputs and tertiary placeholders (DESIGN.md).
+    $response->assertSee('e3eaff', false);
+    $response->assertSee('aaa9ae', false);
+
+    // The old cream palette is gone.
+    $response->assertDontSee('d3cec6', false);
+    $response->assertDontSee('9c9fa5', false);
+});
+
 test('renders the privacy policy page', function () {
     $this->get(route('privacy'))
         ->assertOk()

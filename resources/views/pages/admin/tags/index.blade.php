@@ -96,9 +96,9 @@ new #[Title('Tags')] class extends Component {
             ->paginate(10);
     @endphp
 
-    <div class="mt-6 overflow-hidden rounded-xl border border-[#d3cec6] bg-white">
+    <div class="mt-6 overflow-hidden rounded-xl border border-[#e3eaff] bg-white">
         <table class="w-full text-left text-sm">
-            <thead class="bg-[#f5f1ec]">
+            <thead class="bg-[#fafbff]">
                 <tr>
                     <th class="px-4 py-3 font-semibold">Nama</th>
                     <th class="px-4 py-3 font-semibold">Slug</th>
@@ -106,11 +106,11 @@ new #[Title('Tags')] class extends Component {
                     <th class="px-4 py-3 font-semibold text-right">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-[#ebe7e1]">
+            <tbody class="divide-y divide-[#e3eaff]">
                 @forelse ($tags as $tag)
-                    <tr wire:key="tag-{{ $tag->id }}" class="bg-white hover:bg-[#f5f1ec]/60 transition">
+                    <tr wire:key="tag-{{ $tag->id }}" class="bg-white hover:bg-[#f3f6ff]/60 transition">
                         <td class="px-4 py-3 font-medium">#{{ $tag->name }}</td>
-                        <td class="px-4 py-3 text-[#626260]">{{ $tag->slug }}</td>
+                        <td class="px-4 py-3 text-[#65646e]">{{ $tag->slug }}</td>
                         <td class="px-4 py-3">{{ $tag->posts_count }}</td>
                         <td class="px-4 py-3">
                             <div class="flex justify-end gap-1.5">
@@ -121,12 +121,12 @@ new #[Title('Tags')] class extends Component {
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-4 py-12 text-center text-sm text-[#626260]">Tidak ada tag ditemukan.</td>
+                        <td colspan="4" class="px-4 py-12 text-center text-sm text-[#65646e]">Tidak ada tag ditemukan.</td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
-        <div class="border-t border-[#ebe7e1] bg-white p-4">
+        <div class="border-t border-[#e3eaff] bg-white p-4">
             {{ $tags->links() }}
         </div>
     </div>

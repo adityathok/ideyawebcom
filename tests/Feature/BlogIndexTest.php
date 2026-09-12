@@ -30,6 +30,20 @@ test('applies the rootly design system to the blog index', function () {
     $response->assertDontSee('ebe7e1', false);
 });
 
+test('applies the rootly design system to pagination', function () {
+    Post::factory()->published()->count(15)->create();
+
+    $response = $this->get(route('blog.index'))->assertOk();
+
+    // Active page uses the deep-blue primary (DESIGN.md).
+    $response->assertSee('0a1589', false);
+
+    // The old cream palette is gone.
+    $response->assertDontSee('f5f1ec', false);
+    $response->assertDontSee('d3cec6', false);
+    $response->assertDontSee('7b7b78', false);
+});
+
 test('renders the blog index empty state', function () {
     $this->get(route('blog.index'))
         ->assertOk()

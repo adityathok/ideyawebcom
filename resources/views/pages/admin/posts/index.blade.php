@@ -53,11 +53,11 @@ new #[Title('Posts')] class extends Component
             <flux:heading size="xl">Posts</flux:heading>
             <flux:subheading>Kelola artikel blog ({{ \App\Models\Post::count() }} total, {{ \App\Models\Post::published()->count() }} published).</flux:subheading>
         </div>
-        <a href="{{ route('admin.post-form') }}" wire:navigate class="inline-flex items-center rounded-lg bg-[#111111] px-4 py-2 text-sm font-medium text-white hover:bg-black">+ Post Baru</a>
+        <a href="{{ route('admin.post-form') }}" wire:navigate class="inline-flex items-center rounded-lg bg-[#0a1589] px-4 py-2 text-sm font-medium text-white hover:bg-[#06105a]">+ Post Baru</a>
     </div>
 
-    <!-- Filter — card putih DESIGN.md: hairline #d3cec6, rounded-xl 12px -->
-    <div class="mt-6 rounded-xl border border-[#d3cec6] bg-white p-4">
+    <!-- Filter — card putih DESIGN.md: hairline #e3eaff, rounded-xl 12px -->
+    <div class="mt-6 rounded-xl border border-[#e3eaff] bg-white p-4">
         <div class="flex flex-col gap-3 lg:flex-row lg:items-end">
             <div class="flex-1">
                 <flux:input wire:model.live.debounce.300ms="search" label="Cari artikel" placeholder="Cari judul..." icon="magnifying-glass" />
@@ -78,18 +78,18 @@ new #[Title('Posts')] class extends Component
             </div>
         </div>
         @if ($search !== '' || $filterStatus !== '' || $filterCategory !== '')
-            <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-[#ebe7e1] pt-4">
-                <span class="text-xs font-medium text-[#626260]">Filter aktif:</span>
+            <div class="mt-4 flex flex-wrap items-center gap-2 border-t border-[#e3eaff] pt-4">
+                <span class="text-xs font-medium text-[#65646e]">Filter aktif:</span>
                 @if ($search !== '')
-                    <span class="inline-flex items-center gap-1 rounded-full bg-[#f5f1ec] border border-[#d3cec6] px-3 py-1 text-xs text-[#111111]">“{{ \Illuminate\Support\Str::limit($search, 24) }}”</span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-[#f3f6ff] border border-[#e3eaff] px-3 py-1 text-xs text-[#100f12]">“{{ \Illuminate\Support\Str::limit($search, 24) }}”</span>
                 @endif
                 @if ($filterStatus !== '')
-                    <span class="inline-flex rounded-full bg-[#111111] px-3 py-1 text-xs font-medium text-white">{{ ucfirst($filterStatus) }}</span>
+                    <span class="inline-flex rounded-full bg-[#0a1589] px-3 py-1 text-xs font-medium text-white">{{ ucfirst($filterStatus) }}</span>
                 @endif
                 @if ($filterCategory !== '')
                     @php $fc = \App\Models\Category::find($filterCategory); @endphp
                     @if ($fc)
-                        <span class="inline-flex items-center gap-1.5 rounded-full border border-[#d3cec6] bg-white px-3 py-1 text-xs font-medium text-[#111111]"><span class="size-2 rounded-full" style="background: {{ $fc->color ?? '#52525b' }}"></span>{{ $fc->name }}</span>
+                        <span class="inline-flex items-center gap-1.5 rounded-full border border-[#e3eaff] bg-white px-3 py-1 text-xs font-medium text-[#100f12]"><span class="size-2 rounded-full" style="background: {{ $fc->color ?? '#7d95ff' }}"></span>{{ $fc->name }}</span>
                     @endif
                 @endif
                 <flux:button size="sm" variant="ghost" wire:click="clearFilters">Reset</flux:button>
@@ -106,55 +106,55 @@ new #[Title('Posts')] class extends Component
             ->paginate(10);
     @endphp
 
-    <div class="mt-6 overflow-hidden rounded-xl border border-[#d3cec6] bg-white">
+    <div class="mt-6 overflow-hidden rounded-xl border border-[#e3eaff] bg-white">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-                <thead class="bg-[#f5f1ec]">
+                <thead class="bg-[#fafbff]">
                     <tr>
-                        <th class="px-4 py-3 font-semibold text-[#111111] w-[42%]">Judul</th>
-                        <th class="px-4 py-3 font-semibold text-[#111111]">Kategori</th>
-                        <th class="px-4 py-3 font-semibold text-[#111111]">Status</th>
-                        <th class="px-4 py-3 font-semibold text-[#111111] text-center">Views</th>
-                        <th class="px-4 py-3 font-semibold text-[#111111] text-right">Aksi</th>
+                        <th class="px-4 py-3 font-semibold text-[#100f12] w-[42%]">Judul</th>
+                        <th class="px-4 py-3 font-semibold text-[#100f12]">Kategori</th>
+                        <th class="px-4 py-3 font-semibold text-[#100f12]">Status</th>
+                        <th class="px-4 py-3 font-semibold text-[#100f12] text-center">Views</th>
+                        <th class="px-4 py-3 font-semibold text-[#100f12] text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#ebe7e1]">
+                <tbody class="divide-y divide-[#e3eaff]">
                     @forelse ($posts as $post)
-                        <tr class="bg-white hover:bg-[#f5f1ec]/60 transition">
+                        <tr class="bg-white hover:bg-[#f3f6ff]/60 transition">
                             <td class="px-4 py-3">
                                 <div class="flex gap-3">
-                                    <div class="hidden sm:block size-12 shrink-0 overflow-hidden rounded-lg border border-[#ebe7e1] bg-[#f5f1ec]">
+                                    <div class="hidden sm:block size-12 shrink-0 overflow-hidden rounded-lg border border-[#e3eaff] bg-[#fafbff]">
                                         @php $thumb = $post->imageUrl(); @endphp
                                         @if ($thumb)
                                             <img src="{{ $thumb }}" alt="" class="h-full w-full object-cover" loading="lazy" />
                                         @else
-                                            <div class="flex h-full w-full items-center justify-center text-[#7b7b78] text-xs">—</div>
+                                            <div class="flex h-full w-full items-center justify-center text-[#787685] text-xs">—</div>
                                         @endif
                                     </div>
                                     <div class="min-w-0">
-                                        <div class="font-medium text-[#111111] line-clamp-1">{{ $post->title }}</div>
-                                        <div class="text-xs text-[#626260] truncate">{{ $post->slug }}</div>
+                                        <div class="font-medium text-[#100f12] line-clamp-1">{{ $post->title }}</div>
+                                        <div class="text-xs text-[#65646e] truncate">{{ $post->slug }}</div>
                                         @if (filled($post->image_caption))
-                                            <div class="text-xs italic text-[#626260] line-clamp-1">“{{ $post->image_caption }}”</div>
+                                            <div class="text-xs italic text-[#65646e] line-clamp-1">“{{ $post->image_caption }}”</div>
                                         @endif
                                     </div>
                                 </div>
                             </td>
                             <td class="px-4 py-3">
                                 @if ($post->category)
-                                    <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium text-white" style="background: {{ $post->category->color ?? '#52525b' }}">{{ $post->category->name }}</span>
+                                    <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium text-white" style="background: {{ $post->category->color ?? '#7d95ff' }}">{{ $post->category->name }}</span>
                                 @else
-                                    <span class="text-[#626260]">-</span>
+                                    <span class="text-[#65646e]">-</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $post->status->value === 'published' ? 'bg-green-100 text-green-700' : ($post->status->value === 'draft' ? 'bg-[#ebe7e1] text-[#626260]' : 'bg-amber-100 text-amber-700') }}">{{ $post->status->label() }}</span>
+                                <span class="inline-flex rounded-full px-2.5 py-1 text-xs font-medium {{ $post->status->value === 'published' ? 'bg-green-100 text-green-700' : ($post->status->value === 'draft' ? 'bg-[#f3f6ff] text-[#65646e]' : 'bg-amber-100 text-amber-700') }}">{{ $post->status->label() }}</span>
                             </td>
-                            <td class="px-4 py-3 text-center text-[#111111]">{{ $post->view_count }}</td>
+                            <td class="px-4 py-3 text-center text-[#100f12]">{{ $post->view_count }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end gap-1.5">
-                                    <a href="{{ route('blog.show', $post) }}" target="_blank" class="inline-flex items-center rounded-lg border border-[#d3cec6] bg-white px-2.5 py-1.5 text-xs font-medium text-[#111111] hover:bg-[#f5f1ec]">Lihat</a>
-                                    <a href="{{ route('admin.post-form', ['id' => $post->id]) }}" wire:navigate class="inline-flex items-center rounded-lg bg-[#111111] px-2.5 py-1.5 text-xs font-medium text-white hover:bg-black">Edit</a>
+                                    <a href="{{ route('blog.show', $post) }}" target="_blank" class="inline-flex items-center rounded-lg border border-[#e3eaff] bg-white px-2.5 py-1.5 text-xs font-medium text-[#100f12] hover:bg-[#f3f6ff]">Lihat</a>
+                                    <a href="{{ route('admin.post-form', ['id' => $post->id]) }}" wire:navigate class="inline-flex items-center rounded-lg bg-[#0a1589] px-2.5 py-1.5 text-xs font-medium text-white hover:bg-[#06105a]">Edit</a>
                                     <flux:button size="sm" variant="danger" wire:click="delete({{ $post->id }})" wire:confirm="Hapus post ini?">Hapus</flux:button>
                                 </div>
                             </td>
@@ -162,7 +162,7 @@ new #[Title('Posts')] class extends Component
                     @empty
                         <tr>
                             <td colspan="5" class="px-4 py-12 text-center">
-                                <p class="text-sm text-[#626260]">Tidak ada post ditemukan.</p>
+                                <p class="text-sm text-[#65646e]">Tidak ada post ditemukan.</p>
                                 @if ($search !== '' || $filterStatus !== '' || $filterCategory !== '')
                                     <flux:button size="sm" variant="ghost" wire:click="clearFilters" class="mt-2">Reset filter</flux:button>
                                 @endif
@@ -172,7 +172,7 @@ new #[Title('Posts')] class extends Component
                 </tbody>
             </table>
         </div>
-        <div class="border-t border-[#ebe7e1] bg-white p-4">
+        <div class="border-t border-[#e3eaff] bg-white p-4">
             {{ $posts->links() }}
         </div>
     </div>

@@ -9,6 +9,18 @@ test('login screen can be rendered', function () {
     $response->assertOk();
 });
 
+test('applies the rootly design system to the auth screens', function () {
+    $response = $this->get(route('login'))->assertOk();
+
+    // White canvas and ink logo (DESIGN.md).
+    $response->assertSee('bg-white', false);
+    $response->assertSee('100f12', false);
+
+    // The old cream/off-white palette is gone.
+    $response->assertDontSee('f5f1ec', false);
+    $response->assertDontSee('d3cec6', false);
+});
+
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
 

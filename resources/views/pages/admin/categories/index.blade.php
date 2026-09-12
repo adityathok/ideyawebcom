@@ -13,7 +13,7 @@ new #[Title('Kategori')] class extends Component {
     public string $name = '';
     public string $slug = '';
     public string $description = '';
-    public string $color = '#52525b';
+    public string $color = '#7d95ff';
     public ?int $editingId = null;
     public ?int $deletingId = null;
     public string $deletingName = '';
@@ -30,7 +30,7 @@ new #[Title('Kategori')] class extends Component {
     public function create(): void
     {
         $this->reset(['name','slug','description','editingId']);
-        $this->color = '#52525b';
+        $this->color = '#7d95ff';
         Flux::modal('category-form')->show();
     }
 
@@ -41,7 +41,7 @@ new #[Title('Kategori')] class extends Component {
         $this->name = $cat->name;
         $this->slug = $cat->slug;
         $this->description = $cat->description ?? '';
-        $this->color = $cat->color ?? '#52525b';
+        $this->color = $cat->color ?? '#7d95ff';
         Flux::modal('category-form')->show();
     }
 
@@ -66,7 +66,7 @@ new #[Title('Kategori')] class extends Component {
         ]);
 
         $this->reset(['name','slug','description','editingId']);
-        $this->color = '#52525b';
+        $this->color = '#7d95ff';
         Flux::toast(variant: 'success', text: 'Kategori disimpan.');
         Flux::modal('category-form')->close();
     }
@@ -103,9 +103,9 @@ new #[Title('Kategori')] class extends Component {
         <flux:input wire:model.live.debounce.300ms="search" placeholder="Cari kategori..." icon="magnifying-glass" />
     </div>
 
-    <div class="mt-6 overflow-hidden rounded-xl border border-[#d3cec6]">
+    <div class="mt-6 overflow-hidden rounded-xl border border-[#e3eaff]">
         <table class="w-full text-left text-sm">
-            <thead class="bg-[#f5f1ec]">
+            <thead class="bg-[#fafbff]">
                 <tr>
                     <th class="px-4 py-3 font-semibold">Nama</th>
                     <th class="px-4 py-3 font-semibold">Slug</th>
@@ -114,12 +114,12 @@ new #[Title('Kategori')] class extends Component {
                     <th class="px-4 py-3 font-semibold">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-[#ebe7e1]">
+            <tbody class="divide-y divide-[#e3eaff]">
                 @foreach(\App\Models\Category::when($search, fn($q) => $q->where('name','like',"%{$search}%"))->withCount('posts')->orderBy('name')->paginate(10) as $cat)
                     <tr class="bg-white">
-                        <td class="px-4 py-3 font-medium flex items-center gap-2"><span class="size-3 rounded-full" style="background: {{ $cat->color ?? '#52525b' }}"></span> {{ $cat->name }}</td>
-                        <td class="px-4 py-3 text-[#626260]">{{ $cat->slug }}</td>
-                        <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs text-white" style="background: {{ $cat->color ?? '#52525b' }}">{{ $cat->color ?? '-' }}</span></td>
+                        <td class="px-4 py-3 font-medium flex items-center gap-2"><span class="size-3 rounded-full" style="background: {{ $cat->color ?? '#7d95ff' }}"></span> {{ $cat->name }}</td>
+                        <td class="px-4 py-3 text-[#65646e]">{{ $cat->slug }}</td>
+                        <td class="px-4 py-3"><span class="rounded px-2 py-1 text-xs text-white" style="background: {{ $cat->color ?? '#7d95ff' }}">{{ $cat->color ?? '-' }}</span></td>
                         <td class="px-4 py-3">{{ $cat->posts_count }}</td>
                         <td class="px-4 py-3 flex gap-1">
                             <flux:button size="sm" variant="ghost" wire:click="edit({{ $cat->id }})">Edit</flux:button>
