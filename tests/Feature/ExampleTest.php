@@ -21,7 +21,7 @@ test('applies the rootly design system to the home page', function () {
 
     // Dark hero: deep-blue scrim over the local sky photo, white text, light nav.
     $response->assertSee('text-gradient-dark', false);
-    $response->assertSee('hero-sky.jpg', false);
+    $response->assertSee('hero-sky.webp', false);
     $response->assertSee('data-nav-light', false);
 
     // Tech logos are recoloured white via CSS filters for the dark hero.
