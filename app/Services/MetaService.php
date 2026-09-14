@@ -160,7 +160,7 @@ final class MetaService
         [$imageWidth, $imageHeight] = $this->imageDimensions($image);
         $url = $this->strOrNull($this->data['url'] ?? null) ?? url()->current();
         $type = $this->strOrNull($this->data['type'] ?? null) ?? 'website';
-        $locale = str_replace('_', '-', (string) app()->getLocale()) ?: 'id';
+        $locale = $this->strOrNull($this->data['locale'] ?? null) ?? $this->defaultOgLocale();
 
         $robots = $this->strOrNull($this->data['robots'] ?? null) ?? 'index, follow';
         $canonical = $this->strOrNull($this->data['canonical'] ?? null) ?? $url;
@@ -285,6 +285,20 @@ final class MetaService
         $height = (int) ($size[1] ?? 0);
 
         return [$width > 0 ? $width : null, $height > 0 ? $height : null];
+    }
+
+    /**
+     * og:locale wajib berformat language_TERRITORY (`id_ID`), bukan `id-ID`.
+     *
+     * Locale aplikasi yang sudah membawa region dihormati apa adanya. Kode bahasa
+     * tanpa region (`en` bawaan Laravel, atau `id`) tidak cukup untuk og:locale:
+     * seluruh konten publik situs ini berbahasa Indonesia, jadi default-nya `id_ID`.
+     */
+    private function defaultOgLocale(): string
+    {
+        $locale = str_replace('-', '_', (string) app()->getLocale());
+
+        return str_contains($locale, '_') ? $locale : 'id_ID';
     }
 
     /**

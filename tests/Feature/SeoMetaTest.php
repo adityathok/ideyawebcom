@@ -368,3 +368,37 @@ test('falls back to the configured default when a page has no og image asset', f
         });
     }
 });
+
+test('renders og:locale as id_ID', function () {
+    foreach ([route('home'), route('blog.index')] as $url) {
+        $this->get($url)
+            ->assertOk()
+            ->assertSee('<meta property="og:locale" content="id_ID" />', false);
+    }
+});
+
+test('keeps language_TERRITORY format when the app locale carries a region', function () {
+    app()->setLocale('en-US');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('<meta property="og:locale" content="en_US" />', false)
+        ->assertDontSee('<meta property="og:locale" content="en-US" />', false);
+});
+
+test('falls back to id_ID when the app locale has no region', function (string $locale) {
+    app()->setLocale($locale);
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('<meta property="og:locale" content="id_ID" />', false);
+})->with([
+    'laravel default' => 'en',
+    'bare indonesian' => 'id',
+]);
+
+test('lets a page override og:locale', function () {
+    $meta = app(MetaService::class)->set(['locale' => 'en_US'])->generate();
+
+    expect($meta['locale'])->toBe('en_US');
+});

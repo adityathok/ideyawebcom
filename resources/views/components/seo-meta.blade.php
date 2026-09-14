@@ -13,7 +13,8 @@
     $robots = $m['robots'] ?? 'index, follow';
     $url = $m['url'] ?? $canonical;
     $siteName = $m['site_name'] ?? config('app.name');
-    $locale = $m['locale'] ?? (str_replace('_', '-', app()->getLocale()) ?: 'id_ID');
+    // og:locale berformat language_TERRITORY; situs ini berbahasa Indonesia.
+    $locale = $m['locale'] ?? 'id_ID';
     $type = $m['type'] ?? 'website';
     $image = $m['image'] ?? null;
     // Jaring pengaman SEO: og:image wajib terisi, walau pemanggil tidak mengirimnya.
