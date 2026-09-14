@@ -9,7 +9,7 @@
     $robots = $m['robots'] ?? 'index, follow';
     $url = $m['url'] ?? $canonical;
     $siteName = $m['site_name'] ?? config('app.name');
-    $locale = $m['locale'] ?? str_replace('_', '-', app()->getLocale());
+    $locale = $m['locale'] ?? (str_replace('_', '-', app()->getLocale()) ?: 'id_ID');
     $type = $m['type'] ?? 'website';
     $image = $m['image'] ?? null;
     $imageAlt = $m['image_alt'] ?? $title;
