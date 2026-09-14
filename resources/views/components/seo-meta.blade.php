@@ -21,6 +21,10 @@
         $image = asset('images/og-logo.jpg');
     }
     $imageAlt = $m['image_alt'] ?? $title;
+    // og:image:width/height hanya dirender kalau keduanya diketahui; crawler
+    // memakai pasangan ini untuk menyiapkan preview tanpa mengunduh gambar.
+    $imageWidth = $m['image_width'] ?? null;
+    $imageHeight = $m['image_height'] ?? null;
     $twitterCard = $m['twitter_card'] ?? ($image ? 'summary_large_image' : 'summary');
     $publishedTime = $m['published_time'] ?? null;
     $author = $m['author'] ?? null;
@@ -42,6 +46,8 @@
 <meta property="og:description" content="{{ $description }}" />
 @if($url)<meta property="og:url" content="{{ $url }}" />@endif
 <meta property="og:image" content="{{ $image }}" />
+@if($imageWidth && $imageHeight)<meta property="og:image:width" content="{{ $imageWidth }}" />
+<meta property="og:image:height" content="{{ $imageHeight }}" />@endif
 <meta property="og:image:alt" content="{{ $imageAlt }}" />
 @if($publishedTime)<meta property="article:published_time" content="{{ $publishedTime }}" />@endif
 @if($author)<meta property="article:author" content="{{ $author }}" />@endif

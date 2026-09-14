@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
  * Aset asli (kalau ada) dipindah sementara ke *.phpunit-bak lalu dikembalikan,
  * supaya tes tidak rapuh terhadap file yang nanti ditambahkan manual.
  */
-function withPageOgImage(string $slug, ?string $extension, Closure $callback): void
+function withPageOgImage(string $slug, ?string $extension, Closure $callback, ?string $contents = null): void
 {
     $directory = public_path('images');
     $extensions = ['jpg', 'jpeg', 'png', 'webp'];
@@ -31,7 +31,9 @@ function withPageOgImage(string $slug, ?string $extension, Closure $callback): v
     }
 
     if ($extension !== null) {
-        File::put("{$directory}/og-{$slug}.{$extension}", 'phpunit-og-image');
+        // Fixture 2000x1333 — sengaja beda dari kartu brand (1200x630) supaya tes
+        // dimensi membuktikan angkanya diambil dari gambar halaman itu sendiri.
+        File::put("{$directory}/og-{$slug}.{$extension}", $contents ?? File::get(public_path('images/page-hero-sky.jpg')));
     }
 
     try {
@@ -72,6 +74,29 @@ function postImageUrl(string $path): string
     $disk = Storage::disk('public');
 
     return $disk->url($path);
+}
+
+/**
+ * Menjalankan $callback dengan gambar sementara di disk public, lalu mengembalikan
+ * isi sebelumnya (atau menghapusnya kalau file itu memang belum ada).
+ */
+function withStoredImage(string $path, Closure $callback, ?string $contents = null): void
+{
+    $disk = Storage::disk('public');
+    $existed = $disk->exists($path);
+    $original = $existed ? $disk->get($path) : null;
+
+    $disk->put($path, $contents ?? File::get(public_path('images/page-hero-sky.jpg')));
+
+    try {
+        $callback();
+    } finally {
+        if ($existed) {
+            $disk->put($path, (string) $original);
+        } else {
+            $disk->delete($path);
+        }
+    }
 }
 
 test('renders a non-empty og:description on every public page', function () {
@@ -239,6 +264,58 @@ test('uses the image caption as og:image alt when the post provides one', functi
     $this->get(route('blog.show', $post))
         ->assertOk()
         ->assertSee('property="og:image:alt" content="Tangkapan layar dashboard"', false);
+});
+
+test('renders og:image dimensions for the default brand image', function () {
+    foreach ([route('home'), route('blog.index')] as $url) {
+        $this->get($url)
+            ->assertOk()
+            ->assertSee('<meta property="og:image:width" content="1200" />', false)
+            ->assertSee('<meta property="og:image:height" content="630" />', false);
+    }
+});
+
+test('renders og:image dimensions for a page specific image', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    withPageOgImage('layanan', 'jpg', function () {
+        $this->get(route('layanan'))
+            ->assertOk()
+            ->assertSee('<meta property="og:image:width" content="2000" />', false)
+            ->assertSee('<meta property="og:image:height" content="1333" />', false);
+    });
+});
+
+test('renders og:image dimensions for a post image stored on the public disk', function () {
+    $post = Post::factory()->published()->create([
+        'title' => 'Panduan Web App',
+        'image' => 'posts/cover.jpg',
+    ]);
+
+    withStoredImage('posts/cover.jpg', function () use ($post) {
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertSee('<meta property="og:image:width" content="2000" />', false)
+            ->assertSee('<meta property="og:image:height" content="1333" />', false);
+    });
+});
+
+test('omits og:image dimensions for a remote og image', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('property="og:image" content="https://cdn.example.com/og-default.jpg"', false)
+        ->assertDontSee('og:image:width', false);
+});
+
+test('omits og:image dimensions when the image file cannot be read', function () {
+    withPageOgImage('layanan', 'png', function () {
+        $this->get(route('layanan'))
+            ->assertOk()
+            ->assertSee('og-layanan.png', false)
+            ->assertDontSee('og:image:width', false);
+    }, contents: 'bukan gambar');
 });
 
 test('uses the og image from settings as the default for pages without their own image', function () {

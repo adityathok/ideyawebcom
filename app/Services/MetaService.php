@@ -6,6 +6,8 @@ namespace App\Services;
 
 use App\Models\Post;
 use App\Models\Setting;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 final class MetaService
@@ -155,6 +157,7 @@ final class MetaService
         // halaman → judul halaman, gambar default/brand → nama situs.
         $imageAlt = $this->strOrNull($this->data['image_alt'] ?? null)
             ?? ($pageImage !== null ? $title : $siteName);
+        [$imageWidth, $imageHeight] = $this->imageDimensions($image);
         $url = $this->strOrNull($this->data['url'] ?? null) ?? url()->current();
         $type = $this->strOrNull($this->data['type'] ?? null) ?? 'website';
         $locale = str_replace('_', '-', (string) app()->getLocale()) ?: 'id';
@@ -218,6 +221,8 @@ final class MetaService
             'type' => $type,
             'image' => $image,
             'image_alt' => $imageAlt,
+            'image_width' => $imageWidth,
+            'image_height' => $imageHeight,
             'twitter_card' => $twitterCard,
             'published_time' => $publishedTime,
             'author' => $author,
@@ -252,6 +257,72 @@ final class MetaService
             : $siteDescription;
 
         return Str::limit($description, 160);
+    }
+
+    /**
+     * Dimensi og:image — hanya kalau gambarnya file lokal yang bisa dibaca.
+     *
+     * URL remote (CDN) sengaja dilewati supaya render halaman tidak menunggu
+     * request luar; crawler tetap membaca dimensinya sendiri saat itu.
+     *
+     * @return array{0: int|null, 1: int|null}
+     */
+    private function imageDimensions(?string $image): array
+    {
+        $file = $this->localImagePath($image);
+
+        if ($file === null) {
+            return [null, null];
+        }
+
+        $size = @getimagesize($file);
+
+        if ($size === false) {
+            return [null, null];
+        }
+
+        $width = (int) ($size[0] ?? 0);
+        $height = (int) ($size[1] ?? 0);
+
+        return [$width > 0 ? $width : null, $height > 0 ? $height : null];
+    }
+
+    /**
+     * Petakan URL gambar kembali ke file lokal, kalau memang file kita sendiri.
+     *
+     * Prefix storage diperiksa lebih dulu karena root publik adalah prefix yang
+     * lebih pendek dan ikut cocok untuk URL storage.
+     */
+    private function localImagePath(?string $image): ?string
+    {
+        if ($image === null) {
+            return null;
+        }
+
+        /** @var FilesystemAdapter $disk */
+        $disk = Storage::disk('public');
+
+        $bases = [
+            [$disk->url(''), $disk->path('')],
+            [asset(''), public_path()],
+        ];
+
+        foreach ($bases as [$urlBase, $root]) {
+            $urlBase = rtrim($urlBase, '/');
+            $root = rtrim($root, '/\\');
+
+            if ($urlBase === '' || ! str_starts_with($image, $urlBase.'/')) {
+                continue;
+            }
+
+            $file = $root.'/'.ltrim(substr($image, strlen($urlBase) + 1), '/');
+
+            if (is_file($file)) {
+                return $file;
+            }
+        }
+
+        return null;
     }
 
     private function strOrNull(mixed $value): ?string
