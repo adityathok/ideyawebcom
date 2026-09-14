@@ -72,6 +72,10 @@ final class BlogController extends Controller
             'description' => $category->description ?: 'Artikel kategori '.$category->name,
             'url' => route('blog.category', $category),
             'type' => 'website',
+            'breadcrumbs' => [
+                ['name' => 'Blog', 'url' => route('blog.index')],
+                ['name' => $category->name],
+            ],
         ])->generate();
 
         return view('pages.blog.category', compact('category', 'posts', 'seoMeta'));
@@ -90,6 +94,10 @@ final class BlogController extends Controller
             'description' => 'Artikel dengan tag #'.$tag->name,
             'url' => route('blog.tag', $tag),
             'type' => 'website',
+            'breadcrumbs' => [
+                ['name' => 'Blog', 'url' => route('blog.index')],
+                ['name' => '#'.$tag->name],
+            ],
         ])->generate();
 
         return view('pages.blog.tag', compact('tag', 'posts', 'seoMeta'));

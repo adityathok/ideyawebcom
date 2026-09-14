@@ -83,7 +83,18 @@ final class Setting extends Model
 
     public static function seoOgImageUrl(): ?string
     {
-        $path = (string) (self::get('seo_og_image', '') ?? '');
+        return self::publicUrl('seo_og_image');
+    }
+
+    /**
+     * Ubah nilai setting menjadi URL gambar yang bisa dirender crawler.
+     *
+     * Nilai absolut (`http://`, `https://`, `/`) dipakai apa adanya; selain itu
+     * dianggap path relatif di disk `public`.
+     */
+    public static function publicUrl(string $key): ?string
+    {
+        $path = (string) (self::get($key, '') ?? '');
         if ($path === '') {
             return null;
         }

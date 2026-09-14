@@ -98,6 +98,7 @@ final class MetaService
             'description' => 'Artikel, tutorial, dan insight tentang membangun produk digital — dari ide, desain, hingga scale.',
             'type' => 'website',
             'url' => url()->current(),
+            'breadcrumbs' => [['name' => 'Blog']],
         ], $extra));
     }
 
@@ -123,6 +124,10 @@ final class MetaService
             'author' => $post->author->name ?? null,
             'section' => $post->category->name ?? null,
             'tags' => $post->tags->pluck('name')->all(),
+            'breadcrumbs' => [
+                ['name' => 'Blog', 'url' => route('blog.index')],
+                ['name' => $post->title],
+            ],
         ], $extra));
     }
 
@@ -145,7 +150,8 @@ final class MetaService
         $seoImage = $this->withDefaults ? Setting::seoOgImageUrl() : null;
 
         $title = $this->strOrNull($this->data['title'] ?? null) ?? $seoTitle ?? $company;
-        $description = $this->resolveDescription($title, $company, $seoDescription, $profile);
+        $siteDescription = $this->siteDescription($seoDescription, $profile, $company);
+        $description = $this->resolveDescription($title, $company, $siteDescription);
 
         // Urutan og:image: gambar khusus halaman → default dari pengaturan (seo_og_image)
         // → banner brand bawaan, supaya tiap halaman selalu punya og:image.
@@ -184,29 +190,17 @@ final class MetaService
             $tags = null;
         }
 
-        // JSON-LD (Website / Article) — minimal, aman untuk Rich Results
-        $jsonLd = null;
-        if ($type === 'article') {
-            $jsonLd = [
-                '@context' => 'https://schema.org',
-                '@type' => 'Article',
-                'headline' => $title,
-                'description' => $description,
-                'author' => $author ? ['@type' => 'Person', 'name' => $author] : null,
-                'datePublished' => $publishedTime,
-                'image' => $image,
-                'mainEntityOfPage' => $url,
-            ];
-            $jsonLd = array_filter($jsonLd, fn ($v) => $v !== null && $v !== '');
-        } else {
-            $jsonLd = [
-                '@context' => 'https://schema.org',
-                '@type' => 'WebSite',
-                'name' => $siteName,
-                'url' => $canonical,
-                'description' => $description,
-            ];
+        $services = $this->data['services'] ?? [];
+        if (! is_array($services)) {
+            $services = [];
         }
+
+        $breadcrumbs = $this->data['breadcrumbs'] ?? [];
+        if (! is_array($breadcrumbs)) {
+            $breadcrumbs = [];
+        }
+
+        $isHome = rtrim($canonical, '/') === rtrim(url('/'), '/');
 
         return [
             'title' => $title,
@@ -228,7 +222,23 @@ final class MetaService
             'author' => $author,
             'section' => $section,
             'tags' => $tags,
-            'json_ld' => $jsonLd,
+            'json_ld' => $this->jsonLd([
+                'type' => $type,
+                'title' => $title,
+                'description' => $description,
+                'site_description' => $siteDescription,
+                'canonical' => $canonical,
+                'url' => $url,
+                'image' => $image,
+                'published_time' => $publishedTime,
+                'author' => $author,
+                'site_name' => $siteName,
+                'language' => str_replace('_', '-', $locale),
+                'profile' => $profile,
+                'is_home' => $isHome,
+                'services' => $services,
+                'breadcrumbs' => $breadcrumbs,
+            ]),
         ];
     }
 
@@ -237,26 +247,303 @@ final class MetaService
      *
      * Urutan: `description` eksplisit halaman → default SEO situs (di-awali judul
      * halaman agar tetap unik) → tagline/profil → nama aplikasi.
-     *
-     * @param  array<string, string>  $profile
      */
-    private function resolveDescription(string $title, string $company, ?string $seoDescription, array $profile): string
+    private function resolveDescription(string $title, string $company, string $siteDescription): string
     {
         $explicit = $this->strOrNull($this->data['description'] ?? null);
         if ($explicit !== null) {
             return Str::limit($explicit, 160);
         }
 
-        $siteDescription = $seoDescription
-            ?? ($this->withDefaults ? $this->strOrNull($profile['about'] ?? null) : null)
-            ?? ($this->withDefaults ? $this->strOrNull($profile['tagline'] ?? null) : null)
-            ?? $company;
-
         $description = $title !== $company
             ? $title.' — '.$siteDescription
             : $siteDescription;
 
         return Str::limit($description, 160);
+    }
+
+    /**
+     * Deskripsi situs (bukan halaman) dari pengaturan SEO → profil → pemanggil.
+     *
+     * @param  array<string, string>  $profile
+     */
+    private function siteDescription(?string $seoDescription, array $profile, string $fallback): string
+    {
+        if (! $this->withDefaults) {
+            return $fallback;
+        }
+
+        return $seoDescription
+            ?? $this->strOrNull($profile['about'] ?? null)
+            ?? $this->strOrNull($profile['tagline'] ?? null)
+            ?? $fallback;
+    }
+
+    /**
+     * Susun satu blok `@graph` JSON-LD.
+     *
+     * Organization & WebSite selalu hadir supaya node halaman bisa merujuk @id
+     * mereka tanpa crawler perlu menggabungkan blok terpisah. Node lain menyusul
+     * sesuai konteks: WebPage (halaman dalam), Article (post), Service (halaman
+     * layanan), dan BreadcrumbList.
+     *
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
+    private function jsonLd(array $context): array
+    {
+        $graph = [
+            $this->organizationSchema($context),
+            $this->websiteSchema($context),
+        ];
+
+        if ($context['type'] === 'article') {
+            $graph[] = $this->articleSchema($context);
+        } elseif (! $context['is_home']) {
+            $graph[] = $this->webPageSchema($context);
+        }
+
+        foreach ([$this->serviceSchema($context), $this->breadcrumbSchema($context)] as $partial) {
+            if ($partial !== null) {
+                $graph[] = $partial;
+            }
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@graph' => $graph,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
+    private function organizationSchema(array $context): array
+    {
+        /** @var array<string, string> $profile */
+        $profile = $context['profile'];
+
+        $streetAddress = $this->strOrNull($profile['address'] ?? null);
+
+        $logoUrl = $this->withDefaults ? Setting::publicUrl('logo') : null;
+        [$logoWidth, $logoHeight] = $this->imageDimensions($logoUrl);
+
+        return $this->withoutEmpty([
+            '@type' => 'Organization',
+            '@id' => $this->schemaId('organization'),
+            'name' => $context['site_name'],
+            'url' => url('/'),
+            'description' => $context['site_description'],
+            'email' => $this->strOrNull($profile['email'] ?? null),
+            'telephone' => $this->strOrNull($profile['phone'] ?? null),
+            'address' => $streetAddress === null
+                ? null
+                : ['@type' => 'PostalAddress', 'streetAddress' => $streetAddress],
+            'logo' => $logoUrl === null
+                ? null
+                : $this->withoutEmpty([
+                    '@type' => 'ImageObject',
+                    'url' => $logoUrl,
+                    'width' => $logoWidth,
+                    'height' => $logoHeight,
+                ]),
+            'sameAs' => array_values(array_filter([
+                $this->strOrNull($profile['facebook'] ?? null),
+                $this->strOrNull($profile['instagram'] ?? null),
+                $this->strOrNull($profile['twitter'] ?? null),
+                $this->strOrNull($profile['linkedin'] ?? null),
+            ])),
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
+    private function websiteSchema(array $context): array
+    {
+        return $this->withoutEmpty([
+            '@type' => 'WebSite',
+            '@id' => $this->schemaId('website'),
+            'url' => url('/'),
+            'name' => $context['site_name'],
+            'description' => $context['site_description'],
+            'inLanguage' => $context['language'],
+            'publisher' => ['@id' => $this->schemaId('organization')],
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
+    private function webPageSchema(array $context): array
+    {
+        return $this->withoutEmpty([
+            '@type' => 'WebPage',
+            '@id' => $context['canonical'].'#webpage',
+            'url' => $context['canonical'],
+            'name' => $context['title'],
+            'description' => $context['description'],
+            'inLanguage' => $context['language'],
+            'isPartOf' => ['@id' => $this->schemaId('website')],
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
+    private function articleSchema(array $context): array
+    {
+        $author = $context['author'];
+
+        return $this->withoutEmpty([
+            '@type' => 'Article',
+            '@id' => $context['canonical'].'#article',
+            'headline' => $context['title'],
+            'description' => $context['description'],
+            'author' => $author === null ? null : ['@type' => 'Person', 'name' => $author],
+            // Google mensyaratkan publisher untuk rich result Article.
+            'publisher' => ['@id' => $this->schemaId('organization')],
+            'datePublished' => $context['published_time'],
+            'image' => $context['image'],
+            'mainEntityOfPage' => $context['url'],
+            'inLanguage' => $context['language'],
+            'isPartOf' => ['@id' => $this->schemaId('website')],
+        ]);
+    }
+
+    /**
+     * Service + katalog layanan, hanya bila halaman mengirim meta key `services`.
+     *
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>|null
+     */
+    private function serviceSchema(array $context): ?array
+    {
+        /** @var array<int, mixed> $services */
+        $services = $context['services'];
+
+        $offers = [];
+
+        foreach ($services as $service) {
+            if (! is_array($service)) {
+                continue;
+            }
+
+            $name = $this->strOrNull($service['title'] ?? null);
+
+            if ($name === null) {
+                continue;
+            }
+
+            $offers[] = $this->withoutEmpty([
+                '@type' => 'Offer',
+                'itemOffered' => $this->withoutEmpty([
+                    '@type' => 'Service',
+                    'name' => $name,
+                    'description' => $this->strOrNull($service['short'] ?? null)
+                        ?? $this->strOrNull($service['desc'] ?? null),
+                ]),
+            ]);
+        }
+
+        if ($offers === []) {
+            return null;
+        }
+
+        $name = 'Layanan '.$context['site_name'];
+        $canonical = $context['canonical'];
+
+        return $this->withoutEmpty([
+            '@type' => 'Service',
+            '@id' => $canonical.'#service',
+            'name' => $name,
+            'serviceType' => $context['title'],
+            'description' => $context['description'],
+            'url' => $canonical,
+            'provider' => ['@id' => $this->schemaId('organization')],
+            'hasOfferCatalog' => [
+                '@type' => 'OfferCatalog',
+                'name' => $name,
+                'itemListElement' => $offers,
+            ],
+        ]);
+    }
+
+    /**
+     * BreadcrumbList dari meta key `breadcrumbs` — list `['name' => ..., 'url' => ...]`.
+     *
+     * "Beranda" ditambahkan otomatis; URL item terakhir default ke canonical halaman
+     * supaya struktur tetap valid walau pemanggil tidak mengirim URL-nya.
+     *
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>|null
+     */
+    private function breadcrumbSchema(array $context): ?array
+    {
+        /** @var array<int, mixed> $breadcrumbs */
+        $breadcrumbs = $context['breadcrumbs'];
+
+        if ($breadcrumbs === []) {
+            return null;
+        }
+
+        $items = [['name' => 'Beranda', 'url' => route('home')]];
+
+        foreach ($breadcrumbs as $breadcrumb) {
+            if (! is_array($breadcrumb)) {
+                continue;
+            }
+
+            $name = $this->strOrNull($breadcrumb['name'] ?? null);
+
+            if ($name === null) {
+                continue;
+            }
+
+            $items[] = ['name' => $name, 'url' => $this->strOrNull($breadcrumb['url'] ?? null)];
+        }
+
+        $lastIndex = array_key_last($items);
+        $elements = [];
+
+        foreach ($items as $index => $item) {
+            $elements[] = $this->withoutEmpty([
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $item['name'],
+                'item' => $item['url'] ?? ($index === $lastIndex ? $context['canonical'] : null),
+            ]);
+        }
+
+        return $this->withoutEmpty([
+            '@type' => 'BreadcrumbList',
+            '@id' => $context['canonical'].'#breadcrumb',
+            'itemListElement' => $elements,
+        ]);
+    }
+
+    private function schemaId(string $fragment): string
+    {
+        return url('/').'#'.$fragment;
+    }
+
+    /**
+     * Buang nilai kosong (null, '', []) tanpa mengubah urutan key, supaya JSON-LD
+     * hanya memuat properti yang benar-benar ada isinya.
+     *
+     * @param  array<string, mixed>  $schema
+     * @return array<string, mixed>
+     */
+    private function withoutEmpty(array $schema): array
+    {
+        return array_filter(
+            $schema,
+            static fn (mixed $value): bool => $value !== null && $value !== '' && $value !== [],
+        );
     }
 
     /**
