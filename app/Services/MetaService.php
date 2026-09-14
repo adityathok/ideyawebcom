@@ -137,11 +137,7 @@ final class MetaService
         $seoImage = $this->withDefaults ? Setting::seoOgImageUrl() : null;
 
         $title = $this->strOrNull($this->data['title'] ?? null) ?? $seoTitle ?? $company;
-        $rawDescription = $this->strOrNull($this->data['description'] ?? null)
-            ?? $seoDescription
-            ?? ($this->withDefaults ? ($profile['about'] ?? null) : null)
-            ?? ($company.' — '.(config('app.name') ? $appName : 'Developer Website & Web App'));
-        $description = Str::limit(trim((string) $rawDescription), 160);
+        $description = $this->resolveDescription($title, $company, $seoDescription, $profile);
 
         $image = $this->strOrNull($this->data['image'] ?? null) ?? $this->strOrNull($seoImage);
         $imageAlt = $this->strOrNull($this->data['image_alt'] ?? null) ?? $title;
@@ -198,7 +194,7 @@ final class MetaService
 
         return [
             'title' => $title,
-            'title_full' => $title !== $siteName ? $title.' — '.$siteName : $title,
+            'title_full' => $title !== $siteName && ! str_contains($title, $siteName) ? $title.' — '.$siteName : $title,
             'description' => $description,
             'keywords' => $keywords,
             'canonical' => $canonical,
@@ -216,6 +212,33 @@ final class MetaService
             'tags' => $tags,
             'json_ld' => $jsonLd,
         ];
+    }
+
+    /**
+     * Deskripsi meta tidak boleh kosong dan harus unik per halaman.
+     *
+     * Urutan: `description` eksplisit halaman → default SEO situs (di-awali judul
+     * halaman agar tetap unik) → tagline/profil → nama aplikasi.
+     *
+     * @param  array<string, string>  $profile
+     */
+    private function resolveDescription(string $title, string $company, ?string $seoDescription, array $profile): string
+    {
+        $explicit = $this->strOrNull($this->data['description'] ?? null);
+        if ($explicit !== null) {
+            return Str::limit($explicit, 160);
+        }
+
+        $siteDescription = $seoDescription
+            ?? ($this->withDefaults ? $this->strOrNull($profile['about'] ?? null) : null)
+            ?? ($this->withDefaults ? $this->strOrNull($profile['tagline'] ?? null) : null)
+            ?? $company;
+
+        $description = $title !== $company
+            ? $title.' — '.$siteDescription
+            : $siteDescription;
+
+        return Str::limit($description, 160);
     }
 
     private function strOrNull(mixed $value): ?string

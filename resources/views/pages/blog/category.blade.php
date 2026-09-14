@@ -1,4 +1,4 @@
-<x-layouts.public :title="$category->name">
+<x-layouts.public :title="$category->name" :seo-meta="$seoMeta">
     {{-- Header — blue tint block (surface-2) di atas canvas putih --}}
     <div class="border-b border-[#e3eaff] bg-[#f3f6ff]">
         <div class="mx-auto max-w-5xl px-4 pb-10 pt-28 sm:px-6 lg:px-8">

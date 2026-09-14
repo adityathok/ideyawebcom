@@ -4,6 +4,10 @@
     $titleFull = $m['title_full'] ?? $m['title'] ?? config('app.name', 'IdeyaWeb');
     $title = $m['title'] ?? $titleFull;
     $description = $m['description'] ?? null;
+    // Jaring pengaman SEO: og:description wajib terisi, walau pemanggil tidak mengirimnya.
+    if (! filled($description)) {
+        $description = filled($title) ? $title : (string) config('app.name', 'IdeyaWeb');
+    }
     $keywords = $m['keywords'] ?? null;
     $canonical = $m['canonical'] ?? $m['url'] ?? null;
     $robots = $m['robots'] ?? 'index, follow';
@@ -21,7 +25,7 @@
     $jsonLd = $m['json_ld'] ?? null;
 @endphp
 <title>{{ $titleFull }}</title>
-@if($description)<meta name="description" content="{{ $description }}" />@endif
+<meta name="description" content="{{ $description }}" />
 @if($keywords)<meta name="keywords" content="{{ $keywords }}" />@endif
 <meta name="robots" content="{{ $robots }}" />
 @if($canonical)<link rel="canonical" href="{{ $canonical }}" />@endif
@@ -31,7 +35,7 @@
 <meta property="og:locale" content="{{ $locale }}" />
 <meta property="og:type" content="{{ $type }}" />
 <meta property="og:title" content="{{ $title }}" />
-@if($description)<meta property="og:description" content="{{ $description }}" />@endif
+<meta property="og:description" content="{{ $description }}" />
 @if($url)<meta property="og:url" content="{{ $url }}" />@endif
 @if($image)<meta property="og:image" content="{{ $image }}" />
 <meta property="og:image:alt" content="{{ $imageAlt }}" />@endif
@@ -43,7 +47,7 @@
 {{-- Twitter --}}
 <meta name="twitter:card" content="{{ $twitterCard }}" />
 <meta name="twitter:title" content="{{ $title }}" />
-@if($description)<meta name="twitter:description" content="{{ $description }}" />@endif
+<meta name="twitter:description" content="{{ $description }}" />
 @if($image)<meta name="twitter:image" content="{{ $image }}" />
 <meta name="twitter:image:alt" content="{{ $imageAlt }}" />@endif
 

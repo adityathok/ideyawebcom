@@ -1,4 +1,4 @@
-<x-layouts.public :title="($profile['company_name'] ?? config('app.name', 'IdeyaWeb'))">
+<x-layouts.public :title="($profile['company_name'] ?? config('app.name', 'IdeyaWeb'))" :seo-meta="$seoMeta">
     @php
         $profile = $profile ?? \App\Models\Setting::profile();
 

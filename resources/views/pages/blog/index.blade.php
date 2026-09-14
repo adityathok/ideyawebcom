@@ -1,4 +1,4 @@
-<x-layouts.public title="Blog">
+<x-layouts.public title="Blog" :seo-meta="$seoMeta">
     {{-- Header — blue tint block (surface-2) di atas canvas putih --}}
     <div class="border-b border-[#e3eaff] bg-sky-100">
         <div class="mx-auto max-w-5xl px-4 pb-12 pt-28 sm:px-6 lg:px-8">
