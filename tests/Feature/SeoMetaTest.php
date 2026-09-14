@@ -5,12 +5,73 @@ use App\Models\Post;
 use App\Models\Setting;
 use App\Models\Tag;
 use App\Services\MetaService;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+
+/**
+ * Menjalankan $callback dengan aset public/images/og-{slug}.{ext} dalam kondisi tertentu.
+ * Aset asli (kalau ada) dipindah sementara ke *.phpunit-bak lalu dikembalikan,
+ * supaya tes tidak rapuh terhadap file yang nanti ditambahkan manual.
+ */
+function withPageOgImage(string $slug, ?string $extension, Closure $callback): void
+{
+    $directory = public_path('images');
+    $extensions = ['jpg', 'jpeg', 'png', 'webp'];
+    $backups = [];
+
+    foreach ($extensions as $candidate) {
+        $path = "{$directory}/og-{$slug}.{$candidate}";
+
+        if (File::isFile($path)) {
+            $backup = "{$path}.phpunit-bak";
+            File::move($path, $backup);
+            $backups[$candidate] = $backup;
+        }
+    }
+
+    if ($extension !== null) {
+        File::put("{$directory}/og-{$slug}.{$extension}", 'phpunit-og-image');
+    }
+
+    try {
+        $callback();
+    } finally {
+        foreach ($extensions as $candidate) {
+            $created = "{$directory}/og-{$slug}.{$candidate}";
+
+            if (File::isFile($created)) {
+                File::delete($created);
+            }
+        }
+
+        foreach ($backups as $candidate => $backup) {
+            File::move($backup, "{$directory}/og-{$slug}.{$candidate}");
+        }
+    }
+}
 
 function ogDescriptionFromHtml(string $html): ?string
 {
     preg_match('/<meta property="og:description" content="([^"]*)"/', $html, $matches);
 
     return $matches[1] ?? null;
+}
+
+function ogImageFromHtml(string $html): ?string
+{
+    preg_match('/<meta property="og:image" content="([^"]*)"/', $html, $matches);
+
+    return $matches[1] ?? null;
+}
+
+/** URL absolut untuk gambar post di disk public — sama seperti Post::imageUrl(). */
+function postImageUrl(string $path): string
+{
+    /** @var FilesystemAdapter $disk */
+    $disk = Storage::disk('public');
+
+    return $disk->url($path);
 }
 
 test('renders a non-empty og:description on every public page', function () {
@@ -81,4 +142,152 @@ test('always produces a non-empty description even without settings', function (
     $meta = app(MetaService::class)->set(['title' => 'Blog'])->generate();
 
     expect($meta['description'])->not->toBeEmpty();
+});
+
+test('renders a non-empty absolute og:image on every public page', function () {
+    $category = Category::factory()->create(['name' => 'Laravel']);
+    $tag = Tag::factory()->create(['name' => 'Testing']);
+    $post = Post::factory()->published()->create(['title' => 'Panduan Web App', 'image' => 'posts/cover.jpg']);
+
+    $pages = [
+        'home' => route('home'),
+        'layanan' => route('layanan'),
+        'kontak' => route('kontak'),
+        'privacy' => route('privacy'),
+        'blog index' => route('blog.index'),
+        'blog show' => route('blog.show', $post),
+        'blog category' => route('blog.category', $category),
+        'blog tag' => route('blog.tag', $tag),
+    ];
+
+    foreach ($pages as $label => $url) {
+        $image = ogImageFromHtml($this->get($url)->assertOk()->getContent());
+
+        expect($image)->not->toBeEmpty("og:image kosong atau hilang di halaman {$label}");
+        expect($image)->toMatch('/^https?:\/\//', "og:image harus URL absolut di halaman {$label}");
+    }
+});
+
+test('falls back to the default og image for a post without its own image', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    $post = Post::factory()->published()->create([
+        'title' => 'Post Tanpa Gambar',
+        'image' => null,
+        'cover_image' => null,
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('property="og:image" content="https://cdn.example.com/og-default.jpg"', false);
+});
+
+test('keeps the post image over the default when the post has one', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    $post = Post::factory()->published()->create([
+        'title' => 'Post Bergambar',
+        'image' => 'posts/cover.jpg',
+    ]);
+
+    $expected = 'property="og:image" content="'.postImageUrl('posts/cover.jpg').'"';
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee($expected, false)
+        ->assertDontSee('property="og:image" content="https://cdn.example.com/og-default.jpg"', false);
+});
+
+test('uses the site name as og:image alt when the default image is used', function () {
+    Setting::set('company_name', 'IdeyaWeb');
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    $post = Post::factory()->published()->create([
+        'title' => 'Post Tanpa Gambar',
+        'image' => null,
+        'cover_image' => null,
+    ]);
+
+    $expected = 'property="og:image:alt" content="IdeyaWeb"';
+
+    $pages = [route('home'), route('blog.index'), route('layanan'), route('blog.show', $post)];
+
+    foreach ($pages as $url) {
+        $this->get($url)->assertOk()->assertSee($expected, false);
+    }
+});
+
+test('uses the post title as og:image alt when the post has its own image', function () {
+    $post = Post::factory()->published()->create([
+        'title' => 'Panduan Web App',
+        'image' => 'posts/cover.jpg',
+        'image_caption' => null,
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('property="og:image:alt" content="Panduan Web App"', false);
+});
+
+test('uses the image caption as og:image alt when the post provides one', function () {
+    $post = Post::factory()->published()->create([
+        'title' => 'Panduan Web App',
+        'image' => 'posts/cover.jpg',
+        'image_caption' => 'Tangkapan layar dashboard',
+    ]);
+
+    $this->get(route('blog.show', $post))
+        ->assertOk()
+        ->assertSee('property="og:image:alt" content="Tangkapan layar dashboard"', false);
+});
+
+test('uses the og image from settings as the default for pages without their own image', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    $expected = 'property="og:image" content="https://cdn.example.com/og-default.jpg"';
+
+    foreach ([route('home'), route('blog.index')] as $url) {
+        $this->get($url)->assertOk()->assertSee($expected, false);
+    }
+});
+
+test('falls back to the bundled brand image when no og image is configured', function () {
+    $expected = 'property="og:image" content="'.asset('images/og-logo.jpg').'"';
+
+    foreach ([route('home'), route('blog.index')] as $url) {
+        $this->get($url)->assertOk()->assertSee($expected, false);
+    }
+});
+
+test('prefers a page specific og image over the configured default', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    // jpg dan webp sekaligus memastikan resolver mengenali beberapa ekstensi.
+    $pages = [
+        'layanan' => 'jpg',
+        'kontak' => 'webp',
+    ];
+
+    foreach ($pages as $slug => $extension) {
+        withPageOgImage($slug, $extension, function () use ($slug, $extension) {
+            $expected = 'property="og:image" content="'.asset("images/og-{$slug}.{$extension}").'"';
+
+            $this->get(route($slug))
+                ->assertOk()
+                ->assertSee($expected, false)
+                ->assertDontSee('property="og:image" content="https://cdn.example.com/og-default.jpg"', false);
+        });
+    }
+});
+
+test('falls back to the configured default when a page has no og image asset', function () {
+    Setting::set('seo_og_image', 'https://cdn.example.com/og-default.jpg');
+
+    $expected = 'property="og:image" content="https://cdn.example.com/og-default.jpg"';
+
+    foreach (['layanan', 'kontak', 'privacy'] as $slug) {
+        withPageOgImage($slug, null, function () use ($slug, $expected) {
+            $this->get(route($slug))->assertOk()->assertSee($expected, false);
+        });
+    }
 });

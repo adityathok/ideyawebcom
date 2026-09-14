@@ -21,6 +21,7 @@ final class PageController extends Controller
         $seoMeta = $meta->set([
             'title' => 'Layanan',
             'description' => 'Layanan pembuatan website, web app custom, WordPress, integrasi API, dan maintenance — dikerjakan rapi, cepat, aman, dan terukur.',
+            'image' => $this->pageOgImage('layanan'),
             'type' => 'website',
             'url' => route('layanan'),
         ])->generate();
@@ -36,6 +37,7 @@ final class PageController extends Controller
         $seoMeta = $meta->set([
             'title' => 'Kontak Kami',
             'description' => 'Hubungi '.$company.' untuk konsultasi gratis seputar pembuatan website, web app custom, WordPress, dan maintenance.',
+            'image' => $this->pageOgImage('kontak'),
             'type' => 'website',
             'url' => route('kontak'),
         ])->generate();
@@ -50,6 +52,7 @@ final class PageController extends Controller
         $seoMeta = $meta->set([
             'title' => 'Kebijakan Privasi',
             'description' => 'Kebijakan privasi menjelaskan bagaimana kami mengumpulkan, menggunakan, melindungi, dan menghapus data pribadi Anda.',
+            'image' => $this->pageOgImage('privacy'),
             'type' => 'website',
             'url' => route('privacy'),
         ])->generate();
@@ -86,5 +89,22 @@ final class PageController extends Controller
         return redirect()
             ->route('kontak')
             ->with('contact_status', 'Terima kasih! Pesan Anda sudah kami terima dan akan segera dibalas.');
+    }
+
+    /**
+     * OG image khusus halaman: public/images/og-{slug}.{ext}.
+     * Null kalau belum ada → MetaService memakai default dari pengaturan seo_og_image.
+     */
+    private function pageOgImage(string $slug): ?string
+    {
+        foreach (['jpg', 'jpeg', 'png', 'webp'] as $extension) {
+            $relative = "images/og-{$slug}.{$extension}";
+
+            if (is_file(public_path($relative))) {
+                return asset($relative);
+            }
+        }
+
+        return null;
     }
 }

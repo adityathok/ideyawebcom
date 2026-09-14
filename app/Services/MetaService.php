@@ -73,11 +73,12 @@ final class MetaService
         $defaultTitle = filled($seo['seo_title']) ? $seo['seo_title'] : $company.' — '.$tagline;
         $defaultDescription = filled($seo['seo_description']) ? $seo['seo_description'] : Str::limit(trim($about), 160);
 
+        // `image` sengaja tidak di-set: generate() sudah memakai seo_og_image sebagai
+        // default, sehingga og:image:alt ikut memakai nama situs (bukan judul halaman).
         return $this->set(array_merge([
             'title' => $defaultTitle,
             'description' => $defaultDescription,
             'keywords' => $seo['seo_keywords'] ?: null,
-            'image' => Setting::seoOgImageUrl(),
             'type' => 'website',
             'url' => url()->current(),
         ], $extra));
@@ -105,11 +106,15 @@ final class MetaService
     {
         $post->loadMissing(['category', 'tags', 'author']);
 
+        $image = $post->imageUrl();
+
         return $this->set(array_merge([
             'title' => $post->title,
             'description' => $post->excerpt ?: Str::limit(strip_tags((string) $post->body), 160),
-            'image' => $post->imageUrl(),
-            'image_alt' => $post->image_caption ?: $post->title,
+            'image' => $image,
+            // Alt hanya dari post kalau post memang punya gambar sendiri; kalau tidak,
+            // biarkan null supaya generate() memakai nama situs untuk gambar default.
+            'image_alt' => $image !== null ? ($post->image_caption ?: $post->title) : null,
             'type' => 'article',
             'url' => route('blog.show', $post),
             'published_time' => $post->published_at?->toIso8601String(),
@@ -130,6 +135,7 @@ final class MetaService
         $seo = $this->withDefaults ? Setting::seo() : [];
         $appName = (string) config('app.name', 'IdeyaWeb');
         $company = $this->withDefaults ? ($profile['company_name'] ?? '') ?: $appName : $appName;
+        $siteName = $company;
 
         $seoTitle = $this->withDefaults ? $this->strOrNull($seo['seo_title'] ?? null) : null;
         $seoDescription = $this->withDefaults ? $this->strOrNull($seo['seo_description'] ?? null) : null;
@@ -139,12 +145,19 @@ final class MetaService
         $title = $this->strOrNull($this->data['title'] ?? null) ?? $seoTitle ?? $company;
         $description = $this->resolveDescription($title, $company, $seoDescription, $profile);
 
-        $image = $this->strOrNull($this->data['image'] ?? null) ?? $this->strOrNull($seoImage);
-        $imageAlt = $this->strOrNull($this->data['image_alt'] ?? null) ?? $title;
+        // Urutan og:image: gambar khusus halaman → default dari pengaturan (seo_og_image)
+        // → banner brand bawaan, supaya tiap halaman selalu punya og:image.
+        $pageImage = $this->strOrNull($this->data['image'] ?? null);
+        $image = $pageImage
+            ?? $this->strOrNull($seoImage)
+            ?? ($this->withDefaults ? asset('images/og-logo.jpg') : null);
+        // Alt harus mendeskripsikan gambar yang benar-benar dipakai: gambar khusus
+        // halaman → judul halaman, gambar default/brand → nama situs.
+        $imageAlt = $this->strOrNull($this->data['image_alt'] ?? null)
+            ?? ($pageImage !== null ? $title : $siteName);
         $url = $this->strOrNull($this->data['url'] ?? null) ?? url()->current();
         $type = $this->strOrNull($this->data['type'] ?? null) ?? 'website';
         $locale = str_replace('_', '-', (string) app()->getLocale()) ?: 'id';
-        $siteName = $company;
 
         $robots = $this->strOrNull($this->data['robots'] ?? null) ?? 'index, follow';
         $canonical = $this->strOrNull($this->data['canonical'] ?? null) ?? $url;

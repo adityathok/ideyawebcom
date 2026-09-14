@@ -16,6 +16,10 @@
     $locale = $m['locale'] ?? (str_replace('_', '-', app()->getLocale()) ?: 'id_ID');
     $type = $m['type'] ?? 'website';
     $image = $m['image'] ?? null;
+    // Jaring pengaman SEO: og:image wajib terisi, walau pemanggil tidak mengirimnya.
+    if (! filled($image)) {
+        $image = asset('images/og-logo.jpg');
+    }
     $imageAlt = $m['image_alt'] ?? $title;
     $twitterCard = $m['twitter_card'] ?? ($image ? 'summary_large_image' : 'summary');
     $publishedTime = $m['published_time'] ?? null;
@@ -37,8 +41,8 @@
 <meta property="og:title" content="{{ $title }}" />
 <meta property="og:description" content="{{ $description }}" />
 @if($url)<meta property="og:url" content="{{ $url }}" />@endif
-@if($image)<meta property="og:image" content="{{ $image }}" />
-<meta property="og:image:alt" content="{{ $imageAlt }}" />@endif
+<meta property="og:image" content="{{ $image }}" />
+<meta property="og:image:alt" content="{{ $imageAlt }}" />
 @if($publishedTime)<meta property="article:published_time" content="{{ $publishedTime }}" />@endif
 @if($author)<meta property="article:author" content="{{ $author }}" />@endif
 @if($section)<meta property="article:section" content="{{ $section }}" />@endif
@@ -48,8 +52,8 @@
 <meta name="twitter:card" content="{{ $twitterCard }}" />
 <meta name="twitter:title" content="{{ $title }}" />
 <meta name="twitter:description" content="{{ $description }}" />
-@if($image)<meta name="twitter:image" content="{{ $image }}" />
-<meta name="twitter:image:alt" content="{{ $imageAlt }}" />@endif
+<meta name="twitter:image" content="{{ $image }}" />
+<meta name="twitter:image:alt" content="{{ $imageAlt }}" />
 
 @if($jsonLd)
 <script type="application/ld+json">{!! json_encode($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
