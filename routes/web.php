@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
@@ -19,6 +20,14 @@ Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.sho
 Route::get('/kategori/{category:slug}', [BlogController::class, 'category'])->name('blog.category');
 Route::get('/tag/{tag:slug}', [BlogController::class, 'tag'])->name('blog.tag');
 
+// `scopeBindings()` mengunci {version} lewat Product::versions() dan {page} lewat
+// DocVersion::pages(), sehingga versi maupun halaman milik produk lain tidak bisa
+// diakses lewat URL produk ini.
+Route::get('/docs', [DocsController::class, 'index'])->name('docs.index');
+Route::get('/docs/{product:slug}', [DocsController::class, 'product'])->name('docs.product');
+Route::get('/docs/{product:slug}/{version:slug}', [DocsController::class, 'version'])->name('docs.version')->scopeBindings();
+Route::get('/docs/{product:slug}/{version:slug}/{page:slug}', [DocsController::class, 'page'])->name('docs.page')->scopeBindings();
+
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
@@ -28,6 +37,10 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::livewire('admin/tags', 'pages::admin.tags.index')->name('admin.tags');
     Route::livewire('admin/users', 'pages::admin.users.index')->name('admin.users');
     Route::livewire('admin/settings', 'pages::admin.settings.index')->name('admin.settings');
+    Route::livewire('admin/docs', 'pages::admin.docs.index')->name('admin.docs');
+    Route::livewire('admin/doc-form', 'pages::admin.doc-form.index')->name('admin.doc-form');
+    Route::livewire('admin/products', 'pages::admin.products.index')->name('admin.products');
+    Route::livewire('admin/versions', 'pages::admin.versions.index')->name('admin.versions');
 });
 
 Route::redirect('admin/profile', '/admin/settings')->name('admin.profile');

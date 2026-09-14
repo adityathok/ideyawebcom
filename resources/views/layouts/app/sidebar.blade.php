@@ -36,6 +36,20 @@
             </flux:sidebar.nav>
 
             <flux:sidebar.nav>
+                <flux:sidebar.group :heading="__('Dokumentasi')" class="grid">
+                    <flux:sidebar.item icon="book-open" :href="route('admin.docs')" :current="request()->routeIs('admin.docs', 'admin.doc-form')" wire:navigate>
+                        {{ __('Halaman') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="cube" :href="route('admin.products')" :current="request()->routeIs('admin.products')" wire:navigate>
+                        {{ __('Produk') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="queue-list" :href="route('admin.versions')" :current="request()->routeIs('admin.versions')" wire:navigate>
+                        {{ __('Versi') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
+
+            <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Manajemen')" class="grid">
                     <flux:sidebar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>
                         {{ __('Users') }}

@@ -340,6 +340,17 @@
     font-weight: 600;
     line-height: 1.35;
 }
+.prose :where(h4) {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+/* Anchor daftar isi dokumentasi: header publik `fixed` setinggi 56px, jadi
+   heading yang dituju harus diberi jarak agar tidak tertutup nav. */
+.prose :where(h2, h3, h4) {
+    scroll-margin-top: 88px;
+}
 .prose :where(ul, ol) {
     margin: 1rem 0;
     padding-left: 1.5rem;

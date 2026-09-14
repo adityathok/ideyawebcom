@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\DocPage;
+use App\Models\DocVersion;
 use App\Models\Post;
+use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
@@ -132,6 +135,69 @@ final class MetaService
     }
 
     /**
+     * Convenience: SEO untuk daftar dokumentasi produk.
+     *
+     * @param  array<string, mixed>  $extra
+     */
+    public function forDocsIndex(array $extra = []): self
+    {
+        return $this->set(array_merge([
+            'title' => 'Dokumentasi',
+            'description' => 'Panduan, referensi, dan catatan rilis tiap produk — dari pemasangan, konfigurasi, hingga pemecahan masalah.',
+            'type' => 'website',
+            'url' => url()->current(),
+            'breadcrumbs' => [['name' => 'Dokumentasi']],
+        ], $extra));
+    }
+
+    /**
+     * Convenience: SEO untuk dokumentasi satu versi produk.
+     *
+     * @param  array<string, mixed>  $extra
+     */
+    public function forDocsVersion(Product $product, DocVersion $version, array $extra = []): self
+    {
+        return $this->set(array_merge([
+            'title' => 'Dokumentasi '.$product->name.' '.$version->label,
+            'description' => $product->tagline ?: Str::limit(strip_tags((string) $product->description), 160),
+            'type' => 'website',
+            'url' => route('docs.version', [$product, $version]),
+            'breadcrumbs' => [
+                ['name' => 'Dokumentasi', 'url' => route('docs.index')],
+                ['name' => $product->name],
+                ['name' => $version->label],
+            ],
+        ], $extra));
+    }
+
+    /**
+     * Convenience: SEO untuk satu halaman dokumentasi.
+     *
+     * `type` tetap nilai Open Graph yang sah (`article`) untuk og:type, sedangkan
+     * `schema_type` memilih tipe JSON-LD yang lebih spesifik (TechArticle).
+     *
+     * @param  array<string, mixed>  $extra
+     */
+    public function forDocPage(Product $product, DocVersion $version, DocPage $page, array $extra = []): self
+    {
+        return $this->set(array_merge([
+            'title' => $page->title,
+            'description' => $page->excerpt ?: Str::limit(strip_tags((string) $page->body), 160),
+            'type' => 'article',
+            'schema_type' => 'tech_article',
+            'url' => route('docs.page', [$product, $version, $page]),
+            'published_time' => $page->published_at?->toIso8601String(),
+            'section' => $product->name.' '.$version->label,
+            'breadcrumbs' => [
+                ['name' => 'Dokumentasi', 'url' => route('docs.index')],
+                ['name' => $product->name],
+                ['name' => $version->label],
+                ['name' => $page->title],
+            ],
+        ], $extra));
+    }
+
+    /**
      * Generate array siap pakai untuk <head> (title, meta, og, twitter, canonical, json-ld).
      *
      * @return array<string, mixed>
@@ -224,6 +290,7 @@ final class MetaService
             'tags' => $tags,
             'json_ld' => $this->jsonLd([
                 'type' => $type,
+                'schema_type' => $this->strOrNull($this->data['schema_type'] ?? null),
                 'title' => $title,
                 'description' => $description,
                 'site_description' => $siteDescription,
@@ -297,7 +364,11 @@ final class MetaService
             $this->websiteSchema($context),
         ];
 
-        if ($context['type'] === 'article') {
+        $schemaType = is_string($context['schema_type'] ?? null) ? $context['schema_type'] : $context['type'];
+
+        if ($schemaType === 'tech_article') {
+            $graph[] = $this->techArticleSchema($context);
+        } elseif ($context['type'] === 'article') {
             $graph[] = $this->articleSchema($context);
         } elseif (! $context['is_home']) {
             $graph[] = $this->webPageSchema($context);
@@ -405,6 +476,31 @@ final class MetaService
             'headline' => $context['title'],
             'description' => $context['description'],
             'author' => $author === null ? null : ['@type' => 'Person', 'name' => $author],
+            // Google mensyaratkan publisher untuk rich result Article.
+            'publisher' => ['@id' => $this->schemaId('organization')],
+            'datePublished' => $context['published_time'],
+            'image' => $context['image'],
+            'mainEntityOfPage' => $context['url'],
+            'inLanguage' => $context['language'],
+            'isPartOf' => ['@id' => $this->schemaId('website')],
+        ]);
+    }
+
+    /**
+     * TechArticle: `Article` versi teknis (dokumentasi produk). Sama seperti
+     * `articleSchema()` tapi tanpa author dan tanpa tag, karena halaman dokumentasi
+     * tidak punya penulis per halaman.
+     *
+     * @param  array<string, mixed>  $context
+     * @return array<string, mixed>
+     */
+    private function techArticleSchema(array $context): array
+    {
+        return $this->withoutEmpty([
+            '@type' => 'TechArticle',
+            '@id' => $context['canonical'].'#techarticle',
+            'headline' => $context['title'],
+            'description' => $context['description'],
             // Google mensyaratkan publisher untuk rich result Article.
             'publisher' => ['@id' => $this->schemaId('organization')],
             'datePublished' => $context['published_time'],

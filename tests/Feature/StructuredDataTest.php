@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\Category;
+use App\Models\DocPage;
 use App\Models\Post;
+use App\Models\Product;
 use App\Models\Setting;
 use App\Models\Tag;
 
@@ -165,12 +167,62 @@ test('marks an inner page as a WebPage within the WebSite', function (string $ro
         ->and($webPage['description'])->not->toBeEmpty()
         ->and($webPage['isPartOf'])->toBe(['@id' => url('/').'#website'])
         ->and($webPage['inLanguage'])->toBe('id-ID');
-})->with(['layanan', 'kontak', 'privacy', 'blog.index']);
+})->with(['layanan', 'kontak', 'privacy', 'blog.index', 'docs.index']);
+
+test('renders a four level breadcrumb on a documentation page', function () {
+    $product = Product::factory()->create(['name' => 'Aplikasi Kasir']);
+    $version = $product->versions()->firstOrFail();
+    $page = DocPage::factory()->published()->create([
+        'version_id' => $version->id,
+        'title' => 'Pemasangan',
+    ]);
+
+    $breadcrumb = schemaNode(jsonLdFromHtml($this->get(route('docs.page', [$product, $version, $page]))->getContent()), 'BreadcrumbList');
+
+    expect(array_column($breadcrumb['itemListElement'], 'name'))->toBe([
+        'Beranda',
+        'Dokumentasi',
+        'Aplikasi Kasir',
+        $version->label,
+        'Pemasangan',
+    ]);
+
+    // Hanya item terakhir yang belum punya URL sendiri → diarahkan ke halaman ini.
+    expect(collect($breadcrumb['itemListElement'])->last()['item'])
+        ->toBe(route('docs.page', [$product, $version, $page]));
+});
+
+test('renders a TechArticle node instead of a plain Article on a documentation page', function () {
+    $product = Product::factory()->create(['name' => 'Aplikasi Kasir']);
+    $version = $product->versions()->firstOrFail();
+    $page = DocPage::factory()->published()->create([
+        'version_id' => $version->id,
+        'title' => 'Pemasangan',
+        'excerpt' => 'Langkah pemasangan aplikasi.',
+    ]);
+
+    $jsonLd = jsonLdFromHtml($this->get(route('docs.page', [$product, $version, $page]))->getContent());
+    $techArticle = schemaNode($jsonLd, 'TechArticle');
+
+    expect($techArticle['@id'])->toBe(route('docs.page', [$product, $version, $page]).'#techarticle')
+        ->and($techArticle['headline'])->toBe('Pemasangan')
+        ->and($techArticle['description'])->toBe('Langkah pemasangan aplikasi.')
+        ->and($techArticle['publisher'])->toBe(['@id' => url('/').'#organization'])
+        ->and($techArticle['isPartOf'])->toBe(['@id' => url('/').'#website'])
+        ->and(schemaNode($jsonLd, 'Article'))->toBeNull();
+});
 
 test('renders an Organization and WebSite node on every public page', function () {
     $category = Category::factory()->create(['name' => 'Laravel']);
     $tag = Tag::factory()->create(['name' => 'Testing']);
     $post = Post::factory()->published()->create(['title' => 'Panduan Web App']);
+
+    $product = Product::factory()->create(['name' => 'Aplikasi Kasir']);
+    $version = $product->versions()->firstOrFail();
+    $docPage = DocPage::factory()->published()->create([
+        'version_id' => $version->id,
+        'title' => 'Pemasangan',
+    ]);
 
     $pages = [
         'home' => route('home'),
@@ -181,6 +233,9 @@ test('renders an Organization and WebSite node on every public page', function (
         'blog show' => route('blog.show', $post),
         'blog category' => route('blog.category', $category),
         'blog tag' => route('blog.tag', $tag),
+        'docs index' => route('docs.index'),
+        'docs version' => route('docs.version', [$product, $version]),
+        'docs page' => route('docs.page', [$product, $version, $docPage]),
     ];
 
     foreach ($pages as $label => $url) {

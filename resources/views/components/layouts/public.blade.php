@@ -31,6 +31,7 @@
                 <a href="{{ route('home') }}#tentang" class="rounded-lg px-3 py-2 text-sm font-medium text-[#65646e] hover:bg-[#f3f6ff] hover:text-[#100f12]">Tentang</a>
                 <a href="{{ route('home') }}#proses" class="rounded-lg px-3 py-2 text-sm font-medium text-[#65646e] hover:bg-[#f3f6ff] hover:text-[#100f12]">Proses</a>
                 <a href="{{ route('blog.index') }}" @if(request()->routeIs('blog.*')) data-active @endif class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('blog.*') ? 'bg-[#f3f6ff] text-[#0a1589]' : 'text-[#65646e] hover:bg-[#f3f6ff] hover:text-[#100f12]' }}">Blog</a>
+                <a href="{{ route('docs.index') }}" @if(request()->routeIs('docs.*')) data-active @endif class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('docs.*') ? 'bg-[#f3f6ff] text-[#0a1589]' : 'text-[#65646e] hover:bg-[#f3f6ff] hover:text-[#100f12]' }}">Dokumentasi</a>
                 <a href="{{ route('kontak') }}" @if(request()->routeIs('kontak')) data-active @endif class="rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('kontak') ? 'bg-[#f3f6ff] text-[#0a1589]' : 'text-[#65646e] hover:bg-[#f3f6ff] hover:text-[#100f12]' }}">Kontak</a>
             </nav>
             <div class="flex items-center gap-2">
@@ -91,6 +92,7 @@
                 <p>&copy; {{ date('Y') }} {{ ($profile['company_name'] ?? '') ?: config('app.name', 'IdeyaWeb') }}. All rights reserved.</p>
                 <div class="flex items-center gap-5">
                     <a href="{{ route('kontak') }}" class="text-white transition hover:underline">Kontak</a>
+                    <a href="{{ route('docs.index') }}" class="text-white transition hover:underline">Dokumentasi</a>
                     <a href="{{ route('privacy') }}" class="text-white transition hover:underline">Kebijakan Privasi</a>
                 </div>
             </div>
