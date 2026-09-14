@@ -41,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::livewire('admin/doc-form', 'pages::admin.doc-form.index')->name('admin.doc-form');
     Route::livewire('admin/products', 'pages::admin.products.index')->name('admin.products');
     Route::livewire('admin/versions', 'pages::admin.versions.index')->name('admin.versions');
+    Route::livewire('admin/media', 'pages::admin.media.index')->name('admin.media');
 });
 
 Route::redirect('admin/profile', '/admin/settings')->name('admin.profile');

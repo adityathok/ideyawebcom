@@ -1,18 +1,23 @@
 <?php
 
+use App\Actions\Media\StoreMediaAction;
 use App\Models\DocPage;
 use App\Models\DocVersion;
+use App\Models\Media;
 use App\Models\Product;
 use Flux\Flux;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 new #[Title('Form Dokumen')] class extends Component
 {
+    use WithFileUploads;
     #[Url]
     public ?int $id = null;
 
@@ -39,6 +44,10 @@ new #[Title('Form Dokumen')] class extends Component
     public ?string $published_at = null;
 
     public bool $showPreview = false;
+
+    public string $mediaSearch = '';
+
+    public $docImageUpload = null;
 
     public function mount(): void
     {
@@ -82,6 +91,56 @@ new #[Title('Form Dokumen')] class extends Component
     public function togglePreview(): void
     {
         $this->showPreview = ! $this->showPreview;
+    }
+
+    public function openMediaPicker(): void
+    {
+        $this->mediaSearch = '';
+
+        Flux::modal('media-picker')->show();
+    }
+
+    public function insertMedia(int $id): void
+    {
+        $this->appendMarkdownImage(Media::findOrFail($id));
+
+        Flux::modal('media-picker')->close();
+    }
+
+    public function updatedDocImageUpload(): void
+    {
+        if (! $this->docImageUpload instanceof UploadedFile) {
+            return;
+        }
+
+        $this->validate([
+            'docImageUpload' => StoreMediaAction::validationRules(true),
+        ]);
+
+        $media = app(StoreMediaAction::class)->handle($this->docImageUpload, auth()->id());
+
+        $this->docImageUpload = null;
+
+        $this->appendMarkdownImage($media);
+    }
+
+    /**
+     * Sisipkan gambar di akhir konten.
+     *
+     * Body halaman docs adalah Markdown di dalam textarea, jadi penyisipan dikerjakan
+     * di server: tidak perlu mengurus posisi kursor di browser dan hasilnya bisa diuji.
+     * Pemakaian medianya tercatat saat halaman disimpan (pivot `inline`).
+     */
+    private function appendMarkdownImage(Media $media): void
+    {
+        $alt = str_replace(['[', ']'], '', $media->alt_text ?: $media->original_name);
+        $markdown = '!['.$alt.']('.$media->url().')';
+
+        $trimmed = rtrim($this->body);
+
+        $this->body = $trimmed === '' ? $markdown : $trimmed."\n\n".$markdown;
+
+        Flux::toast(variant: 'success', text: 'Gambar disisipkan di akhir konten. Simpan halaman agar tercatat pemakaiannya.');
     }
 
     public function save(): void
@@ -201,7 +260,7 @@ new #[Title('Form Dokumen')] class extends Component
         <flux:subheading>{{ $isEdit ? 'Perbarui halaman dokumentasi #'.$id.' dan simpan perubahan.' : 'Buat halaman dokumentasi baru untuk sebuah versi produk.' }}</flux:subheading>
     </div>
 
-    <form wire:submit="save" class="mt-6 space-y-4 rounded-2xl border border-[#e3eaff] bg-white p-6">
+    <form wire:submit="save" class="mt-6 space-y-4 rounded-2xl border border-[#e3eaff] bg-white p-6" enctype="multipart/form-data">
         <flux:select wire:model.live="product_id" label="Produk" required description="Hanya untuk memilih versi di bawah — yang disimpan di halaman adalah versinya.">
             <flux:select.option value="">Pilih produk</flux:select.option>
             @foreach (\App\Models\Product::orderBy('name')->get() as $product)
@@ -245,6 +304,22 @@ new #[Title('Form Dokumen')] class extends Component
             </div>
         @endif
 
+        <div class="space-y-3 rounded-xl border border-[#e3eaff] bg-[#fafbff] p-4">
+            <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-[#100f12]">Gambar di Konten</label>
+                <span class="text-xs text-[#65646e]">JPG/PNG/WebP/GIF/AVIF maks {{ (int) config('media.max_size_kb') / 1024 }}MB</span>
+            </div>
+            <p class="text-xs text-[#65646e]">Gambar disisipkan di akhir konten dalam sintaks Markdown, lalu bisa Anda pindahkan sesuai kebutuhan.</p>
+            <div class="flex flex-wrap gap-2">
+                <flux:button size="sm" variant="ghost" type="button" wire:click="openMediaPicker">Pilih dari galeri</flux:button>
+            </div>
+            <input type="file" wire:model="docImageUpload" accept="image/*" class="block w-full rounded-lg border border-[#e3eaff] bg-white px-3 py-2 text-sm text-[#100f12] file:mr-3 file:rounded-md file:border-0 file:bg-[#0a1589] file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-[#06105a]" />
+            <div wire:loading wire:target="docImageUpload" class="text-xs text-[#65646e]">Mengunggah...</div>
+            @error('docImageUpload')
+                <p class="text-xs text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
         <div class="grid gap-4 sm:grid-cols-3">
             <flux:select wire:model="status" label="Status">
                 <flux:select.option value="draft">Draft</flux:select.option>
@@ -260,4 +335,45 @@ new #[Title('Form Dokumen')] class extends Component
             <flux:button type="submit" variant="primary">{{ $isEdit ? 'Update' : 'Simpan' }}</flux:button>
         </div>
     </form>
+
+    <flux:modal name="media-picker" class="max-w-3xl">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Sisipkan gambar di konten</flux:heading>
+                <flux:subheading>Gambar diambil dari perpustakaan media dan ditambahkan di akhir konten dalam sintaks Markdown.</flux:subheading>
+            </div>
+
+            <flux:input wire:model.live.debounce.300ms="mediaSearch" placeholder="Cari nama file..." icon="magnifying-glass" />
+
+            @php
+                $pickerMedia = \App\Models\Media::query()
+                    ->images()
+                    ->search($mediaSearch !== '' ? $mediaSearch : null)
+                    ->latest('id')
+                    ->take(24)
+                    ->get();
+            @endphp
+
+            @if ($pickerMedia->isEmpty())
+                <p class="py-8 text-center text-sm text-[#65646e]">Tidak ada media yang cocok.</p>
+            @else
+                <div class="grid max-h-[60vh] grid-cols-2 gap-3 overflow-y-auto sm:grid-cols-3">
+                    @foreach ($pickerMedia as $item)
+                        <button type="button" wire:key="picker-{{ $item->id }}" wire:click="insertMedia({{ $item->id }})" class="overflow-hidden rounded-lg border border-[#e3eaff] bg-white text-left transition hover:border-[#0a1589]">
+                            <span class="block aspect-[4/3] bg-[#fafbff]">
+                                <img src="{{ $item->url() }}" alt="{{ $item->alt_text ?? '' }}" class="h-full w-full object-cover" loading="lazy" />
+                            </span>
+                            <span class="block truncate px-2 py-1.5 text-xs text-[#100f12]" title="{{ $item->original_name }}">{{ $item->original_name }}</span>
+                        </button>
+                    @endforeach
+                </div>
+            @endif
+
+            <div class="flex justify-end">
+                <flux:modal.close>
+                    <flux:button variant="ghost">Tutup</flux:button>
+                </flux:modal.close>
+            </div>
+        </div>
+    </flux:modal>
 </section>

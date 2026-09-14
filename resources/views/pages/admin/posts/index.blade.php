@@ -2,7 +2,6 @@
 
 use App\Models\Post;
 use Flux\Flux;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -39,11 +38,10 @@ new #[Title('Posts')] class extends Component
 
     public function delete(int $id): void
     {
-        $post = Post::findOrFail($id);
-        if ($post->image) {
-            Storage::disk('public')->delete($post->image);
-        }
-        $post->delete();
+        // Filenya tidak ikut dihapus: media dikelola perpustakaan dan bisa dipakai
+        // post atau halaman dokumentasi lain, jadi menghapus file bukan urusan post.
+        Post::findOrFail($id)->delete();
+
         Flux::toast(variant: 'success', text: 'Post dihapus.');
     }
 }; ?>
@@ -98,7 +96,7 @@ new #[Title('Posts')] class extends Component
     </div>
 
     @php
-        $posts = \App\Models\Post::with(['category'])
+        $posts = \App\Models\Post::with(['category', 'cover'])
             ->when($search, fn ($q) => $q->where('title', 'like', "%{$search}%"))
             ->when($filterStatus, fn ($q) => $q->where('status', $filterStatus))
             ->when($filterCategory, fn ($q) => $q->where('category_id', $filterCategory))

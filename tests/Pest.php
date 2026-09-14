@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 /*
@@ -47,4 +48,33 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Byte PNG yang benar-benar sah, disusun manual (tanpa GD) supaya `getimagesize()`
+ * dan validasi `mimetypes` membaca isi file asli, bukan file kosong.
+ */
+function pngBytes(int $width = 1, int $height = 1): string
+{
+    $chunk = fn (string $type, string $data): string => pack('N', strlen($data)).$type.$data.pack('N', crc32($type.$data));
+
+    $raw = '';
+
+    for ($y = 0; $y < $height; $y++) {
+        // Tiap baris diawali byte filter (0) lalu piksel RGB merah.
+        $raw .= "\x00".str_repeat("\xff\x00\x00", $width);
+    }
+
+    return "\x89PNG\r\n\x1a\n"
+        .$chunk('IHDR', pack('NNCCCCC', $width, $height, 8, 2, 0, 0, 0))
+        .$chunk('IDAT', gzcompress($raw))
+        .$chunk('IEND', '');
+}
+
+/**
+ * Unggahan palsu berisi PNG yang sah, siap dipakai `StoreMediaAction`.
+ */
+function uploadPng(string $name = 'foto.png', int $width = 1, int $height = 1): UploadedFile
+{
+    return UploadedFile::fake()->createWithContent($name, pngBytes($width, $height));
 }

@@ -15,7 +15,7 @@ final class BlogController extends Controller
 {
     public function index(Request $request, MetaService $meta): View
     {
-        $posts = Post::with(['category', 'tags', 'author'])
+        $posts = Post::with(['category', 'tags', 'author', 'cover'])
             ->published()
             ->search($request->string('q')->toString() ?: null)
             ->when($request->filled('category'), function ($q) use ($request) {
@@ -40,10 +40,10 @@ final class BlogController extends Controller
     {
         abort_unless($post->status->value === 'published' || auth()->check(), 404);
 
-        $post->load(['category', 'tags', 'author']);
+        $post->load(['category', 'tags', 'author', 'cover']);
         $post->increment('view_count');
 
-        $related = Post::with(['category'])
+        $related = Post::with(['category', 'cover'])
             ->published()
             ->where('id', '!=', $post->id)
             ->where('category_id', $post->category_id)
@@ -62,7 +62,7 @@ final class BlogController extends Controller
     public function category(Category $category, MetaService $meta): View
     {
         $posts = $category->posts()
-            ->with(['category', 'tags', 'author'])
+            ->with(['category', 'tags', 'author', 'cover'])
             ->published()
             ->latest('published_at')
             ->paginate(9);
@@ -84,7 +84,7 @@ final class BlogController extends Controller
     public function tag(Tag $tag, MetaService $meta): View
     {
         $posts = $tag->posts()
-            ->with(['category', 'tags', 'author'])
+            ->with(['category', 'tags', 'author', 'cover'])
             ->published()
             ->latest('published_at')
             ->paginate(9);

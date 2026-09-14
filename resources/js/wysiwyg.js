@@ -30,14 +30,20 @@ function normalizeContent(value) {
         .join('');
 }
 
-const TOOLBAR = [
-    [{ header: [2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    ['blockquote', 'code-block'],
-    ['link'],
-    ['clean'],
-];
+/**
+ * Toolbar rows. The image button only appears when the editor is wired to a
+ * media input, so editors without a library fall back to link-only.
+ */
+function toolbarRows(withImage) {
+    return [
+        [{ header: [2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['blockquote', 'code-block'],
+        withImage ? ['link', 'image'] : ['link'],
+        ['clean'],
+    ];
+}
 
 function registerWysiwyg() {
     const Alpine = window.Alpine;
@@ -48,31 +54,70 @@ function registerWysiwyg() {
 
     Alpine.__wysiwygRegistered = true;
 
-    Alpine.data('wysiwyg', ({ model, placeholder = '' }) => ({
-        init() {
-            // The Quill instance is intentionally kept in a closure and never
-            // assigned to Alpine's reactive state: a reactive Proxy wraps class
-            // instances and breaks Quill's internal identity checks, throwing
-            // "Cannot read properties of null (reading 'offset')".
-            const quill = new Quill(this.$refs.editor, {
-                theme: 'snow',
-                placeholder,
-                modules: { toolbar: TOOLBAR },
-            });
+    Alpine.data('wysiwyg', ({ model, placeholder = '', mediaInputId = null }) => {
+        // The Quill instance is intentionally kept in a closure and never
+        // assigned to Alpine's reactive state: a reactive Proxy wraps class
+        // instances and breaks Quill's internal identity checks, throwing
+        // "Cannot read properties of null (reading 'offset')".
+        let quill = null;
 
-            const initial = normalizeContent(this.$wire.get(model) ?? '');
+        return {
+            init() {
+                quill = new Quill(this.$refs.editor, {
+                    theme: 'snow',
+                    placeholder,
+                    modules: {
+                        toolbar: mediaInputId
+                            ? {
+                                  container: toolbarRows(true),
+                                  handlers: { image: () => this.openMediaPicker() },
+                              }
+                            : { container: toolbarRows(false) },
+                    },
+                });
 
-            if (initial) {
-                quill.clipboard.dangerouslyPasteHTML(initial);
-            }
+                const initial = normalizeContent(this.$wire.get(model) ?? '');
 
-            quill.on('text-change', () => {
-                const html = quill.getText().trim() === '' ? '' : quill.getSemanticHTML();
+                if (initial) {
+                    quill.clipboard.dangerouslyPasteHTML(initial);
+                }
 
-                this.$wire.set(model, html, false);
-            });
-        },
-    }));
+                quill.on('text-change', () => {
+                    const html = quill.getText().trim() === '' ? '' : quill.getSemanticHTML();
+
+                    this.$wire.set(model, html, false);
+                });
+            },
+
+            /**
+             * The file input lives outside the editor subtree so Livewire owns
+             * it; Quill's toolbar button only needs to trigger the picker.
+             */
+            openMediaPicker() {
+                if (! mediaInputId) {
+                    return;
+                }
+
+                document.getElementById(mediaInputId)?.click();
+            },
+
+            /**
+             * Insert at the cursor when the editor is focused, otherwise append
+             * at the end, so a gallery pick never silently lands nowhere.
+             */
+            insertMediaImage(url) {
+                if (! quill || ! url) {
+                    return;
+                }
+
+                const range = quill.getSelection(true);
+                const index = range ? range.index : quill.getLength();
+
+                quill.insertEmbed(index, 'image', url, 'user');
+                quill.setSelection(index + 1, 0, 'silent');
+            },
+        };
+    });
 }
 
 // Register against whichever Alpine instance Livewire boots. The name is

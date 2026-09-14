@@ -3,11 +3,15 @@
 use App\Enums\DocStatus;
 use App\Models\DocPage;
 use App\Models\DocVersion;
+use App\Models\Media;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 beforeEach(function (): void {
+    Storage::fake('public');
+
     $this->actingAs(User::factory()->create());
 });
 
@@ -280,4 +284,57 @@ test('the markdown preview renders the body', function () {
         ->call('togglePreview')
         ->assertSet('showPreview', true)
         ->assertSee('<h2 id="judul-bagian">', false);
+});
+
+test('picking media from the library appends a markdown image to the body', function () {
+    $media = Media::factory()->create(['alt_text' => 'Tangkapan layar']);
+
+    Livewire::test('pages::admin.doc-form.index')
+        ->set('body', "# Judul\n\nTeks halaman.")
+        ->call('openMediaPicker')
+        ->assertDispatched('modal-show', name: 'media-picker')
+        ->call('insertMedia', $media->id)
+        ->assertDispatched('modal-close', name: 'media-picker')
+        ->assertSet('body', "# Judul\n\nTeks halaman.\n\n![Tangkapan layar](".$media->url().')');
+});
+
+test('inserting a markdown image into an empty body leaves no leading blank lines', function () {
+    $media = Media::factory()->create(['original_name' => 'diagram.png']);
+
+    Livewire::test('pages::admin.doc-form.index')
+        ->set('body', '')
+        ->call('insertMedia', $media->id)
+        ->assertSet('body', '![diagram.png]('.$media->url().')');
+});
+
+test('uploading an image on the doc form stores it and appends it to the body', function () {
+    $component = Livewire::test('pages::admin.doc-form.index')
+        ->set('body', 'Teks halaman.')
+        ->set('docImageUpload', uploadPng('panduan.png'))
+        ->assertHasNoErrors();
+
+    $media = Media::sole();
+
+    Storage::disk('public')->assertExists($media->path);
+
+    expect($component->get('body'))->toBe("Teks halaman.\n\n![panduan.png](".$media->url().')');
+});
+
+test('saving a doc page records the appended image as media usage', function () {
+    $product = Product::factory()->create();
+    $version = $product->versions()->firstOrFail();
+    $media = Media::factory()->withFile()->create();
+
+    Livewire::test('pages::admin.doc-form.index')
+        ->set('version_id', $version->id)
+        ->set('title', 'Panduan Gambar')
+        ->set('body', 'Teks halaman.')
+        ->call('insertMedia', $media->id)
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $page = DocPage::where('slug', 'panduan-gambar')->firstOrFail();
+
+    expect($media->fresh()->isInUse())->toBeTrue()
+        ->and($page->body)->toContain($media->url());
 });

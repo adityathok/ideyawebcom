@@ -110,7 +110,7 @@ final class MetaService
      */
     public function forPost(Post $post, array $extra = []): self
     {
-        $post->loadMissing(['category', 'tags', 'author']);
+        $post->loadMissing(['category', 'tags', 'author', 'cover']);
 
         $image = $post->imageUrl();
 

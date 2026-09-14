@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('mediables', function (Blueprint $table): void {
+            $table->id();
+            $table->foreignId('media_id')->constrained('media')->cascadeOnDelete();
+            $table->morphs('mediable');
+            // Satu media bisa dipakai sebagai `cover` di satu tempat dan `inline`
+            // di tempat lain, jadi koleksi ikut menentukan keunikan barisnya.
+            $table->string('collection', 50)->default('inline');
+            $table->unsignedInteger('sort_order')->default(0);
+            $table->timestamps();
+
+            $table->unique(['media_id', 'mediable_type', 'mediable_id', 'collection'], 'mediables_unique_attachment');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('mediables');
+    }
+};

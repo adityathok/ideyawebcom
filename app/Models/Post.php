@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasMedia;
 use App\Enums\PostStatus;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -21,7 +22,7 @@ use Illuminate\Support\Str;
 final class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasMedia, SoftDeletes;
 
     protected function casts(): array
     {
@@ -62,6 +63,14 @@ final class Post extends Model
 
     public function imageUrl(): ?string
     {
+        // Cover dari perpustakaan media untuk unggahan baru; kolom lama tetap
+        // dibaca sebagai cadangan supaya post yang belum ikut migrasi tetap tampil.
+        $cover = $this->coverMedia();
+
+        if ($cover !== null) {
+            return $cover->url();
+        }
+
         if (filled($this->image)) {
             return Storage::disk('public')->url($this->image);
         }

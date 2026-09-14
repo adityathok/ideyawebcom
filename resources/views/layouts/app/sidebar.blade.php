@@ -50,6 +50,14 @@
             </flux:sidebar.nav>
 
             <flux:sidebar.nav>
+                <flux:sidebar.group :heading="__('Media')" class="grid">
+                    <flux:sidebar.item icon="photo" :href="route('admin.media')" :current="request()->routeIs('admin.media')" wire:navigate>
+                        {{ __('Perpustakaan') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
+
+            <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Manajemen')" class="grid">
                     <flux:sidebar.item icon="users" :href="route('admin.users')" :current="request()->routeIs('admin.users')" wire:navigate>
                         {{ __('Users') }}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Concerns\HasMedia;
 use App\Enums\DocStatus;
 use Carbon\CarbonImmutable;
 use Database\Factories\DocPageFactory;
@@ -34,7 +35,7 @@ use Illuminate\Support\Str;
 final class DocPage extends Model
 {
     /** @use HasFactory<DocPageFactory> */
-    use HasFactory, SoftDeletes;
+    use HasFactory, HasMedia, SoftDeletes;
 
     protected function casts(): array
     {
