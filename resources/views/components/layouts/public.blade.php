@@ -12,6 +12,7 @@
         ['label' => 'Tentang', 'url' => route('home').'#tentang', 'active' => false],
         ['label' => 'Proses', 'url' => route('home').'#proses', 'active' => false],
         ['label' => 'Blog', 'url' => route('blog.index'), 'active' => request()->routeIs('blog.*')],
+        ['label' => 'Wilayah', 'url' => route('lp.index'), 'active' => request()->routeIs('lp.*')],
         ['label' => 'Dokumentasi', 'url' => route('docs.index'), 'active' => request()->routeIs('docs.*')],
         ['label' => 'Kontak', 'url' => route('kontak'), 'active' => request()->routeIs('kontak')],
     ];
@@ -152,6 +153,7 @@
                         <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">WordPress Development</a></li>
                         <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">Optimasi WordPress</a></li>
                         <li><a href="{{ route('layanan') }}" class="text-white transition hover:underline">Maintenance Website</a></li>
+                        <li><a href="{{ route('lp.index') }}" class="text-white transition hover:underline">Wilayah Layanan</a></li>
                     </ul>
                 </div>
                 <div>
