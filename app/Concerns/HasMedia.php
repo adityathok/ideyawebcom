@@ -61,6 +61,24 @@ trait HasMedia
     }
 
     /**
+     * Sinkronkan gambar milik satu koleksi: `null` menghapus, model menambah.
+     *
+     * Koleksi lain dibiarkan utuh, jadi model dengan beberapa gambar (misalnya
+     * LP kota: gambar utama + ikon) tidak saling menghapus saat salah satu
+     * diperbarui. Koleksi `inline` tetap dikelola `syncInlineMedia()`.
+     */
+    public function setMediaForCollection(string $collection, ?Media $media): void
+    {
+        $this->media()->wherePivot('collection', $collection)->detach();
+
+        if ($media !== null) {
+            $this->attachMedia($media, $collection);
+        }
+
+        $this->unsetRelation('media');
+    }
+
+    /**
      * Selaraskan catatan pemakaian gambar inline dengan isi body terbaru.
      *
      * Referensi dikenali dari URL-nya (bukan dari id), karena body bisa berupa

@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::livewire('admin/products', 'pages::admin.products.index')->name('admin.products');
     Route::livewire('admin/versions', 'pages::admin.versions.index')->name('admin.versions');
     Route::livewire('admin/media', 'pages::admin.media.index')->name('admin.media');
+    Route::livewire('admin/lp-kota', 'pages::admin.lp-kota.index')->name('admin.lp-kota');
 });
 
 Route::redirect('admin/profile', '/admin/settings')->name('admin.profile');

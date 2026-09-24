@@ -50,6 +50,14 @@
             </flux:sidebar.nav>
 
             <flux:sidebar.nav>
+                <flux:sidebar.group :heading="__('Landing Page')" class="grid">
+                    <flux:sidebar.item icon="map-pin" :href="route('admin.lp-kota')" :current="request()->routeIs('admin.lp-kota')" wire:navigate>
+                        {{ __('LP Kota') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+            </flux:sidebar.nav>
+
+            <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Media')" class="grid">
                     <flux:sidebar.item icon="photo" :href="route('admin.media')" :current="request()->routeIs('admin.media')" wire:navigate>
                         {{ __('Perpustakaan') }}
