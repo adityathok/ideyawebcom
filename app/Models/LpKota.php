@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
  * Landing page per wilayah: satu baris mewakili satu kecamatan di satu kota,
@@ -95,6 +96,20 @@ final class LpKota extends Model
     public function labelWilayah(): string
     {
         return $this->nama_kecamatan.', '.$this->nama_kota;
+    }
+
+    /**
+     * Slug URL kota, diturunkan dari nama — tabel tidak menyimpan kolom slug,
+     * jadi slug selalu ikut kalau nama kota diperbaiki di admin.
+     */
+    public function slugKota(): string
+    {
+        return Str::slug($this->nama_kota);
+    }
+
+    public function slugKecamatan(): string
+    {
+        return Str::slug($this->nama_kecamatan);
     }
 
     /**

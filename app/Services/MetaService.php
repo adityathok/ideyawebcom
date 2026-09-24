@@ -6,10 +6,12 @@ namespace App\Services;
 
 use App\Models\DocPage;
 use App\Models\DocVersion;
+use App\Models\LpKota;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -167,6 +169,41 @@ final class MetaService
                 ['name' => $product->name],
                 ['name' => $version->label],
             ],
+        ], $extra));
+    }
+
+    /**
+     * Convenience: SEO untuk landing page wilayah (`/lp/{kota}` dan
+     * `/lp/{kota}/{kecamatan}`).
+     *
+     * Satu method dipakai dua level halaman supaya deskripsi, breadcrumb, dan
+     * pemilihan gambar tidak bisa berbeda antara keduanya. Deskripsi dibangun
+     * dari daftar wilayah sehingga tiap halaman kota unik (syarat og:description).
+     *
+     * @param  Collection<int, LpKota>  $wilayah  baris wilayah yang dicakup halaman
+     * @param  array<string, mixed>  $extra
+     */
+    public function forLpKota(string $title, Collection $wilayah, array $extra = []): self
+    {
+        $kota = (string) ($wilayah->first()->nama_kota ?? '');
+        $daftarKecamatan = $wilayah->pluck('nama_kecamatan')->unique()->values();
+        $layanan = 'Jasa pembuatan website, web app custom, dan WordPress';
+
+        $description = $daftarKecamatan->isEmpty()
+            ? $layanan.' untuk wilayah '.$kota.'.'
+            : $layanan.' untuk '.$daftarKecamatan->implode(', ').' — '.$kota.'.';
+
+        // Gambar hero wilayah pertama jadi og:image; kalau belum ada gambar,
+        // biarkan null supaya generate() memakai gambar default situs.
+        $gambar = $wilayah->first()?->gambarUtamaUrl();
+
+        return $this->set(array_merge([
+            'title' => $title,
+            'description' => Str::limit($description, 160),
+            'image' => $gambar,
+            'image_alt' => $gambar !== null ? $title : null,
+            'type' => 'website',
+            'url' => url()->current(),
         ], $extra));
     }
 

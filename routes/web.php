@@ -3,6 +3,7 @@
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\DocsController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LpKotaController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\WebManifestController;
@@ -19,6 +20,13 @@ Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/kategori/{category:slug}', [BlogController::class, 'category'])->name('blog.category');
 Route::get('/tag/{tag:slug}', [BlogController::class, 'tag'])->name('blog.tag');
+
+// Landing page per wilayah. Parameter binding memakai nama kelas (`{lpKota}`)
+// supaya rute admin `admin/lp-kota` yang sudah ada tidak berubah; segmen URL
+// tetap slug kota/kecamatan, bukan id.
+Route::get('/lp', [LpKotaController::class, 'index'])->name('lp.index');
+Route::get('/lp/{kota}', [LpKotaController::class, 'kota'])->name('lp.kota');
+Route::get('/lp/{kota}/{kecamatan}', [LpKotaController::class, 'kecamatan'])->name('lp.kecamatan');
 
 // `scopeBindings()` mengunci {version} lewat Product::versions() dan {page} lewat
 // DocVersion::pages(), sehingga versi maupun halaman milik produk lain tidak bisa

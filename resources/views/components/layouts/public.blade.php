@@ -3,7 +3,7 @@
 @php
     $profile = $profile ?? \App\Models\Setting::profile();
     // Halaman dengan hero gelap → nav harus terang selama belum di-scroll.
-    $darkHero = request()->routeIs('home', 'layanan', 'kontak', 'privacy');
+    $darkHero = request()->routeIs('home', 'layanan', 'kontak', 'privacy', 'lp.*');
 
     // Menu publik dipakai dua kali: nav desktop di header dan panel offcanvas di mobile.
     $navMenu = [

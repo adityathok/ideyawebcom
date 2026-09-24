@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\PostStatus;
 use App\Models\Category;
+use App\Models\LpKota;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\Tag;
@@ -21,6 +22,7 @@ final class SitemapController extends Controller
             ...$this->categories(),
             ...$this->tags(),
             ...$this->docs(),
+            ...$this->wilayah(),
         ];
 
         return response()->view('sitemap', ['urls' => $urls], 200, [
@@ -133,6 +135,39 @@ final class SitemapController extends Controller
                     $urls[] = $this->entry(route('docs.page', [$product, $version, $page]), 'weekly', 0.4, $page->updated_at?->toAtomString());
                 }
             }
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Landing page wilayah: satu entri per kota, satu per kecamatan. Slug
+     * diturunkan dari nama, jadi URL-nya dihitung di sini (bukan dari kolom DB).
+     *
+     * @return list<array{loc: string, lastmod: string|null, changefreq: string|null, priority: float|null}>
+     */
+    private function wilayah(): array
+    {
+        $urls = [];
+        $dilihat = [];
+
+        $baris = LpKota::query()->orderBy('nama_kota')->orderBy('nama_kecamatan')->get(['id', 'nama_kota', 'nama_kecamatan', 'updated_at']);
+
+        foreach ($baris as $item) {
+            $slugKota = $item->slugKota();
+
+            // Kota bisa muncul dari beberapa kecamatan; cukup sekali di sitemap.
+            if (! isset($dilihat[$slugKota])) {
+                $dilihat[$slugKota] = true;
+                $urls[] = $this->entry(route('lp.kota', ['kota' => $slugKota]), 'monthly', 0.7, $item->updated_at?->toAtomString());
+            }
+
+            $urls[] = $this->entry(
+                route('lp.kecamatan', ['kota' => $slugKota, 'kecamatan' => $item->slugKecamatan()]),
+                'monthly',
+                0.6,
+                $item->updated_at?->toAtomString(),
+            );
         }
 
         return $urls;

@@ -41,11 +41,28 @@ trait HasMedia
         return $this->coverMedia()?->url();
     }
 
+    /**
+     * Pasang satu media ke sebuah koleksi tanpa menyentuh koleksi lain.
+     *
+     * Sengaja tidak memakai `syncWithoutDetaching()`: relasi `media()` tidak
+     * difilter per koleksi, jadi pivot-nya di-upsert berdasarkan id media dan
+     * baris koleksi lama ikut berpindah — gambar yang dipakai sebagai
+     * `gambar_utama` hilang saat media yang sama dipilih sebagai `gambar_icon`.
+     * Karena itu baris selalu disisipkan baru, dan pengecekan di awal menjaga
+     * indeks unik `mediables_unique_attachment` tidak dilanggar.
+     */
     public function attachMedia(Media $media, string $collection = Media::COLLECTION_INLINE): void
     {
-        $this->media()->syncWithoutDetaching([
-            $media->getKey() => ['collection' => $collection],
-        ]);
+        $sudahAda = $this->media()
+            ->wherePivot('collection', $collection)
+            ->whereKey($media->getKey())
+            ->exists();
+
+        if ($sudahAda) {
+            return;
+        }
+
+        $this->media()->attach($media->getKey(), ['collection' => $collection]);
     }
 
     public function setCoverMedia(?Media $media): void
