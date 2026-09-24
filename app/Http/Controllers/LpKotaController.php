@@ -9,56 +9,25 @@ use App\Models\Setting;
 use App\Services\MetaService;
 use App\Services\ServiceCatalog;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * Halaman publik landing page per wilayah: daftar kota, halaman satu kota, dan
- * halaman satu kecamatan.
+ * Halaman publik landing page per kota: `/lp-layanan-kota/{kota}`.
  *
- * URL memakai slug turunan dari nama kota/kecamatan, sedangkan binding route
- * memakai `{lpKota}` (id) supaya rute admin yang sudah ada tidak berubah. Nama
- * yang tidak menghasilkan slug — misalnya "Kec. 12" — sengaja menghasilkan 404,
- * bukan mencocokkan baris sembarangan.
+ * Hanya ada satu level halaman — kecamatan tidak punya URL sendiri, melainkan
+ * tampil sebagai konten di halaman kotanya. Jadi tidak ada halaman daftar
+ * wilayah; halaman ini dituju langsung (iklan/SEO) dan didaftarkan di sitemap.
+ *
+ * URL memakai slug turunan dari nama kota. Nama yang tidak menghasilkan slug —
+ * misalnya "Kota 12" — sengaja berakhir 404, bukan mencocokkan baris sembarangan.
  */
 final class LpKotaController extends Controller
 {
-    public function index(MetaService $meta): View
-    {
-        $wilayah = LpKota::query()
-            ->with('media')
-            ->orderBy('nama_kota')
-            ->orderBy('nama_kecamatan')
-            ->get();
-
-        $kota = $wilayah
-            ->groupBy('nama_kota')
-            ->map(fn ($baris, string $nama): array => [
-                'nama' => $nama,
-                'slug' => Str::slug($nama),
-                'kecamatan' => $baris->pluck('nama_kecamatan')->unique()->values()->all(),
-                'gambar' => $baris->first()->gambarUtamaUrl(),
-            ])
-            ->sortKeys()
-            ->values();
-
-        $seoMeta = $meta->set([
-            'title' => 'Wilayah Layanan',
-            'description' => 'Kami melayani jasa pembuatan website, web app custom, dan WordPress untuk '
-                .$kota->count().' kota/kabupaten. Lihat daftar wilayah dan kecamatan yang kami jangkau.',
-            'type' => 'website',
-            'url' => route('lp.index'),
-            'breadcrumbs' => [['name' => 'Wilayah Layanan']],
-        ])->generate();
-
-        return view('pages.lp-kota.index', compact('kota', 'seoMeta'));
-    }
-
     public function kota(string $kota, MetaService $meta): View
     {
-        // Kota dicari dari baris pertama, bukan dari daftar distinct, supaya
-        // slug kota yang tidak punya baris apa pun tetap berakhir 404.
+        // Kota dicari lewat daftar barisnya, bukan dari daftar distinct, supaya
+        // slug yang tidak punya baris apa pun tetap berakhir 404.
         $wilayah = $this->wilayahKota($kota);
 
         if ($wilayah->isEmpty()) {
@@ -66,58 +35,28 @@ final class LpKotaController extends Controller
         }
 
         $namaKota = (string) $wilayah->first()->nama_kota;
-        $kotaSlug = $wilayah->first()->slugKota();
         $kecamatan = $wilayah->sortBy('nama_kecamatan')->values();
+
+        $profil = Setting::profile();
+        $services = ServiceCatalog::summary();
+
+        // Satu tombol WhatsApp per kecamatan, supaya pesan yang masuk sudah
+        // menyebut wilayah yang dibaca pengunjung.
+        $whatsapp = [];
+        foreach ($kecamatan as $item) {
+            $whatsapp[$item->id] = $this->whatsappUrl(
+                $profil['phone'] ?? null,
+                'Halo, saya butuh jasa website untuk wilayah '.$item->labelWilayah().'.',
+            );
+        }
 
         $seoMeta = $meta->forLpKota($namaKota, $wilayah, [
             'url' => route('lp.kota', ['kota' => $kota]),
-            'breadcrumbs' => [
-                ['name' => 'Wilayah Layanan', 'url' => route('lp.index')],
-                ['name' => $namaKota],
-            ],
-        ])->generate();
-
-        return view('pages.lp-kota.kota', compact('namaKota', 'kotaSlug', 'kecamatan', 'seoMeta'));
-    }
-
-    public function kecamatan(string $kota, string $kecamatan, MetaService $meta): View
-    {
-        $wilayah = $this->wilayahKota($kota);
-
-        if ($wilayah->isEmpty()) {
-            throw new NotFoundHttpException;
-        }
-
-        $namaKota = (string) $wilayah->first()->nama_kota;
-        $kotaSlug = $wilayah->first()->slugKota();
-        $baris = $wilayah->first(fn (LpKota $item): bool => $item->slugKecamatan() === $kecamatan);
-
-        if ($baris === null) {
-            throw new NotFoundHttpException;
-        }
-
-        $kecamatanLain = $wilayah
-            ->reject(fn (LpKota $item): bool => $item->id === $baris->id)
-            ->sortBy('nama_kecamatan')
-            ->values();
-
-        $judul = $baris->nama_kecamatan.', '.$namaKota;
-        $profil = Setting::profile();
-        $whatsapp = $this->whatsappUrl($profil['phone'] ?? null, 'Halo, saya butuh jasa website untuk wilayah '.$baris->labelWilayah().'.');
-
-        $services = ServiceCatalog::summary();
-
-        $seoMeta = $meta->forLpKota($judul, collect([$baris]), [
-            'url' => route('lp.kecamatan', ['kota' => $kota, 'kecamatan' => $kecamatan]),
             'services' => $services,
-            'breadcrumbs' => [
-                ['name' => 'Wilayah Layanan', 'url' => route('lp.index')],
-                ['name' => $namaKota, 'url' => route('lp.kota', ['kota' => $kota])],
-                ['name' => $baris->nama_kecamatan],
-            ],
+            'breadcrumbs' => [['name' => $namaKota]],
         ])->generate();
 
-        return view('pages.lp-kota.kecamatan', compact('baris', 'namaKota', 'kotaSlug', 'kecamatanLain', 'whatsapp', 'seoMeta', 'services'));
+        return view('pages.lp-kota.kota', compact('namaKota', 'kecamatan', 'whatsapp', 'services', 'seoMeta'));
     }
 
     /**

@@ -1,14 +1,12 @@
 @props([
     'breadcrumb' => null,
     'badge' => null,
-    'trail' => [],
     'image' => null,
 ])
 
 {{--
     Hero halaman dalam — foto langit biru gelap dengan scrim, agar nav terang (lihat layouts.public: darkHero).
     Slot: `title` (wajib), `subtitle` (opsional), `actions` (opsional).
-    `trail` menambah item breadcrumb berlink di antara "Beranda" dan `breadcrumb` (mis. Wilayah Layanan).
     `image` mengganti latar langit dengan gambar sendiri (mis. foto wilayah di halaman LP kota).
 --}}
 <section {{ $attributes->merge(['class' => 'relative isolate overflow-hidden bg-[#0a1589]']) }}>
@@ -31,10 +29,6 @@
     <div class="mx-auto max-w-4xl px-4 pb-28 pt-32 text-center sm:px-6 sm:pb-32 sm:pt-40 lg:px-8">
         <nav aria-label="Breadcrumb" class="flex flex-wrap items-center justify-center gap-2 text-sm text-white/70">
             <a href="{{ route('home') }}" class="transition hover:text-white">Beranda</a>
-            @foreach ($trail as $item)
-                <span aria-hidden="true">/</span>
-                <a href="{{ $item['url'] }}" class="transition hover:text-white">{{ $item['name'] }}</a>
-            @endforeach
             <span aria-hidden="true">/</span>
             <span class="text-white">{{ $breadcrumb }}</span>
         </nav>

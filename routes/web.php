@@ -21,12 +21,10 @@ Route::get('/blog/{post:slug}', [BlogController::class, 'show'])->name('blog.sho
 Route::get('/kategori/{category:slug}', [BlogController::class, 'category'])->name('blog.category');
 Route::get('/tag/{tag:slug}', [BlogController::class, 'tag'])->name('blog.tag');
 
-// Landing page per wilayah. Parameter binding memakai nama kelas (`{lpKota}`)
-// supaya rute admin `admin/lp-kota` yang sudah ada tidak berubah; segmen URL
-// tetap slug kota/kecamatan, bukan id.
-Route::get('/lp', [LpKotaController::class, 'index'])->name('lp.index');
-Route::get('/lp/{kota}', [LpKotaController::class, 'kota'])->name('lp.kota');
-Route::get('/lp/{kota}/{kecamatan}', [LpKotaController::class, 'kecamatan'])->name('lp.kecamatan');
+// Landing page per kota. Kecamatan tidak punya URL sendiri; isinya masuk ke
+// halaman kota. Parameter binding memakai nama kelas (`{lpKota}`) supaya rute
+// admin `admin/lp-kota` yang sudah ada tidak berubah.
+Route::get('/lp-layanan-kota/{kota}', [LpKotaController::class, 'kota'])->name('lp.kota');
 
 // `scopeBindings()` mengunci {version} lewat Product::versions() dan {page} lewat
 // DocVersion::pages(), sehingga versi maupun halaman milik produk lain tidak bisa

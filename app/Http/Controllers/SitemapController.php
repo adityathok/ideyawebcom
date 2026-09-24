@@ -141,8 +141,8 @@ final class SitemapController extends Controller
     }
 
     /**
-     * Landing page wilayah: satu entri per kota, satu per kecamatan. Slug
-     * diturunkan dari nama, jadi URL-nya dihitung di sini (bukan dari kolom DB).
+     * Landing page per kota: satu entri per kota. Kecamatan tidak punya URL
+     * sendiri (isinya masuk halaman kota), jadi tidak didaftarkan terpisah.
      *
      * @return list<array{loc: string, lastmod: string|null, changefreq: string|null, priority: float|null}>
      */
@@ -151,23 +151,18 @@ final class SitemapController extends Controller
         $urls = [];
         $dilihat = [];
 
-        $baris = LpKota::query()->orderBy('nama_kota')->orderBy('nama_kecamatan')->get(['id', 'nama_kota', 'nama_kecamatan', 'updated_at']);
+        $baris = LpKota::query()->orderBy('nama_kota')->get(['id', 'nama_kota', 'updated_at']);
 
         foreach ($baris as $item) {
             $slugKota = $item->slugKota();
 
-            // Kota bisa muncul dari beberapa kecamatan; cukup sekali di sitemap.
-            if (! isset($dilihat[$slugKota])) {
-                $dilihat[$slugKota] = true;
-                $urls[] = $this->entry(route('lp.kota', ['kota' => $slugKota]), 'monthly', 0.7, $item->updated_at?->toAtomString());
+            // Satu kota bisa punya banyak kecamatan; cukup sekali di sitemap.
+            if (isset($dilihat[$slugKota])) {
+                continue;
             }
 
-            $urls[] = $this->entry(
-                route('lp.kecamatan', ['kota' => $slugKota, 'kecamatan' => $item->slugKecamatan()]),
-                'monthly',
-                0.6,
-                $item->updated_at?->toAtomString(),
-            );
+            $dilihat[$slugKota] = true;
+            $urls[] = $this->entry(route('lp.kota', ['kota' => $slugKota]), 'monthly', 0.7, $item->updated_at?->toAtomString());
         }
 
         return $urls;
